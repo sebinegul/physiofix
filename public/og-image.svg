@@ -1,0 +1,17 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111f"/>
+  <rect x="44" y="44" width="1112" height="542" rx="28" fill="url(#g)"/>
+  <circle cx="950" cy="180" r="140" fill="#22d3ee" fill-opacity="0.16"/>
+  <circle cx="860" cy="470" r="180" fill="#2563eb" fill-opacity="0.2"/>
+  <path d="M220 466c80-104 168-156 318-154 139 2 218 52 322 154" stroke="#ffffff" stroke-opacity="0.32" stroke-width="8" stroke-linecap="round"/>
+  <rect x="140" y="170" width="250" height="78" rx="20" fill="#ffffff" fill-opacity="0.12"/>
+  <text x="170" y="220" fill="#ffffff" font-family="Arial, sans-serif" font-size="42" font-weight="700">PhysioFix</text>
+  <text x="140" y="300" fill="#f8fafc" font-family="Arial, sans-serif" font-size="46" font-weight="700">Physiotherapy • Sports Rehab • Recovery</text>
+  <text x="140" y="360" fill="#cbd5e1" font-family="Arial, sans-serif" font-size="24">Back pain, sports injury, neuro rehab, post-surgery care and home visits.</text>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0f4c81"/>
+    </linearGradient>
+  </defs>
+</svg>
