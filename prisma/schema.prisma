@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          String    @default("patient") // "admin" or "patient"
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  patient       Patient?
+  appointments  Appointment[]
+}
+
+model Patient {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth   String?
+  gender        String?
+  address       String?
+  emergencyContact String?
+  medicalHistory  String?
+  allergies     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  consultations Consultation[]
+  assignedExercises AssignedExercise[]
+}
+
+model Exercise {
+  id            String    @id @default(uuid())
+  name          String
+  description   String
+  category      String    // e.g., "stretching", "strengthening", "balance"
+  difficulty    String    // "easy", "medium", "hard"
+  duration      String    // e.g., "10 minutes"
+  instructions  String
+  imageUrl      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  assignedExercises AssignedExercise[]
+}
+
+model Appointment {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date          DateTime
+  time          String
+  type          String    // e.g., "consultation", "follow-up", "assessment"
+  status        String    @default("pending") // "pending", "confirmed", "completed", "cancelled"
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Consultation {
+  id            String    @id @default(uuid())
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  date          DateTime  @default(now())
+  diagnosis     String
+  treatment     String
+  notes         String?
+  followUpDate  DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model AssignedExercise {
+  id            String    @id @default(uuid())
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  exerciseId    String
+  exercise      Exercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets          Int       @default(3)
+  reps          Int       @default(10)
+  frequency     String    // e.g., "daily", "3x per week"
+  notes         String?
+  assignedDate  DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SiteContent {
+  id            String    @id @default(uuid())
+  key           String    @unique
+  value         String
+  updatedAt     DateTime  @updatedAt
+}
