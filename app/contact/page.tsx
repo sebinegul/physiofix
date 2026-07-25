@@ -1,9 +1,86 @@
+"use client";
+import { useState } from "react";
 import PageTransition from "../components/PageTransition";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
-import { Sparkles, MapPin, Mail, Phone, Send } from "lucide-react";
+import { Sparkles, MapPin, Mail, Phone, Send, CheckCircle2 } from "lucide-react";
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [serverMessage, setServerMessage] = useState("");
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters.";
+    }
+
+    const phoneRegex = /^[\d\s\-+()]{7,15}$/;
+    if (!formData.phone.trim() || !phoneRegex.test(formData.phone.trim())) {
+      newErrors.phone = "Please provide a valid phone number.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim() || !emailRegex.test(formData.email.trim())) {
+      newErrors.email = "Please provide a valid email address.";
+    }
+
+    if (!formData.message.trim() || formData.message.trim().length < 10) {
+      newErrors.message = "Please describe your concern in at least 10 characters.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus("error");
+        setServerMessage(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      setStatus("success");
+      setServerMessage(data.message);
+      setFormData({ name: "", phone: "", email: "", message: "" });
+      setErrors({});
+    } catch {
+      setStatus("error");
+      setServerMessage("Network error. Please check your connection and try again.");
+    }
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
   return (
     <PageTransition>
       <main className="min-h-screen pt-28 pb-20">
@@ -61,17 +138,75 @@ export default function ContactPage() {
                 <h2 className="relative mb-2 text-2xl font-semibold">Request an appointment</h2>
                 <p className="relative mb-6 text-sm leading-7 text-slate-300">Share your details and a brief summary of your concern. A reply will be shared with the best next step for your care.</p>
 
-                <form className="relative space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <input className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20" placeholder="Your name" />
-                    <input className="rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20" placeholder="Phone number" />
+                {status === "success" ? (
+                  <div className="relative flex items-center gap-2 rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm text-teal-300">
+                    <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
+                    {serverMessage}
                   </div>
-                  <input className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20" placeholder="Email address" />
-                  <textarea className="min-h-28 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20" placeholder="Tell us about your pain, injury, or goal for recovery" />
-                  <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:shadow-lg">
-                    Send enquiry <Send className="h-4 w-4" />
-                  </button>
-                </form>
+                ) : (
+                  <form onSubmit={handleSubmit} className="relative space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <input
+                          type="text"
+                          required
+                          minLength={2}
+                          value={formData.name}
+                          onChange={(e) => handleChange("name", e.target.value)}
+                          className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20"
+                          placeholder="Your name"
+                        />
+                        {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
+                      </div>
+                      <div>
+                        <input
+                          type="tel"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => handleChange("phone", e.target.value)}
+                          className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20"
+                          placeholder="Phone number"
+                        />
+                        {errors.phone && <p className="mt-1 text-xs text-red-400">{errors.phone}</p>}
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => handleChange("email", e.target.value)}
+                        className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20"
+                        placeholder="Email address"
+                      />
+                      {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
+                    </div>
+                    <div>
+                      <textarea
+                        required
+                        minLength={10}
+                        value={formData.message}
+                        onChange={(e) => handleChange("message", e.target.value)}
+                        className="min-h-28 w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-teal-400/50 focus:ring-2 focus:ring-teal-400/20"
+                        placeholder="Tell us about your pain, injury, or goal for recovery"
+                      />
+                      {errors.message && <p className="mt-1 text-xs text-red-400">{errors.message}</p>}
+                    </div>
+
+                    {status === "error" && (
+                      <p className="rounded-xl bg-red-500/10 px-4 py-2 text-sm text-red-400">{serverMessage}</p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={status === "loading"}
+                      className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
+                    >
+                      {status === "loading" ? "Sending..." : "Send enquiry"}
+                      <Send className="h-4 w-4" />
+                    </button>
+                  </form>
+                )}
               </div>
             </ScrollReveal>
           </div>

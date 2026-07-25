@@ -7,12 +7,40 @@ import ScrollReveal from "../components/ui/ScrollReveal";
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setSubmitted(true);
-    setEmail("");
+    setError("");
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -67,13 +95,14 @@ export default function Newsletter() {
                       type="email"
                       required
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); setError(""); }}
                       placeholder="Enter your email"
                       className="flex-1 rounded-2xl border border-white/15 bg-white/95 px-4 py-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-teal-400/50"
                     />
-                    <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:shadow-lg">
-                      Subscribe <ArrowRight className="h-4 w-4" />
+                    <button type="submit" disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100">
+                      {loading ? "Subscribing..." : "Subscribe"} <ArrowRight className="h-4 w-4" />
                     </button>
+                    {error && <p className="w-full text-left text-xs text-red-400">{error}</p>}
                   </motion.form>
                 )}
               </AnimatePresence>

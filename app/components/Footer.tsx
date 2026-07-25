@@ -69,10 +69,20 @@ export default function Footer() {
               </div>
             </div>
             <div className="flex gap-3">
-              {[Facebook, Twitter, Instagram, Linkedin, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 transition hover:border-teal-400/40 hover:bg-teal-500/20">
+              {[
+                { Icon: Facebook, label: "Facebook" },
+                { Icon: Twitter, label: "Twitter" },
+                { Icon: Instagram, label: "Instagram" },
+                { Icon: Linkedin, label: "LinkedIn" },
+                { Icon: Youtube, label: "YouTube" },
+              ].map(({ Icon, label }) => (
+                <span
+                  key={label}
+                  title={label}
+                  className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400"
+                >
                   <Icon className="h-4 w-4 text-slate-300" />
-                </a>
+                </span>
               ))}
             </div>
           </ScrollReveal>
@@ -94,8 +104,8 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-6 sm:flex-row">
           <p className="text-xs text-slate-500">© {new Date().getFullYear()} PhysioFix. All rights reserved.</p>
           <div className="flex gap-6 text-xs text-slate-500">
-            <a href="#" className="transition hover:text-teal-300">Privacy</a>
-            <a href="#" className="transition hover:text-teal-300">Terms</a>
+            <span className="cursor-default">Privacy</span>
+            <span className="cursor-default">Terms</span>
             <Link href="/contact" className="transition hover:text-teal-300">Contact</Link>
           </div>
         </div>
