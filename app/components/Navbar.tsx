@@ -16,6 +16,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
+  const marqueeText = "Rehabilitation | Ortho Rehabilitation | Neuro Rehabilitation | Home Care Physiotherapy Services";
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -42,12 +44,19 @@ export default function Navbar() {
           />
         </Link>
 
-        <div className="relative z-10 hidden items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-sm text-slate-200 lg:flex">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+        <div className="relative z-10 hidden items-center gap-2 overflow-hidden rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs text-slate-200 lg:flex" style={{ maxWidth: '340px' }}>
+          <span className="relative z-10 flex shrink-0 items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            </span>
           </span>
-          Sports Rehab • Ortho • Neuro • Home Care
+          <div className="overflow-hidden">
+            <div className="animate-marquee whitespace-nowrap font-medium">
+              <span className="mr-8">Rehabilitation | Ortho Rehabilitation | Neuro Rehabilitation | Home Care Physiotherapy Services</span>
+              <span className="mr-8">Rehabilitation | Ortho Rehabilitation | Neuro Rehabilitation | Home Care Physiotherapy Services</span>
+            </div>
+          </div>
         </div>
 
         <nav className="relative z-10 hidden items-center gap-7 md:flex">
