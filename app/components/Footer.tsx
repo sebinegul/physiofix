@@ -45,7 +45,7 @@ export default function Footer() {
           <ScrollReveal className="md:col-span-2">
             <Link href="/" className="mb-4 flex items-center">
               <img
-                src="/logoShort.jpg"
+                src="/physiofix.png"
                 alt="PhysioFix Logo"
                 className="h-12 w-auto max-w-[160px] object-contain"
               />

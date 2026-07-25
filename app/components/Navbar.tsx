@@ -36,9 +36,9 @@ export default function Navbar() {
       >
         <Link href="/" className="relative z-10 flex items-center">
           <img
-            src="/logoShort.jpg"
+            src="/physiofix.png"
             alt="PhysioFix Logo"
-            className="h-12 w-auto max-w-[160px] object-contain mix-blend-screen"
+            className="h-12 w-auto max-w-[160px] object-contain"
           />
         </Link>
 
