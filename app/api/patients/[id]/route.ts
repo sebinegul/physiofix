@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireAuth } from "@/lib/auth";
+import { Prisma } from "@prisma/client";
 
 export async function GET(
   request: NextRequest,
@@ -68,7 +69,7 @@ export async function PUT(
     const body = await request.json();
     const { name, phone, dateOfBirth, gender, address, emergencyContact, medicalHistory, allergies } = body;
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Update user name/phone if provided
       if (name !== undefined || phone !== undefined) {
         await tx.user.update({
