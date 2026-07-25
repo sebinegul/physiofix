@@ -96,7 +96,6 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await hashPassword(password);
 
     // Create user and patient in a transaction
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await prisma.$transaction(async (tx: any) => {
       const user = await tx.user.create({
         data: {

@@ -68,7 +68,6 @@ export async function PUT(
     const body = await request.json();
     const { name, phone, dateOfBirth, gender, address, emergencyContact, medicalHistory, allergies } = body;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = await prisma.$transaction(async (tx: any) => {
       // Update user name/phone if provided
       if (name !== undefined || phone !== undefined) {
