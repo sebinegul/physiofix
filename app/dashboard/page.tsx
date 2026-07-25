@@ -52,10 +52,9 @@ async function fetchAPI<T>(url: string): Promise<T | null> {
       return null;
     }
     if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
+    const json = await res.json();
+    return (json && typeof json === "object" && "data" in json) ? json.data as T : json as T;
+  } catch { return null; }
 }
 
 export default function DashboardPage() {

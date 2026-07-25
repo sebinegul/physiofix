@@ -35,7 +35,7 @@ export default function ConsultationsPage() {
       .then((r) => r.json())
       .then((data) => {
         setConsultations(
-          Array.isArray(data) ? data : data.consultations || []
+          Array.isArray(data) ? data : data.data || data.consultations || []
         );
         setLoading(false);
       })

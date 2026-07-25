@@ -42,7 +42,8 @@ async function apiFetch<T>(url: string, options?: RequestInit): Promise<T | null
     });
     if (res.status === 401) { window.location.href = "/login"; return null; }
     if (!res.ok) return null;
-    return res.json();
+    const json = await res.json();
+    return (json && typeof json === "object" && "data" in json) ? json.data as T : json as T;
   } catch { return null; }
 }
 

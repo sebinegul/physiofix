@@ -91,10 +91,10 @@ export default function PatientDashboard() {
     ])
       .then(([userData, patientData, appointmentsData, exercisesData, consultationsData]) => {
         setUser(userData);
-        setPatient(patientData);
-        setAppointments(Array.isArray(appointmentsData) ? appointmentsData : appointmentsData.appointments || []);
-        setExercises(Array.isArray(exercisesData) ? exercisesData : exercisesData.exercises || []);
-        setConsultations(Array.isArray(consultationsData) ? consultationsData : consultationsData.consultations || []);
+        setPatient(Array.isArray(patientData?.data) ? patientData.data[0] : patientData);
+        setAppointments(Array.isArray(appointmentsData) ? appointmentsData : appointmentsData.data || appointmentsData.appointments || []);
+        setExercises(Array.isArray(exercisesData) ? exercisesData : exercisesData.data || exercisesData.exercises || []);
+        setConsultations(Array.isArray(consultationsData) ? consultationsData : consultationsData.data || consultationsData.consultations || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));

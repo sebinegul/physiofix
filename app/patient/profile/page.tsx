@@ -73,7 +73,7 @@ export default function ProfilePage() {
     ])
       .then(([userData, patientData]) => {
         setUser(userData);
-        setPatient(patientData);
+        setPatient(Array.isArray(patientData?.data) ? patientData.data[0] : patientData);
         setFormData({
           name: userData.name || '',
           phone: userData.phone || '',

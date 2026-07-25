@@ -65,7 +65,7 @@ export default function AppointmentsPage() {
       .then((r) => r.json())
       .then((data) => {
         setAppointments(
-          Array.isArray(data) ? data : data.appointments || []
+          Array.isArray(data) ? data : data.data || data.appointments || []
         );
         setLoading(false);
       })

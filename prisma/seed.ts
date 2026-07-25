@@ -1,10 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaLibSql({
-  url: "file:./dev.db",
-});
+const adapter = new PrismaNeonHttp(process.env.DATABASE_URL || "", {});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -138,25 +136,12 @@ async function main() {
         duration: "10 minutes",
         instructions: "1. Start on hands and knees in tabletop position\n2. Inhale: arch your back, lift your head and tailbone (Cow)\n3. Exhale: round your back, tuck your chin and tailbone (Cat)\n4. Flow between positions slowly\n5. Repeat 10-15 times",
       },
-      {
-        name: "Bridging",
-        description: "Core and glute strengthening exercise for spinal stability",
-        category: "Strengthening",
-        difficulty: "Medium",
-        duration: "10 minutes",
-        instructions: "1. Lie on your back with knees bent\n2. Tighten your abdominal muscles\n3. Lift your hips off the floor until your body forms a straight line\n4. Hold for 5 seconds\n5. Lower slowly and repeat 15 times",
-      },
     ];
 
-    // Deduplicate by name
-    const uniqueExercises = exercises.filter(
-      (e, i, arr) => arr.findIndex((x) => x.name === e.name) === i
-    );
-
-    for (const exercise of uniqueExercises) {
+    for (const exercise of exercises) {
       await prisma.exercise.create({ data: exercise });
     }
-    console.log(`${uniqueExercises.length} exercises seeded`);
+    console.log(`${exercises.length} exercises seeded`);
   } else {
     console.log(`Exercises already exist (${exerciseCount} found)`);
   }

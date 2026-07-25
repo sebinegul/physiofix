@@ -46,7 +46,7 @@ export default function ExercisesPage() {
     })
       .then((r) => r.json())
       .then((data) => {
-        setExercises(Array.isArray(data) ? data : data.exercises || []);
+        setExercises(Array.isArray(data) ? data : data.data || data.exercises || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
