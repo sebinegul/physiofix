@@ -83,14 +83,14 @@ export default function PopularSearches() {
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
               {treatmentList.map((item, i) => {
                 const Icon = item.icon;
                 return (
                   <StaggerItem key={item.title}>
                     <Link
                       href={item.href}
-                      className="group relative flex flex-col overflow-hidden rounded-[1.25rem] border border-slate-200/80 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_20px_60px_rgba(59,130,246,0.15)]"
+                      className="group relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-slate-200/80 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_20px_60px_rgba(59,130,246,0.15)]"
                     >
                       {/* Gradient overlay on hover */}
                       <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 transition-opacity duration-500 group-hover:opacity-[0.04]`} />
