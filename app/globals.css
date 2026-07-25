@@ -5,15 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --primary: #0d9488;
-  --primary-dark: #0f766e;
-  --accent: #06b6d4;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --accent: #6366f1;
   --accent-blue: #2563eb;
-  --surface: #f0fdfa;
+  --surface: #f0f5ff;
   --surface-card: rgba(255, 255, 255, 0.72);
   --text-main: #0f172a;
   --text-muted: #64748b;
-  --gradient-brand: linear-gradient(135deg, #14b8a6 0%, #06b6d4 45%, #2563eb 100%);
+  --gradient-brand: linear-gradient(135deg, #3b82f6 0%, #6366f1 45%, #8b5cf6 100%);
 }
 
 * {
@@ -28,12 +28,12 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
   color: var(--text-main);
   min-height: 100vh;
-  background: #f8fffe;
+  background: #f8faff;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: rgba(20, 184, 166, 0.22);
+  background: rgba(59, 130, 246, 0.22);
   color: #0f172a;
 }
 
@@ -48,10 +48,10 @@ h1, h2, h3, h4 {
 
   .bg-mesh-gradient {
     background:
-      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(20, 184, 166, 0.18), transparent 50%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(37, 99, 235, 0.14), transparent 50%),
-      radial-gradient(ellipse 60% 40% at 50% 90%, rgba(6, 182, 212, 0.12), transparent 50%),
-      linear-gradient(160deg, #f0fdfa 0%, #ecfeff 35%, #f8fafc 70%, #ffffff 100%);
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(59, 130, 246, 0.18), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(99, 102, 241, 0.14), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 50% 90%, rgba(139, 92, 246, 0.12), transparent 50%),
+      linear-gradient(160deg, #f0f5ff 0%, #eef2ff 35%, #f8fafc 70%, #ffffff 100%);
   }
 
   .glass-panel {
@@ -70,27 +70,27 @@ h1, h2, h3, h4 {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.25), transparent);
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), rgba(99, 102, 241, 0.25), transparent);
     transform: translateX(-140%);
     animation: shimmer 8s linear infinite;
   }
 
   .section-shell {
-    @apply relative overflow-hidden rounded-[2rem] border border-teal-100/60 bg-white/75 shadow-[0_20px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl;
+    @apply relative overflow-hidden rounded-[2rem] border border-blue-100/60 bg-white/75 shadow-[0_20px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_32px_rgba(20,184,166,0.35)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_12px_40px_rgba(20,184,166,0.45)] active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_32px_rgba(59,130,246,0.35)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_12px_40px_rgba(59,130,246,0.45)] active:scale-[0.98];
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white/80 px-6 py-3 text-sm font-semibold text-slate-700 backdrop-blur transition-all duration-300 hover:border-teal-400 hover:text-teal-600 hover:shadow-md;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white/80 px-6 py-3 text-sm font-semibold text-slate-700 backdrop-blur transition-all duration-300 hover:border-blue-400 hover:text-blue-600 hover:shadow-md;
   }
 
   .gradient-border {
     position: relative;
     background: linear-gradient(white, white) padding-box,
-      linear-gradient(135deg, rgba(20,184,166,0.5), rgba(37,99,235,0.5)) border-box;
+      linear-gradient(135deg, rgba(59,130,246,0.5), rgba(99,102,241,0.5)) border-box;
     border: 1px solid transparent;
   }
 
@@ -145,8 +145,8 @@ h1, h2, h3, h4 {
 }
 
 @keyframes pulse-soft {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(20, 184, 166, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(59, 130, 246, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

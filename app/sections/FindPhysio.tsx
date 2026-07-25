@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight, Activity, Sparkles, Home, ShieldCheck, Stethoscope, MapPin } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import TiltCard from "../components/ui/TiltCard";
@@ -17,7 +17,7 @@ export default function FindPhysio() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-12 lg:grid-cols-[0.92fr_1.08fr]">
           <ScrollReveal>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Expert treatment</p>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Expert treatment</p>
             <h2 className="mb-4 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 md:text-4xl">
               Support for pain relief, movement recovery and everyday strength.
             </h2>
@@ -26,16 +26,16 @@ export default function FindPhysio() {
             </p>
 
             <div className="space-y-4">
-              <div className="rounded-[1.25rem] border border-teal-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md">
+              <div className="rounded-[1.25rem] border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md">
                 <div className="mb-3 flex items-center gap-2 text-slate-900">
-                  <Sparkles className="h-5 w-5 text-teal-600" />
+                  <Sparkles className="h-5 w-5 text-blue-600" />
                   <h3 className="font-semibold">A clear path from first consultation to recovery</h3>
                 </div>
                 <p className="text-sm leading-7 text-slate-600">The care process is made simple, with thoughtful guidance and practical next steps at every stage.</p>
               </div>
-              <div className="rounded-[1.25rem] border border-teal-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md">
+              <div className="rounded-[1.25rem] border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md">
                 <div className="mb-3 flex items-center gap-2 text-slate-900">
-                  <MapPin className="h-5 w-5 text-teal-600" />
+                  <MapPin className="h-5 w-5 text-blue-600" />
                   <h3 className="font-semibold">Convenient care in Bangalore and nearby areas</h3>
                 </div>
                 <p className="text-sm leading-7 text-slate-600">Choose in-clinic care or home visits, with plans designed to fit your routine and recovery pace.</p>
@@ -46,15 +46,15 @@ export default function FindPhysio() {
           <div className="space-y-4">
             <ScrollReveal direction="right" delay={0.1}>
               <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 text-white shadow-[0_24px_80px_rgba(2,6,23,0.22)]">
-                <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-teal-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/20 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-blue-500/15 blur-3xl" />
 
                 <div className="relative mb-5 flex items-center gap-3">
                   <div className="rounded-2xl bg-white/10 p-2">
-                    <Activity className="h-5 w-5 text-teal-300" />
+                    <Activity className="h-5 w-5 text-blue-300" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-teal-300">Popular care categories</p>
+                    <p className="text-sm font-semibold text-blue-300">Popular care categories</p>
                     <p className="text-xs uppercase tracking-[0.26em] text-slate-400">physiotherapy • rehab • wellness</p>
                   </div>
                 </div>
@@ -63,7 +63,7 @@ export default function FindPhysio() {
                   {services.map((service) => (
                     <StaggerItem key={service.title}>
                       <TiltCard className="rounded-[1.15rem] border border-white/10 bg-white/10 p-4 backdrop-blur">
-                        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-400/15 text-teal-300">
+                        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-400/15 text-blue-300">
                           <service.icon className="h-5 w-5" />
                         </div>
                         <h3 className="mb-1 text-sm font-semibold text-white">{service.title}</h3>
@@ -76,7 +76,7 @@ export default function FindPhysio() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <div className="rounded-[1.5rem] border border-teal-100/60 bg-white/80 p-5 shadow-sm backdrop-blur">
+              <div className="rounded-[1.5rem] border border-blue-100/60 bg-white/80 p-5 shadow-sm backdrop-blur">
                 <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">Need guidance on the right next step?</p>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
@@ -15,12 +15,12 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(20,184,166,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
 
       {!prefersReducedMotion && (
         <>
           <motion.div
-            className="absolute left-[-6rem] top-24 h-72 w-72 rounded-full bg-teal-300/20 blur-3xl"
+            className="absolute left-[-6rem] top-24 h-72 w-72 rounded-full bg-blue-300/20 blur-3xl"
             animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -39,9 +39,9 @@ export default function Hero() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-200/80 bg-white/70 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm backdrop-blur"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-white/70 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm backdrop-blur"
             >
-              <Sparkles className="h-4 w-4 text-teal-500" />
+              <Sparkles className="h-4 w-4 text-blue-500" />
               Sports Rehabilitation • Ortho • Neuro • Home Care
             </motion.div>
 
@@ -71,7 +71,7 @@ export default function Hero() {
               className="mb-10 flex flex-wrap gap-3"
             >
               <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/75 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm">
-                <Users className="h-4 w-4 text-teal-600" />
+                <Users className="h-4 w-4 text-blue-600" />
                 Personalised recovery plans
               </div>
               <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/75 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm">
@@ -123,7 +123,7 @@ export default function Hero() {
                       initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.7 + i * 0.05 }}
-                      className="rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-teal-400 hover:text-teal-600 hover:shadow-sm"
+                      className="rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-blue-400 hover:text-blue-600 hover:shadow-sm"
                     >
                       {tag}
                     </motion.button>
@@ -149,7 +149,7 @@ export default function Hero() {
           </div>
 
           <ScrollReveal direction="right" className="relative hidden lg:block">
-            <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-teal-100 via-cyan-50 to-blue-50" />
+            <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
             <div className="animate-float relative z-10 w-full rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
               <div className="relative overflow-hidden rounded-[1.5rem]">
                 <img

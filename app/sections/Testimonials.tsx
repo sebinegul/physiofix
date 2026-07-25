@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
@@ -78,7 +78,7 @@ export default function Testimonials() {
                 </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/15 to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 rounded-[1.25rem] border border-white/15 bg-white/10 p-4 text-white backdrop-blur-xl">
-                  <Quote className="mb-2 h-6 w-6 text-teal-300" />
+                  <Quote className="mb-2 h-6 w-6 text-blue-300" />
                   <AnimatePresence mode="wait">
                     <motion.p
                       key={current.text}
@@ -97,12 +97,12 @@ export default function Testimonials() {
           </ScrollReveal>
 
           <ScrollReveal direction="right">
-            <div className="rounded-[2rem] border border-teal-100/60 bg-white/70 p-7 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Patient&apos;s Speak</p>
+            <div className="rounded-[2rem] border border-blue-100/60 bg-white/70 p-7 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Patient&apos;s Speak</p>
               <h2 className="mb-3 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Recovery journeys shaped by clarity and care.</h2>
               <p className="mb-8 text-lg leading-8 text-slate-600">Real stories from patients who found relief, strength and confidence through personalised physiotherapy care.</p>
 
-              <div className="rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-teal-50/40 via-white to-blue-50/30 p-6">
+              <div className="rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-blue-50/40 via-white to-blue-50/30 p-6">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={idx}
@@ -124,7 +124,7 @@ export default function Testimonials() {
                       </div>
                     </div>
 
-                    <span className="mb-4 inline-flex rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">
+                    <span className="mb-4 inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
                       {current.condition}
                     </span>
                     <p className="text-base leading-7 text-slate-600">{current.text}</p>
@@ -132,7 +132,7 @@ export default function Testimonials() {
                 </AnimatePresence>
 
                 <div className="mt-6 flex items-center gap-3">
-                  <button onClick={() => paginate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-teal-400 hover:text-teal-600" aria-label="Previous testimonial">
+                  <button onClick={() => paginate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-blue-400 hover:text-blue-600" aria-label="Previous testimonial">
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <div className="flex gap-1.5">
@@ -140,12 +140,12 @@ export default function Testimonials() {
                       <button
                         key={i}
                         onClick={() => { setDirection(i > idx ? 1 : -1); setIdx(i); }}
-                        className={`rounded-full transition-all duration-300 ${i === idx ? "h-2.5 w-6 bg-gradient-to-r from-teal-500 to-blue-600" : "h-2.5 w-2.5 bg-slate-300 hover:bg-slate-400"}`}
+                        className={`rounded-full transition-all duration-300 ${i === idx ? "h-2.5 w-6 bg-gradient-to-r from-blue-500 to-blue-600" : "h-2.5 w-2.5 bg-slate-300 hover:bg-slate-400"}`}
                         aria-label={`Go to testimonial ${i + 1}`}
                       />
                     ))}
                   </div>
-                  <button onClick={() => paginate(1)} className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-teal-400 hover:text-teal-600" aria-label="Next testimonial">
+                  <button onClick={() => paginate(1)} className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-blue-400 hover:text-blue-600" aria-label="Next testimonial">
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>

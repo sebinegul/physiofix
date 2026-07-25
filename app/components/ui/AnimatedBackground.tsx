@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { motion, useReducedMotion } from "framer-motion";
 
 export default function AnimatedBackground() {
@@ -16,7 +16,7 @@ export default function AnimatedBackground() {
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div className="absolute inset-0 bg-mesh-gradient opacity-70" />
       <motion.div
-        className="absolute -left-32 top-20 h-[28rem] w-[28rem] rounded-full bg-teal-400/20 blur-[100px]"
+        className="absolute -left-32 top-20 h-[28rem] w-[28rem] rounded-full bg-blue-400/20 blur-[100px]"
         animate={{ x: [0, 40, 0], y: [0, 30, 0], scale: [1, 1.08, 1] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />

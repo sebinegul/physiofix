@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { motion } from "framer-motion";
 import { ReactNode, useRef } from "react";
 
@@ -20,9 +20,9 @@ export default function GradientBorderCard({ children, className = "", delay = 0
       viewport={{ once: true, amount: 0.2 }}
       className={`group relative ${className}`}
     >
-      <div className="absolute -inset-[1px] rounded-[inherit] bg-gradient-to-br from-teal-400/30 via-cyan-400/20 to-blue-500/30 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="absolute -inset-[1px] rounded-[inherit] bg-gradient-to-br from-blue-400/30 via-cyan-400/20 to-blue-500/30 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       {children}
-      <div className="pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-gradient-to-br from-teal-500/8 to-cyan-500/5 opacity-0 blur-2xl transition-all duration-700 group-hover:translate-y-2 group-hover:opacity-100 group-hover:blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 -z-10 rounded-[inherit] bg-gradient-to-br from-blue-500/8 to-cyan-500/5 opacity-0 blur-2xl transition-all duration-700 group-hover:translate-y-2 group-hover:opacity-100 group-hover:blur-3xl" />
     </motion.div>
   );
 }

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
@@ -100,7 +100,7 @@ export default function RootLayout({
       <head>
         <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#14b8a6" />
+        <meta name="theme-color" content="#3b82f6" />
         <meta name="geo.region" content="IN-KA" />
         <meta name="geo.placename" content="Bangalore" />
         <meta name="geo.position" content="12.8924;77.5928" />

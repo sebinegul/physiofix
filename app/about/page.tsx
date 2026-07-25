@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import PageTransition from "../components/PageTransition";
 import ScrollReveal from "../components/ui/ScrollReveal";
@@ -42,7 +42,7 @@ export default function AboutPage() {
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
             <ScrollReveal>
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">About Dr. Nishmitha</p>
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">About Dr. Nishmitha</p>
               <h1 className="mb-5 text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl">
                 A trusted physiotherapist building a <GradientText>modern recovery</GradientText> experience.
               </h1>
@@ -60,14 +60,14 @@ export default function AboutPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="right" delay={0.1}>
-              <div className="rounded-[2rem] border border-teal-100/60 bg-white/70 p-4 shadow-[0_24px_90px_rgba(15,23,42,0.1)] backdrop-blur-xl">
+              <div className="rounded-[2rem] border border-blue-100/60 bg-white/70 p-4 shadow-[0_24px_90px_rgba(15,23,42,0.1)] backdrop-blur-xl">
                 <div className="rounded-[1.5rem] bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8 text-white">
                   <div className="mb-5 flex items-center gap-3">
-                    <div className="rounded-2xl bg-teal-400/15 p-3 text-teal-300">
+                    <div className="rounded-2xl bg-blue-400/15 p-3 text-blue-300">
                       <Stethoscope className="h-6 w-6" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-teal-300">Clinical focus</p>
+                      <p className="text-sm font-semibold text-blue-300">Clinical focus</p>
                       <p className="text-xs uppercase tracking-[0.28em] text-slate-400">orthopaedic • sports • neuro</p>
                     </div>
                   </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
                     {credentials.map((item) => (
                       <StaggerItem key={item}>
                         <div className="flex items-start gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-3">
-                          <BadgeCheck className="mt-0.5 h-4 w-4 text-teal-300" />
+                          <BadgeCheck className="mt-0.5 h-4 w-4 text-blue-300" />
                           <p className="text-sm text-slate-200">{item}</p>
                         </div>
                       </StaggerItem>
@@ -91,7 +91,7 @@ export default function AboutPage() {
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <ScrollReveal>
               <div className="section-shell p-8">
-                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Approach</p>
+                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Approach</p>
                 <h2 className="mb-4 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Hands-on care, thoughtful rehabilitation, and clear communication.</h2>
                 <p className="text-lg leading-8 text-slate-600">
                   Every recovery plan is customised to the person, not the diagnosis alone. The focus is simple: reduce pain, improve strength, restore confidence, and help each patient return to daily life or sport with clarity and calm.
@@ -100,9 +100,9 @@ export default function AboutPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <div className="rounded-[2rem] border border-teal-100/60 bg-gradient-to-br from-teal-500/10 via-white to-blue-500/10 p-8 shadow-[0_20px_80px_rgba(15,23,42,0.06)]">
+              <div className="rounded-[2rem] border border-blue-100/60 bg-gradient-to-br from-blue-500/10 via-white to-blue-500/10 p-8 shadow-[0_20px_80px_rgba(15,23,42,0.06)]">
                 <div className="mb-5 flex items-center gap-3">
-                  <div className="rounded-2xl bg-white p-3 text-teal-600 shadow-sm">
+                  <div className="rounded-2xl bg-white p-3 text-blue-600 shadow-sm">
                     <HeartPulse className="h-5 w-5" />
                   </div>
                   <div>
@@ -113,7 +113,7 @@ export default function AboutPage() {
                 <StaggerContainer className="space-y-3" stagger={0.06}>
                   {expertise.map((item) => (
                     <StaggerItem key={item}>
-                      <div className="rounded-2xl border border-slate-200/70 bg-white/80 px-4 py-3 text-sm text-slate-700 transition hover:border-teal-300">
+                      <div className="rounded-2xl border border-slate-200/70 bg-white/80 px-4 py-3 text-sm text-slate-700 transition hover:border-blue-300">
                         {item}
                       </div>
                     </StaggerItem>

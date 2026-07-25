@@ -10,15 +10,15 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          50: "#f0fdfa",
-          100: "#ccfbf1",
-          400: "#2dd4bf",
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
+          50: "#eff6ff",
+          100: "#dbeafe",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
         },
-        accent: "#06b6d4",
-        surface: "#f0fdfa",
+        accent: "#6366f1",
+        surface: "#f0f5ff",
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],

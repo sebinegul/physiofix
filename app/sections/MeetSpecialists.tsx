@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Star, MapPin, ArrowRight, BadgeCheck, GraduationCap } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
@@ -20,7 +20,7 @@ export default function MeetSpecialists() {
     <section className="py-20" id="doctor">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="mb-10 text-center">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Meet your physiotherapist</p>
+          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Meet your physiotherapist</p>
           <h2 className="text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 md:text-4xl">
             The expert behind <GradientText>PhysioFix</GradientText>
           </h2>
@@ -28,8 +28,8 @@ export default function MeetSpecialists() {
 
         <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <ScrollReveal direction="left">
-            <div className="group relative overflow-hidden rounded-[2rem] border border-teal-100/60 bg-white/70 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl">
-              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-teal-400/20 blur-3xl transition group-hover:bg-teal-400/30" />
+            <div className="group relative overflow-hidden rounded-[2rem] border border-blue-100/60 bg-white/70 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl">
+              <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-400/20 blur-3xl transition group-hover:bg-blue-400/30" />
               <div className="relative overflow-hidden rounded-[1.5rem]">
                 <img
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=640&q=80"
@@ -53,14 +53,14 @@ export default function MeetSpecialists() {
           </ScrollReveal>
 
           <ScrollReveal direction="right">
-            <div className="rounded-[2rem] border border-teal-100/60 bg-white/75 p-8 shadow-[0_20px_70px_rgba(15,23,42,0.07)] backdrop-blur-xl">
+            <div className="rounded-[2rem] border border-blue-100/60 bg-white/75 p-8 shadow-[0_20px_70px_rgba(15,23,42,0.07)] backdrop-blur-xl">
               <div className="mb-4 flex items-center gap-3">
-                <div className="rounded-2xl bg-teal-50 p-2.5 text-teal-600">
+                <div className="rounded-2xl bg-blue-50 p-2.5 text-blue-600">
                   <GraduationCap className="h-5 w-5" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-slate-900">Dr. Nishmitha R</h3>
-                  <p className="text-sm text-teal-600">Master of Physiotherapy (MPT) — Sports Science</p>
+                  <p className="text-sm text-blue-600">Master of Physiotherapy (MPT) — Sports Science</p>
                 </div>
               </div>
 
@@ -72,7 +72,7 @@ export default function MeetSpecialists() {
               <div className="mb-8 grid gap-2 sm:grid-cols-2">
                 {treatments.map((item) => (
                   <div key={item} className="flex items-start gap-2 rounded-xl border border-slate-100 bg-slate-50/80 px-3 py-2.5 text-sm text-slate-700">
-                    <BadgeCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-teal-500" />
+                    <BadgeCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
                     {item}
                   </div>
                 ))}
@@ -80,7 +80,7 @@ export default function MeetSpecialists() {
 
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-1 text-slate-500">
-                  <MapPin className="h-4 w-4 text-teal-500" />
+                  <MapPin className="h-4 w-4 text-blue-500" />
                   <span className="text-sm">JP Nagar, Bangalore</span>
                 </div>
                 <Link href="/about" className="btn-primary !px-5 !py-2.5 !text-sm">

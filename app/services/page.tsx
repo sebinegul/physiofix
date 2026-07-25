@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import PageTransition from "../components/PageTransition";
@@ -54,12 +54,12 @@ export default function ServicesPage() {
       <main className="min-h-screen">
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(20,184,166,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
 
           {!prefersReducedMotion && (
             <>
               <motion.div
-                className="absolute left-[-6rem] top-24 h-72 w-72 rounded-full bg-teal-300/20 blur-3xl"
+                className="absolute left-[-6rem] top-24 h-72 w-72 rounded-full bg-blue-300/20 blur-3xl"
                 animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               />
@@ -77,9 +77,9 @@ export default function ServicesPage() {
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-200/80 bg-white/70 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur"
+                className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-white/70 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur"
               >
-                <Heart className="h-4 w-4 text-teal-500" />
+                <Heart className="h-4 w-4 text-blue-500" />
                 Comprehensive Physiotherapy Care
               </motion.div>
 
@@ -115,7 +115,7 @@ export default function ServicesPage() {
                   key={stat.label}
                   className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/70 px-4 py-3 shadow-sm backdrop-blur"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
                     <stat.icon className="h-5 w-5" />
                   </div>
                   <div>
@@ -132,7 +132,7 @@ export default function ServicesPage() {
         <section className="py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <ScrollReveal className="mb-12 text-center">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
                 What we offer
               </p>
               <h2 className="mb-4 text-3xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-4xl">
@@ -146,8 +146,8 @@ export default function ServicesPage() {
             <StaggerContainer className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" stagger={0.07}>
               {services.map((service, i) => (
                 <StaggerItem key={service.title}>
-                  <TiltCard index={i} className="h-full rounded-[1.6rem] border border-teal-100/60 bg-white/80 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.07)] backdrop-blur">
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-600 transition group-hover:bg-teal-500 group-hover:text-white">
+                  <TiltCard index={i} className="h-full rounded-[1.6rem] border border-blue-100/60 bg-white/80 p-6 shadow-[0_20px_70px_rgba(15,23,42,0.07)] backdrop-blur">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 transition group-hover:bg-blue-500 group-hover:text-white">
                       <service.icon className="h-6 w-6" />
                     </div>
                     <h2 className="mb-2 text-xl font-semibold text-slate-900">{service.title}</h2>
@@ -163,7 +163,7 @@ export default function ServicesPage() {
         <section className="py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <ScrollReveal className="mb-12 text-center">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
                 How it works
               </p>
               <h2 className="mb-4 text-3xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-4xl">
@@ -178,14 +178,14 @@ export default function ServicesPage() {
               {processSteps.map((step, i) => (
                 <ScrollReveal key={step.step} delay={i * 0.12}>
                   <div className="group relative h-full overflow-hidden rounded-[1.5rem] border border-slate-100/80 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
-                    <div className="mb-4 text-5xl font-black leading-none text-teal-500/15 transition-colors duration-500 group-hover:text-teal-500/30">
+                    <div className="mb-4 text-5xl font-black leading-none text-blue-500/15 transition-colors duration-500 group-hover:text-blue-500/30">
                       {step.step}
                     </div>
                     <h3 className="mb-2 text-lg font-bold text-slate-900">{step.title}</h3>
                     <p className="text-sm leading-7 text-slate-600">{step.description}</p>
 
                     {i < processSteps.length - 1 && (
-                      <div className="absolute right-0 top-1/2 hidden h-[2px] w-6 -translate-y-1/2 translate-x-full bg-gradient-to-r from-teal-200 to-transparent lg:block" />
+                      <div className="absolute right-0 top-1/2 hidden h-[2px] w-6 -translate-y-1/2 translate-x-full bg-gradient-to-r from-blue-200 to-transparent lg:block" />
                     )}
                   </div>
                 </ScrollReveal>
@@ -198,13 +198,13 @@ export default function ServicesPage() {
         <section className="pb-16 md:pb-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.1}>
-              <div className="relative overflow-hidden rounded-[2rem] border border-teal-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8 text-white shadow-[0_24px_90px_rgba(2,6,23,0.25)] md:p-12">
-                <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-500/20 blur-3xl" />
+              <div className="relative overflow-hidden rounded-[2rem] border border-blue-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8 text-white shadow-[0_24px_90px_rgba(2,6,23,0.25)] md:p-12">
+                <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-blue-500/15 blur-3xl" />
 
                 <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
                   <div className="max-w-2xl">
-                    <p className="mb-3 text-sm font-semibold uppercase tracking-[0.32em] text-teal-300">
+                    <p className="mb-3 text-sm font-semibold uppercase tracking-[0.32em] text-blue-300">
                       Ready to begin?
                     </p>
                     <h2 className="mb-4 text-3xl font-bold leading-[1.15] tracking-tight md:text-4xl">
@@ -217,7 +217,7 @@ export default function ServicesPage() {
                   <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                     <Link
                       href="/contact"
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 px-6 py-3.5 text-sm font-semibold text-slate-950 shadow-lg shadow-teal-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-teal-500/35"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 px-6 py-3.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-blue-500/35"
                     >
                       Contact Dr. Nishmitha
                       <MoveRight className="h-4 w-4" />

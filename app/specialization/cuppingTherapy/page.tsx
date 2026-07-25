@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {

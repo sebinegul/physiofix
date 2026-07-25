@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -47,9 +47,9 @@ export default function Newsletter() {
     <section className="pb-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="relative overflow-hidden rounded-[2rem] border border-teal-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-6 py-12 text-center shadow-[0_25px_80px_rgba(2,6,23,0.3)] sm:px-12 md:py-16">
+          <div className="relative overflow-hidden rounded-[2rem] border border-blue-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-6 py-12 text-center shadow-[0_25px_80px_rgba(2,6,23,0.3)] sm:px-12 md:py-16">
             <motion.div
-              className="absolute -left-10 top-0 h-44 w-44 rounded-full bg-teal-400/25 blur-3xl"
+              className="absolute -left-10 top-0 h-44 w-44 rounded-full bg-blue-400/25 blur-3xl"
               animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -79,7 +79,7 @@ export default function Newsletter() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur"
                   >
-                    <CheckCircle2 className="h-4 w-4 text-teal-300" />
+                    <CheckCircle2 className="h-4 w-4 text-blue-300" />
                     You are subscribed. We will be in touch soon.
                   </motion.div>
                 ) : (
@@ -97,9 +97,9 @@ export default function Newsletter() {
                       value={email}
                       onChange={(e) => { setEmail(e.target.value); setError(""); }}
                       placeholder="Enter your email"
-                      className="flex-1 rounded-2xl border border-white/15 bg-white/95 px-4 py-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-teal-400/50"
+                      className="flex-1 rounded-2xl border border-white/15 bg-white/95 px-4 py-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-blue-400/50"
                     />
-                    <button type="submit" disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100">
+                    <button type="submit" disabled={loading} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-400 to-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100">
                       {loading ? "Subscribing..." : "Subscribe"} <ArrowRight className="h-4 w-4" />
                     </button>
                     {error && <p className="w-full text-left text-xs text-red-400">{error}</p>}

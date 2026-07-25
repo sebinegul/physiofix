@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Our Services | Physiotherapy, Sports Rehab & Recovery in JP Nagar Bangalore",

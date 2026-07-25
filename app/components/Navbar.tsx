@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -58,7 +58,7 @@ export default function Navbar() {
               className="group relative text-sm font-medium text-slate-300 transition hover:text-white"
             >
               {link.label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-teal-400 to-cyan-400 transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gradient-to-r from-blue-400 to-cyan-400 transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
         </nav>
@@ -95,7 +95,7 @@ export default function Navbar() {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="mx-4 mt-3 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/95 shadow-2xl backdrop-blur-xl md:hidden"
           >
-            <div className="mb-3 flex items-center gap-2 rounded-2xl border border-teal-400/20 bg-teal-500/10 px-3 py-2 text-sm text-teal-100">
+            <div className="mb-3 flex items-center gap-2 rounded-2xl border border-blue-400/20 bg-blue-500/10 px-3 py-2 text-sm text-blue-100">
               <HeartPulse className="h-4 w-4" />
               Expert care for pain, recovery & performance
             </div>
@@ -119,7 +119,7 @@ export default function Navbar() {
               <a href="tel:+918151912525" className="flex-1 rounded-xl border border-white/15 px-3 py-2.5 text-center text-sm font-semibold text-slate-200">
                 Call now
               </a>
-              <Link href="/contact" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-teal-400 to-blue-600 px-3 py-2.5 text-center text-sm font-semibold text-white">
+              <Link href="/contact" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-2.5 text-center text-sm font-semibold text-white">
                 Book visit <MoveRight className="h-4 w-4" />
               </Link>
             </div>

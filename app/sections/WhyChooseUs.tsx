@@ -1,10 +1,10 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Clock, CheckCircle, CalendarCheck, Shield, Star, ArrowRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer";
 
 const reasons = [
-  { icon: Clock, text: "Personalised plans shaped around your symptoms, routine and goals", color: "text-teal-600", bg: "bg-teal-50" },
+  { icon: Clock, text: "Personalised plans shaped around your symptoms, routine and goals", color: "text-blue-600", bg: "bg-blue-50" },
   { icon: CheckCircle, text: "Evidence-based rehabilitation with clear progress and recovery milestones", color: "text-emerald-600", bg: "bg-emerald-50" },
   { icon: CalendarCheck, text: "Flexible clinic and home-visit care for convenience and comfort", color: "text-violet-600", bg: "bg-violet-50" },
   { icon: Shield, text: "Trusted, local physiotherapy support with a calm and supportive approach", color: "text-orange-600", bg: "bg-orange-50" },
@@ -50,7 +50,7 @@ export default function WhyChooseUs() {
           </ScrollReveal>
 
           <ScrollReveal direction="right">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Why choose PhysioFix</p>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Why choose PhysioFix</p>
             <h2 className="mb-5 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 md:text-4xl">
               A calmer, clearer path to recovery.
             </h2>
@@ -61,7 +61,7 @@ export default function WhyChooseUs() {
             <StaggerContainer className="mb-10 space-y-3" stagger={0.08}>
               {reasons.map((reason) => (
                 <StaggerItem key={reason.text}>
-                  <div className="flex items-center gap-3 rounded-2xl border border-teal-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md">
+                  <div className="flex items-center gap-3 rounded-2xl border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md">
                     <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${reason.bg}`}>
                       <reason.icon className={`h-5 w-5 ${reason.color}`} />
                     </div>
