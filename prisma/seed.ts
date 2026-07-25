@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaNeonHttp } from "@prisma/adapter-neon";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaNeonHttp(process.env.DATABASE_URL || "", {});
+ const adapter = new PrismaNeonHttp(process.env.DATABASE_URL || "", {});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
