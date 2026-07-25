@@ -99,7 +99,7 @@ export default function Testimonials() {
           <ScrollReveal direction="right">
             <div className="rounded-[2rem] border border-teal-100/60 bg-white/70 p-7 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl">
               <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Patient&apos;s Speak</p>
-              <h2 className="mb-3 text-3xl font-bold tracking-tight text-slate-900">Recovery journeys shaped by clarity and care.</h2>
+              <h2 className="mb-3 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Recovery journeys shaped by clarity and care.</h2>
               <p className="mb-8 text-lg leading-8 text-slate-600">Real stories from patients who found relief, strength and confidence through personalised physiotherapy care.</p>
 
               <div className="rounded-[1.5rem] border border-slate-200/70 bg-gradient-to-br from-teal-50/40 via-white to-blue-50/30 p-6">

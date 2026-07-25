@@ -49,7 +49,7 @@ export default function Hero() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-5 max-w-2xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-5xl lg:text-[3.45rem]"
+              className="mb-5 max-w-2xl text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl lg:text-[3.45rem]"
             >
               Welcome to{" "}
               <GradientText>PhysioFix</GradientText>

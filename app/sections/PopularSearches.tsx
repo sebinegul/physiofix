@@ -43,7 +43,7 @@ export default function PopularSearches() {
           <ScrollReveal className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-teal-600">Specialization</p>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Conditions and treatments we support every day.</h2>
+              <h2 className="text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Conditions and treatments we support every day.</h2>
             </div>
             <div className="flex flex-wrap gap-2">
               {categories.map((item) => (

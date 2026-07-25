@@ -21,7 +21,7 @@ export default function MeetSpecialists() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="mb-10 text-center">
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Meet your physiotherapist</p>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+          <h2 className="text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 md:text-4xl">
             The expert behind <GradientText>PhysioFix</GradientText>
           </h2>
         </ScrollReveal>

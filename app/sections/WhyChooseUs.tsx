@@ -51,7 +51,7 @@ export default function WhyChooseUs() {
 
           <ScrollReveal direction="right">
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Why choose PhysioFix</p>
-            <h2 className="mb-5 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+            <h2 className="mb-5 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 md:text-4xl">
               A calmer, clearer path to recovery.
             </h2>
             <p className="mb-8 max-w-xl text-lg leading-8 text-slate-600">

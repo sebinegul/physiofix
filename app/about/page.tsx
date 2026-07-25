@@ -27,7 +27,7 @@ export default function AboutPage() {
           <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
             <ScrollReveal>
               <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">About Dr. Nishmitha</p>
-              <h1 className="mb-5 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+              <h1 className="mb-5 text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl">
                 A trusted physiotherapist building a <GradientText>modern recovery</GradientText> experience.
               </h1>
               <p className="mb-8 text-lg leading-8 text-slate-600">
@@ -76,7 +76,7 @@ export default function AboutPage() {
             <ScrollReveal>
               <div className="section-shell p-8">
                 <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Approach</p>
-                <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900">Hands-on care, thoughtful rehabilitation, and clear communication.</h2>
+                <h2 className="mb-4 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Hands-on care, thoughtful rehabilitation, and clear communication.</h2>
                 <p className="text-lg leading-8 text-slate-600">
                   Every recovery plan is customised to the person, not the diagnosis alone. The focus is simple: reduce pain, improve strength, restore confidence, and help each patient return to daily life or sport with clarity and calm.
                 </p>

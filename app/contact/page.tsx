@@ -87,7 +87,7 @@ export default function ContactPage() {
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <ScrollReveal className="mb-10 max-w-3xl">
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">Contact</p>
-            <h1 className="mb-5 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+            <h1 className="mb-5 text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl">
               Book your consultation with <GradientText>Dr. Nishmitha</GradientText>.
             </h1>
             <p className="text-lg leading-8 text-slate-600">Whether you are seeking care for pain, mobility, sports recovery, or post-surgery rehabilitation, a prompt response is available for appointment requests and general enquiries.</p>
