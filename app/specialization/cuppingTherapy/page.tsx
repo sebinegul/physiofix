@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
+
+export const metadata: Metadata = {
+  title: "Cupping Therapy | Pain Relief in JP Nagar",
+  description: "Professional cupping therapy for pain relief, muscle tension & recovery in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/specialization/cuppingTherapy",
+  },
+  openGraph: {
+    title: "Cupping Therapy | Pain Relief in JP Nagar",
+    description: "Professional cupping therapy for pain relief, muscle tension & recovery in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/specialization/cuppingTherapy",
+  },
+};
 
 export default function CuppingTherapyPage() {
   return (

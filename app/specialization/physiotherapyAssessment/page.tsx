@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
+
+export const metadata: Metadata = {
+  title: "Physiotherapy Assessment | Diagnosis in JP Nagar",
+  description: "Comprehensive physiotherapy assessment & diagnosis in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/specialization/physiotherapyAssessment",
+  },
+  openGraph: {
+    title: "Physiotherapy Assessment | Diagnosis in JP Nagar",
+    description: "Comprehensive physiotherapy assessment & diagnosis in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/specialization/physiotherapyAssessment",
+  },
+};
 
 export default function PhysiotherapyAssessmentPage() {
   return (

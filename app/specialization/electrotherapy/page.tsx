@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
+
+export const metadata: Metadata = {
+  title: "Electrotherapy | Pain Management in JP Nagar",
+  description: "Advanced electrotherapy treatment for pain management & rehabilitation in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/specialization/electrotherapy",
+  },
+  openGraph: {
+    title: "Electrotherapy | Pain Management in JP Nagar",
+    description: "Advanced electrotherapy treatment for pain management & rehabilitation in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/specialization/electrotherapy",
+  },
+};
 
 export default function ElectrotherapyPage() {
   return (

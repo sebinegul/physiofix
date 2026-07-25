@@ -1,9 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import PageTransition from "../components/PageTransition";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
 import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer";
 import { ArrowRight, BadgeCheck, HeartPulse, MoveRight, Stethoscope } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "About Dr. Nishmitha R | Physiotherapist in JP Nagar, Bangalore",
+  description:
+    "Dr. Nishmitha R is a sports science physiotherapist (MPT) with 5+ years experience in orthopaedic, sports & neurological rehabilitation. Trusted physiotherapy care in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/about",
+  },
+  openGraph: {
+    title: "About Dr. Nishmitha R | PhysioFix Physiotherapy Bangalore",
+    description:
+      "Meet Dr. Nishmitha R — experienced physiotherapist specialising in sports rehab, orthopaedic care & neurological rehabilitation in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/about",
+  },
+};
 
 const credentials = [
   "Master of Physiotherapy (MPT)",

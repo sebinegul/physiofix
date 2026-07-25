@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+/* Fonts loaded via next/font in layout.tsx for better performance */
 
 @tailwind base;
 @tailwind components;
@@ -25,7 +25,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   color: var(--text-main);
   min-height: 100vh;
   background: #f8fffe;
@@ -38,7 +38,7 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+  font-family: var(--font-plus-jakarta), var(--font-inter), sans-serif;
 }
 
 @layer utilities {

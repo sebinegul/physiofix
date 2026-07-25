@@ -51,17 +51,17 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               className="mb-5 max-w-2xl text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl lg:text-[3.45rem]"
             >
-              Welcome to{" "}
-              <GradientText>PhysioFix</GradientText>
+              Best Physiotherapy in JP Nagar,{" "}
+              <GradientText>Bangalore</GradientText>
             </motion.h1>
 
             <motion.p
               initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.35 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
               className="mb-8 max-w-xl text-lg leading-8 text-slate-600"
             >
-              Your trusted partner in physiotherapy and rehabilitation — expert care for pain relief, mobility, sports recovery and confident movement in Bangalore.
+              Your trusted partner in physiotherapy and rehabilitation — expert care for pain relief, mobility, sports recovery and confident movement in JP Nagar, Bangalore.
             </motion.p>
 
             <motion.div

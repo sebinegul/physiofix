@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
+
+export const metadata: Metadata = {
+  title: "Manual Therapy | Joint Mobilisation in JP Nagar",
+  description: "Hands-on manual therapy for joint mobilisation, soft tissue release & pain relief in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/specialization/manualTherapy",
+  },
+  openGraph: {
+    title: "Manual Therapy | Joint Mobilisation in JP Nagar",
+    description: "Hands-on manual therapy for joint mobilisation, soft tissue release & pain relief in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/specialization/manualTherapy",
+  },
+};
 
 export default function ManualTherapyPage() {
   return (

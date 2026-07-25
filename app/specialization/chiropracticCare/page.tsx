@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
+
+export const metadata: Metadata = {
+  title: "Chiropractic Care | Spine & Joint Alignment in JP Nagar",
+  description: "Expert chiropractic care for spinal alignment, back pain relief & posture correction in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/specialization/chiropracticCare",
+  },
+  openGraph: {
+    title: "Chiropractic Care | Spine & Joint Alignment in JP Nagar",
+    description: "Expert chiropractic care for spinal alignment, back pain relief & posture correction in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/specialization/chiropracticCare",
+  },
+};
 
 export default function ChiropracticCarePage() {
   return (

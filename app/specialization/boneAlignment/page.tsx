@@ -1,4 +1,18 @@
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
+
+export const metadata: Metadata = {
+  title: "Bone Alignment Therapy | Joint Correction in JP Nagar",
+  description: "Expert bone alignment therapy for joint correction & posture improvement in JP Nagar, Bangalore.",
+  alternates: {
+    canonical: "https://physiofix.net/specialization/boneAlignment",
+  },
+  openGraph: {
+    title: "Bone Alignment Therapy | Joint Correction in JP Nagar",
+    description: "Expert bone alignment therapy for joint correction & posture improvement in JP Nagar, Bangalore.",
+    url: "https://physiofix.net/specialization/boneAlignment",
+  },
+};
 
 export default function BoneAlignmentPage() {
   return (
