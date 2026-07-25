@@ -33,7 +33,7 @@ export default function MeetSpecialists() {
               <div className="relative overflow-hidden rounded-[1.5rem]">
                 <img
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=640&q=80"
-                  alt="Dr. Nishmitha R"
+                  alt="Dr.Nishmitha.R"
                   className="h-[420px] w-full object-cover object-top transition duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
@@ -59,13 +59,13 @@ export default function MeetSpecialists() {
                   <GraduationCap className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900">Dr. Nishmitha R</h3>
-                  <p className="text-sm text-blue-600">Master of Physiotherapy (MPT) — Sports Science</p>
+                  <h3 className="text-2xl font-bold text-slate-900">Dr.Nishmitha.R</h3>
+                  <p className="text-sm text-blue-600">Master of Physiotherapy (MPT), Sports Science</p>
                 </div>
               </div>
 
               <p className="mb-6 text-base leading-8 text-slate-600">
-                Dr. Nishmitha R has 5 years of experience in orthopaedic sports medicine and neurologic conditions, including paralysis, back pain, shoulder pain, knee pain, sports injuries, and post-fracture rehabilitation.
+                Dr.Nishmitha.R has 5 years of experience in orthopaedic sports medicine and neurologic conditions, including paralysis, back pain, shoulder pain, knee pain, sports injuries, and post-fracture rehabilitation.
               </p>
 
               <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Specialized treatments</p>

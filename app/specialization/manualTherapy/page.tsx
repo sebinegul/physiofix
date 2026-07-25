@@ -73,7 +73,7 @@ export default function ManualTherapyPage() {
         },
         {
           question: "Is manual therapy painful?",
-          answer: "You may experience mild discomfort during treatment, especially when addressing restricted areas, but it should not be painful. Dr. Nishmitha adjusts the pressure and technique based on your comfort level.",
+          answer: "You may experience mild discomfort during treatment, especially when addressing restricted areas, but it should not be painful. Dr.Nishmitha adjusts the pressure and technique based on your comfort level.",
         },
         {
           question: "How many sessions will I need?",

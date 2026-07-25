@@ -17,8 +17,9 @@ const columns = [
     title: "Quick Links",
     links: [
       { label: "Home", href: "/" },
-      { label: "About Dr. Nishmitha", href: "/about" },
+      { label: "About Dr.Nishmitha", href: "/about" },
       { label: "Services", href: "/services" },
+      { label: "Blog", href: "/blog" },
       { label: "Contact", href: "/contact" },
       { label: "Book Appointment", href: "/contact" },
     ],
@@ -51,7 +52,7 @@ export default function Footer() {
               />
             </Link>
             <p className="mb-5 max-w-xs text-sm leading-7 text-slate-400">
-              Dr. Nishmitha R is a Physiotherapist in Sports Science with 5+ years of experience in orthopaedic sports medicine and neurological rehabilitation.
+              Dr.Nishmitha.R is a Physiotherapist in Sports Science with 5+ years of experience in orthopaedic sports medicine and neurological rehabilitation.
             </p>
             <div className="mb-5 space-y-2 text-sm text-slate-400">
               <div className="flex items-start gap-2">

@@ -69,7 +69,7 @@ export default function ChiropracticCarePage() {
       faqs={[
         {
           question: "Are chiropractic adjustments safe?",
-          answer: "Yes, chiropractic adjustments performed by a qualified professional like Dr. Nishmitha R are safe and effective. The techniques used are gentle and tailored to your specific condition and comfort level.",
+          answer: "Yes, chiropractic adjustments performed by a qualified professional like Dr.Nishmitha.R are safe and effective. The techniques used are gentle and tailored to your specific condition and comfort level.",
         },
         {
           question: "How long does a session take?",

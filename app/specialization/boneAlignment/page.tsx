@@ -69,11 +69,11 @@ export default function BoneAlignmentPage() {
       faqs={[
         {
           question: "How do I know if I have a bone alignment issue?",
-          answer: "Common signs include uneven posture, one shoulder or hip sitting higher than the other, chronic pain in specific areas, and recurring injuries. Dr. Nishmitha performs a thorough assessment to identify any alignment problems.",
+          answer: "Common signs include uneven posture, one shoulder or hip sitting higher than the other, chronic pain in specific areas, and recurring injuries. Dr.Nishmitha performs a thorough assessment to identify any alignment problems.",
         },
         {
           question: "Is bone alignment therapy painful?",
-          answer: "The treatment itself may cause mild discomfort during correction, but it should not be painful. Dr. Nishmitha works within your comfort range and adjusts techniques as needed.",
+          answer: "The treatment itself may cause mild discomfort during correction, but it should not be painful. Dr.Nishmitha works within your comfort range and adjusts techniques as needed.",
         },
         {
           question: "How long does it take to see results?",
@@ -81,7 +81,7 @@ export default function BoneAlignmentPage() {
         },
         {
           question: "Can alignment issues come back?",
-          answer: "With proper exercise compliance and lifestyle modifications, alignment improvements can be maintained long-term. Dr. Nishmitha provides a comprehensive home program to support lasting results.",
+          answer: "With proper exercise compliance and lifestyle modifications, alignment improvements can be maintained long-term. Dr.Nishmitha provides a comprehensive home program to support lasting results.",
         },
       ]}
     />

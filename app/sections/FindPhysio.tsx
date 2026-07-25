@@ -80,7 +80,7 @@ export default function FindPhysio() {
                 <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">Need guidance on the right next step?</p>
-                    <p className="text-sm text-slate-500">Book a consultation with Dr. Nishmitha R.</p>
+                    <p className="text-sm text-slate-500">Book a consultation with Dr.Nishmitha.R.</p>
                   </div>
                   <Link href="/contact" className="btn-primary !px-4 !py-2.5 !text-sm shrink-0">
                     Book now <ArrowRight className="h-4 w-4" />

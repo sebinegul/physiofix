@@ -69,7 +69,7 @@ export default function CuppingTherapyPage() {
       faqs={[
         {
           question: "Is cupping therapy painful?",
-          answer: "Cupping should not be painful. You may feel a tight or warm sensation where the cups are placed. Dr. Nishmitha adjusts the suction pressure to ensure comfort while maintaining effectiveness.",
+          answer: "Cupping should not be painful. You may feel a tight or warm sensation where the cups are placed. Dr.Nishmitha adjusts the suction pressure to ensure comfort while maintaining effectiveness.",
         },
         {
           question: "How long does a cupping session take?",
@@ -81,7 +81,7 @@ export default function CuppingTherapyPage() {
         },
         {
           question: "How many sessions do I need?",
-          answer: "Most patients benefit from 4–6 sessions scheduled weekly. Acute conditions may improve in 2–3 sessions, while chronic issues may require a longer treatment plan. Dr. Nishmitha will create a personalised plan for you.",
+          answer: "Most patients benefit from 4–6 sessions scheduled weekly. Acute conditions may improve in 2–3 sessions, while chronic issues may require a longer treatment plan. Dr.Nishmitha will create a personalised plan for you.",
         },
         {
           question: "Can cupping be combined with other treatments?",

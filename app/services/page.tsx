@@ -236,7 +236,7 @@ export default function ServicesPage() {
                       href="/contact"
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 px-6 py-3.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-blue-500/35"
                     >
-                      Contact Dr. Nishmitha
+                      Contact Dr.Nishmitha
                       <MoveRight className="h-4 w-4" />
                     </Link>
                     <a

@@ -16,7 +16,7 @@ interface ContentMap {
 
 const DEFAULT_CONTENT = {
   hero_title: "Best Physiotherapy in JP Nagar, Bangalore",
-  hero_subtitle: "Your trusted partner in physiotherapy and rehabilitation — expert care for pain relief, mobility, sports recovery and confident movement in JP Nagar, Bangalore.",
+  hero_subtitle: "Your trusted partner in physiotherapy and rehabilitation, expert care for pain relief, mobility, sports recovery and confident movement in JP Nagar, Bangalore.",
   contact_phone: "+91 81519 12525",
 } as const;
 
@@ -175,7 +175,7 @@ export default function Hero() {
               <div className="relative overflow-hidden rounded-[1.5rem]">
                 <img
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&q=80"
-                  alt="Dr. Nishmitha R - Physiotherapist"
+                  alt="Dr.Nishmitha.R - Physiotherapist"
                   className="h-[500px] w-full object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
@@ -190,8 +190,8 @@ export default function Hero() {
                 <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-white">Dr. Nishmitha R</p>
-                      <p className="text-sm text-slate-300">MPT — Sports Science Physiotherapist</p>
+                      <p className="text-sm font-semibold text-white">Dr.Nishmitha.R</p>
+                      <p className="text-sm text-slate-300">MPT, Sports Science Physiotherapist</p>
                     </div>
                     <div className="rounded-full bg-emerald-500/20 px-3 py-1 text-sm font-semibold text-emerald-300">
                       Available

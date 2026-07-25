@@ -77,7 +77,7 @@ export default function PhysiotherapyAssessmentPage() {
         },
         {
           question: "Will I receive treatment on the first visit?",
-          answer: "In most cases, yes. After completing the assessment, Dr. Nishmitha will discuss the findings with you and begin initial treatment if appropriate. This ensures you start your recovery as soon as possible.",
+          answer: "In most cases, yes. After completing the assessment, Dr.Nishmitha will discuss the findings with you and begin initial treatment if appropriate. This ensures you start your recovery as soon as possible.",
         },
         {
           question: "How often will I need follow-up visits?",

@@ -287,7 +287,7 @@ export default function SpecializationLayout({
                       Book a consultation for {title.toLowerCase()}.
                     </h2>
                     <p className="text-lg leading-8 text-slate-300">
-                      Dr. Nishmitha R provides personalised {title.toLowerCase()} sessions tailored to your condition and recovery goals.
+                      Dr.Nishmitha.R provides personalised {title.toLowerCase()} sessions tailored to your condition and recovery goals.
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
@@ -295,7 +295,7 @@ export default function SpecializationLayout({
                       href="/contact"
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 px-6 py-3.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/25 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl hover:shadow-blue-500/35"
                     >
-                      Contact Dr. Nishmitha
+                      Contact Dr.Nishmitha
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                     <a

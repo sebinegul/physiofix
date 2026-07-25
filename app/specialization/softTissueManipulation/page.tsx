@@ -73,11 +73,11 @@ export default function SoftTissueManipulationPage() {
         },
         {
           question: "Will soft tissue treatment be painful?",
-          answer: "You may experience some discomfort during treatment, especially when addressing tight or painful areas. However, Dr. Nishmitha always works within your pain tolerance and adjusts pressure accordingly. Post-treatment soreness is normal and typically resolves within 24–48 hours.",
+          answer: "You may experience some discomfort during treatment, especially when addressing tight or painful areas. However, Dr.Nishmitha always works within your pain tolerance and adjusts pressure accordingly. Post-treatment soreness is normal and typically resolves within 24–48 hours.",
         },
         {
           question: "How often should I have soft tissue treatment?",
-          answer: "For acute conditions, weekly sessions are recommended. For chronic issues or maintenance, sessions every 2–4 weeks are ideal. Dr. Nishmitha will recommend a frequency based on your specific needs.",
+          answer: "For acute conditions, weekly sessions are recommended. For chronic issues or maintenance, sessions every 2–4 weeks are ideal. Dr.Nishmitha will recommend a frequency based on your specific needs.",
         },
         {
           question: "Can I exercise after soft tissue treatment?",

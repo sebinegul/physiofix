@@ -259,7 +259,7 @@ export default function ConsultationsPage() {
               Questions about your treatment?
             </p>
             <p className="text-sm text-primary-700 mt-1">
-              Contact Dr. Nishmitha R at +91-8151912525 or visit the clinic for any
+              Contact Dr.Nishmitha.R at +91-8151912525 or visit the clinic for any
               concerns about your diagnosis or treatment plan.
             </p>
           </div>

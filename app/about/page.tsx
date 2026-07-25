@@ -8,16 +8,16 @@ import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer
 import { ArrowRight, BadgeCheck, HeartPulse, MoveRight, Stethoscope } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Dr. Nishmitha R | Physiotherapist in JP Nagar, Bangalore",
+  title: "About Dr.Nishmitha.R | Physiotherapist in JP Nagar, Bangalore",
   description:
-    "Dr. Nishmitha R is a sports science physiotherapist (MPT) with 5+ years experience in orthopaedic, sports & neurological rehabilitation. Trusted physiotherapy care in JP Nagar, Bangalore.",
+    "Dr.Nishmitha.R is a sports science physiotherapist (MPT) with 5+ years experience in orthopaedic, sports & neurological rehabilitation. Trusted physiotherapy care in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/about",
   },
   openGraph: {
-    title: "About Dr. Nishmitha R | PhysioFix Physiotherapy Bangalore",
+    title: "About Dr.Nishmitha.R | PhysioFix Physiotherapy Bangalore",
     description:
-      "Meet Dr. Nishmitha R — experienced physiotherapist specialising in sports rehab, orthopaedic care & neurological rehabilitation in JP Nagar, Bangalore.",
+      "Meet Dr.Nishmitha.R, experienced physiotherapist specialising in sports rehab, orthopaedic care & neurological rehabilitation in JP Nagar, Bangalore.",
     url: "https://physiofix.net/about",
   },
 };
@@ -47,7 +47,7 @@ async function getAboutContent() {
   }
 }
 
-const DEFAULT_ABOUT_TEXT = "Dr. Nishmitha R is a physiotherapist in sports science with over 5 years of experience helping patients recover from pain, injury, surgery, neurological challenges, and movement limitations with compassionate, hands-on care.";
+const DEFAULT_ABOUT_TEXT = "Dr.Nishmitha.R is a physiotherapist in sports science with over 5 years of experience helping patients recover from pain, injury, surgery, neurological challenges, and movement limitations with compassionate, hands-on care.";
 
 export default async function AboutPage() {
   let aboutText = DEFAULT_ABOUT_TEXT;
@@ -63,7 +63,7 @@ export default async function AboutPage() {
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
             <ScrollReveal>
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">About Dr. Nishmitha</p>
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">About Dr.Nishmitha</p>
               <h1 className="mb-5 text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl">
                 A trusted physiotherapist building a <GradientText>modern recovery</GradientText> experience.
               </h1>

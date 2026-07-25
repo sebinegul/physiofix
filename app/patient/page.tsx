@@ -255,7 +255,7 @@ export default function PatientDashboard() {
                   {formatDate(nextAppointment.date)}
                 </p>
                 <p className="text-lg opacity-90 mt-1">
-                  {nextAppointment.time} — {nextAppointment.type}
+                  {nextAppointment.time} · {nextAppointment.type}
                 </p>
               </div>
               {nextAppointment.notes && (
@@ -277,7 +277,7 @@ export default function PatientDashboard() {
             </div>
             <div>
               <p className="font-semibold text-gray-900">No Upcoming Appointments</p>
-              <p className="text-sm text-gray-500">Book your next session with Dr. Nishmitha R.</p>
+              <p className="text-sm text-gray-500">Book your next session with Dr.Nishmitha.R.</p>
             </div>
           </div>
         </div>

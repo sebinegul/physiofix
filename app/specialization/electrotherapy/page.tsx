@@ -73,7 +73,7 @@ export default function ElectrotherapyPage() {
         },
         {
           question: "Does electrotherapy hurt?",
-          answer: "Electrotherapy should not be painful. You may feel a tingling or pulsating sensation, which is normal. Dr. Nishmitha adjusts the intensity to ensure comfort while maintaining effectiveness.",
+          answer: "Electrotherapy should not be painful. You may feel a tingling or pulsating sensation, which is normal. Dr.Nishmitha adjusts the intensity to ensure comfort while maintaining effectiveness.",
         },
         {
           question: "How long does each session take?",

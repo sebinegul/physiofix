@@ -96,3 +96,19 @@ model SiteContent {
   value         String
   updatedAt     DateTime  @updatedAt
 }
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  author      String   @default("Dr.Nishmitha.R")
+  category    String   @default("general")
+  tags        String?
+  published   Boolean  @default(false)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

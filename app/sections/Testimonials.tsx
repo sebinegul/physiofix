@@ -9,7 +9,7 @@ const testimonials = [
     name: "Rahul Sharma",
     location: "Bangalore",
     rating: 5,
-    text: "Excellent physiotherapy support! My back pain reduced within two weeks. Dr. Nishmitha was professional, attentive and built a plan that actually worked for my lifestyle.",
+    text: "Excellent physiotherapy support! My back pain reduced within two weeks. Dr.Nishmitha was professional, attentive and built a plan that actually worked for my lifestyle.",
     condition: "Chronic Back Pain",
     img: "https://randomuser.me/api/portraits/men/32.jpg",
   },

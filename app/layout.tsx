@@ -21,11 +21,11 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL("https://physiofix.net"),
   title: {
-    default: "PhysioFix | Best Physiotherapy in JP Nagar, Bangalore | Dr. Nishmitha R",
+    default: "PhysioFix | Best Physiotherapy in JP Nagar, Bangalore | Dr.Nishmitha.R",
     template: "%s | PhysioFix - Physiotherapy JP Nagar Bangalore",
   },
   description:
-    "PhysioFix — expert physiotherapy, sports rehab, neuro rehabilitation & post-surgery care in JP Nagar 8th Phase, Bangalore. Dr. Nishmitha R (MPT Sports Science) with 5+ years experience. Book your appointment today.",
+    "PhysioFix, expert physiotherapy, sports rehab, neuro rehabilitation & post-surgery care in JP Nagar 8th Phase, Bangalore. Dr.Nishmitha.R (MPT Sports Science) with 5+ years experience. Book your appointment today.",
   keywords: [
     "physiotherapy Bangalore",
     "physiotherapist JP Nagar",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
         url: "https://physiofix.net/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "PhysioFix — Physiotherapy, Sports Rehab & Recovery Care in JP Nagar, Bangalore",
+        alt: "PhysioFix, Physiotherapy, Sports Rehab & Recovery Care in JP Nagar, Bangalore",
       },
     ],
   },
@@ -263,7 +263,7 @@ export default async function RootLayout({
                   name: "Who is the physiotherapist at PhysioFix?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "Dr. Nishmitha R is a Physiotherapist in Sports Science (MPT) with over 5 years of experience in orthopaedic sports medicine and neurological rehabilitation.",
+                    text: "Dr.Nishmitha.R is a Physiotherapist in Sports Science (MPT) with over 5 years of experience in orthopaedic sports medicine and neurological rehabilitation.",
                   },
                 },
                 {

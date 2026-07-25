@@ -64,7 +64,7 @@ export default function Newsletter() {
                 <Mail className="h-6 w-6" />
               </div>
               <h2 className="mb-3 text-2xl font-bold tracking-tight text-white md:text-3xl">
-                Get recovery tips and appointment updates from Dr. Nishmitha.
+                Get recovery tips and appointment updates from Dr.Nishmitha.
               </h2>
               <p className="mb-8 text-base leading-7 text-slate-300">
                 Join our updates for practical movement advice, rehab insights and clinic news tailored to recovery, sports and everyday mobility.
