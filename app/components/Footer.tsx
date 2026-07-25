@@ -43,15 +43,12 @@ export default function Footer() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 grid gap-10 md:grid-cols-6">
           <ScrollReveal className="md:col-span-2">
-            <Link href="/" className="mb-4 flex items-center gap-2.5">
+            <Link href="/" className="mb-4 flex items-center">
               <img
-                src="/logoShort.jpg"
+                src="/logo.jpg"
                 alt="PhysioFix Logo"
-                className="h-10 w-10 rounded-xl object-cover shadow-lg shadow-teal-500/20"
+                className="h-14 w-auto max-w-[180px] object-contain drop-shadow-lg"
               />
-              <span className="text-xl font-semibold text-white">
-                Physio<span className="text-teal-300">Fix</span>
-              </span>
             </Link>
             <p className="mb-5 max-w-xs text-sm leading-7 text-slate-400">
               Dr. Nishmitha R is a Physiotherapist in Sports Science with 5+ years of experience in orthopaedic sports medicine and neurological rehabilitation.
