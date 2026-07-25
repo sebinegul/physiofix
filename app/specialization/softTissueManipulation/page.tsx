@@ -1,23 +1,79 @@
-import PageTransition from "../../components/PageTransition";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import SpecializationLayout from "../SpecializationLayout";
 
 export default function SoftTissueManipulationPage() {
   return (
-    <PageTransition>
-      <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.16),_transparent_32%),linear-gradient(135deg,_#f8fbff_0%,_#eef7ff_45%,_#ffffff_100%)] px-4 py-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl rounded-[2rem] border border-slate-200/70 bg-white/80 p-8 shadow-[0_20px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-          <Link href="/" className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-700">
-            <ArrowLeft className="h-4 w-4" />
-            Back to home
-          </Link>
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-cyan-600">Specialized treatment</p>
-          <h1 className="mb-4 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Soft Tissue Manipulation</h1>
-          <p className="text-lg leading-8 text-slate-600">
-            Soft tissue manipulation targets tight muscles and connective tissue to improve flexibility, reduce tension and support recovery after strain or overuse.
-          </p>
-        </div>
-      </main>
-    </PageTransition>
+    <SpecializationLayout
+      title="Soft Tissue Manipulation"
+      subtitle="Muscle & Fascia Recovery"
+      description="Soft tissue manipulation targets the muscles, fascia, tendons, and ligaments to relieve pain, improve flexibility, and restore normal tissue function. Using hands-on techniques such as myofascial release, trigger point therapy, and deep tissue mobilisation, it addresses chronic tightness, scar tissue, and movement restrictions."
+      heroImage="/myofascialRelease.jpg"
+      benefits={[
+        {
+          title: "Releases Muscle Tension",
+          description: "Targeted techniques break down adhesions and release chronic muscle tightness, restoring normal muscle length and function.",
+        },
+        {
+          title: "Improves Flexibility",
+          description: "By addressing fascial restrictions and muscle tightness, soft tissue manipulation significantly improves range of motion and flexibility.",
+        },
+        {
+          title: "Reduces Scar Tissue",
+          description: "Manual techniques help remodel scar tissue from injuries and surgeries, improving tissue quality and reducing restriction.",
+        },
+        {
+          title: "Pain Relief",
+          description: "Releasing trigger points and tight bands of tissue provides immediate and lasting pain relief for chronic musculoskeletal conditions.",
+        },
+        {
+          title: "Enhances Recovery",
+          description: "Improved blood flow and tissue mobility accelerate the natural healing process, helping you recover faster from injuries.",
+        },
+        {
+          title: "Prevents Injuries",
+          description: "Regular soft tissue work maintains tissue health and pliability, reducing the risk of strains, sprains, and overuse injuries.",
+        },
+      ]}
+      howItWorks={[
+        "Assessment of tissue quality, tightness, and areas of restriction or pain.",
+        "Application of targeted techniques including massage, myofascial release, and trigger point therapy.",
+        "Progressive pressure and technique adjustment based on tissue response.",
+        "Integration of stretching and movement exercises to maintain tissue changes.",
+        "Home care recommendations including self-massage techniques and foam rolling.",
+      ]}
+      conditions={[
+        "Myofascial Pain Syndrome",
+        "Plantar Fasciitis",
+        "Tennis Elbow",
+        "Golfer's Elbow",
+        "IT Band Syndrome",
+        "Shin Splints",
+        "Shoulder Impingement",
+        "Tension Headaches",
+        "Calf & Hamstring Tightness",
+        "Post-Surgical Scar Adhesions",
+      ]}
+      faqs={[
+        {
+          question: "What is the difference between soft tissue manipulation and massage?",
+          answer: "While relaxation massage focuses on general relaxation, soft tissue manipulation is a clinical treatment that targets specific problems such as trigger points, fascial restrictions, and muscle adhesions. It uses specialised techniques and is performed by a trained physiotherapist.",
+        },
+        {
+          question: "Will soft tissue treatment be painful?",
+          answer: "You may experience some discomfort during treatment, especially when addressing tight or painful areas. However, Dr. Nishmitha always works within your pain tolerance and adjusts pressure accordingly. Post-treatment soreness is normal and typically resolves within 24–48 hours.",
+        },
+        {
+          question: "How often should I have soft tissue treatment?",
+          answer: "For acute conditions, weekly sessions are recommended. For chronic issues or maintenance, sessions every 2–4 weeks are ideal. Dr. Nishmitha will recommend a frequency based on your specific needs.",
+        },
+        {
+          question: "Can I exercise after soft tissue treatment?",
+          answer: "Light exercise and stretching are encouraged after treatment as they help maintain the tissue changes. However, intense exercise should be avoided for 24 hours to allow tissues to recover and adapt.",
+        },
+        {
+          question: "How many sessions will I need?",
+          answer: "Most conditions improve within 4–8 sessions, though chronic issues may require longer. Acute injuries often resolve faster, while long-standing problems need more time to address accumulated tissue changes.",
+        },
+      ]}
+    />
   );
 }

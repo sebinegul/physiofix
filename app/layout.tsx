@@ -32,13 +32,28 @@ export const metadata: Metadata = {
     images: [{ url: "https://physiofix.net/og-image.svg", width: 1200, height: 630, alt: "PhysioFix physiotherapy and sports rehab care" }],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "PhysioFix | Physiotherapy, Sports Rehab & Recovery Care",
-    description:
-      "Trusted physiotherapy and rehabilitation care for pain relief, movement recovery, sports injuries and post-surgery support.",
-    images: ["https://physiofix.net/og-image.svg"],
-  },
-};
+    twitter: {
+      card: "summary_large_image",
+      title: "PhysioFix | Physiotherapy, Sports Rehab & Recovery Care",
+      description: "Trusted physiotherapy and rehabilitation care for pain relief, movement recovery, sports injuries and post-surgery support.",
+      images: ["https://physiofix.net/og-image.svg"],
+    },
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+        { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+        { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      ],
+      apple: [
+        { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      ],
+      other: [
+        { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+        { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+      ],
+    },
+    };
 
 export default function RootLayout({
   children,

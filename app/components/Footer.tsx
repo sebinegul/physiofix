@@ -43,10 +43,12 @@ export default function Footer() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 grid gap-10 md:grid-cols-6">
           <ScrollReveal className="md:col-span-2">
-            <Link href="/" className="mb-4 flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-blue-600">
-                <Activity className="h-5 w-5 text-white" />
-              </div>
+            <Link href="/" className="mb-4 flex items-center gap-2.5">
+              <img
+                src="/logoShort.jpg"
+                alt="PhysioFix Logo"
+                className="h-10 w-10 rounded-xl object-cover shadow-lg shadow-teal-500/20"
+              />
               <span className="text-xl font-semibold text-white">
                 Physio<span className="text-teal-300">Fix</span>
               </span>

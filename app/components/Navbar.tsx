@@ -34,11 +34,12 @@ export default function Navbar() {
           scrolled ? "shadow-[0_24px_90px_rgba(2,6,23,0.45)]" : ""
         }`}
       >
-        <Link href="/" className="relative z-10 flex items-center gap-2">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-teal-400 via-cyan-500 to-blue-600 shadow-lg shadow-teal-500/25">
-            <div className="absolute inset-0 animate-pulse rounded-full bg-teal-300/20" />
-            <Activity className="relative h-5 w-5 text-white" />
-          </div>
+        <Link href="/" className="relative z-10 flex items-center gap-2.5">
+          <img
+            src="/logoShort.jpg"
+            alt="PhysioFix Logo"
+            className="h-11 w-11 rounded-full object-cover shadow-lg shadow-teal-500/20 ring-2 ring-white/10"
+          />
           <div>
             <span className="block text-lg font-semibold tracking-tight text-white">
               Physio<span className="text-teal-300">Fix</span>
