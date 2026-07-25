@@ -57,16 +57,28 @@ export default function AppointmentsPage() {
 
   const fetchAppointments = () => {
     const token = localStorage.getItem('token');
-    if (!token) return;
-
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
     fetch('/api/appointments', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
+        }
+        return r.json();
+      })
       .then((data) => {
-        setAppointments(
-          Array.isArray(data) ? data : data.data || data.appointments || []
-        );
+        if (data) {
+          setAppointments(
+            Array.isArray(data) ? data : data.data || data.appointments || []
+          );
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -78,7 +90,10 @@ export default function AppointmentsPage() {
     setSubmitting(true);
 
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
 
     try {
       const res = await fetch('/api/appointments', {
@@ -94,6 +109,13 @@ export default function AppointmentsPage() {
           notes: formNotes || undefined,
         }),
       });
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return;
+      }
 
       if (!res.ok) {
         const data = await res.json();
@@ -117,10 +139,13 @@ export default function AppointmentsPage() {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
 
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
 
     try {
-      await fetch(`/api/appointments/${id}`, {
+      const res = await fetch(`/api/appointments/${id}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,6 +153,12 @@ export default function AppointmentsPage() {
         },
         body: JSON.stringify({ status: 'cancelled' }),
       });
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return;
+      }
       fetchAppointments();
     } catch {
       // silently fail

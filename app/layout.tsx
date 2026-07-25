@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import Script from "next/script";
+import { prisma } from "@/lib/prisma";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import SiteShell from "./components/SiteShell";
@@ -90,11 +91,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+async function getContactContent() {
+  try {
+    const items = await prisma.siteContent.findMany();
+    const map: Record<string, string> = {};
+    for (const item of items) map[item.key] = item.value;
+    return map;
+  } catch {
+    return {};
+  }
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const content = await getContactContent();
+  const phone = content.contact_phone || "+91-8151912525";
+  const email = content.contact_email || "physiofix2525@gmail.com";
+  const address = content.contact_address || "30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076";
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
       <head>
@@ -121,8 +137,8 @@ export default function RootLayout({
               name: "PhysioFix",
               alternateName: "PhysioFix Physiotherapy Clinic",
               url: "https://physiofix.net",
-              telephone: "+91-8151912525",
-              email: "physiofix2525@gmail.com",
+              telephone: phone,
+              email: email,
               description:
                 "PhysioFix provides expert physiotherapy, chiropractic care, sports rehabilitation, neuro rehabilitation, post-surgery rehab and home care services in JP Nagar, Bangalore.",
               medicalSpecialty: [
@@ -136,8 +152,7 @@ export default function RootLayout({
               logo: "https://physiofix.net/logoShort-transparent.png",
               address: {
                 "@type": "PostalAddress",
-                streetAddress:
-                  "30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road",
+                streetAddress: address,
                 addressLocality: "JP Nagar 8th Phase",
                 addressRegion: "Bangalore, Karnataka",
                 postalCode: "560076",

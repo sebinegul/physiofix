@@ -39,14 +39,27 @@ export default function ExercisesPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
 
     fetch('/api/exercises', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
+        }
+        return r.json();
+      })
       .then((data) => {
-        setExercises(Array.isArray(data) ? data : data.data || data.exercises || []);
+        if (data) {
+          setExercises(Array.isArray(data) ? data : data.data || data.exercises || []);
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));

@@ -75,19 +75,30 @@ export default function PatientDashboard() {
   const [exercises, setExercises] = useState<AssignedExercise[]>([]);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
-
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
     const headers = { Authorization: `Bearer ${token}` };
+    const authFetch = (url: string) =>
+      fetch(url, { headers }).then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          throw new Error('Unauthorized');
+        }
+        return r.json();
+      });
 
     Promise.all([
-      fetch('/api/auth/me', { headers }).then((r) => r.json()),
-      fetch('/api/patients', { headers }).then((r) => r.json()),
-      fetch('/api/appointments', { headers }).then((r) => r.json()),
-      fetch('/api/exercises', { headers }).then((r) => r.json()),
-      fetch('/api/consultations', { headers }).then((r) => r.json()),
+      authFetch('/api/auth/me'),
+      authFetch('/api/patients'),
+      authFetch('/api/appointments'),
+      authFetch('/api/exercises'),
+      authFetch('/api/consultations'),
     ])
       .then(([userData, patientData, appointmentsData, exercisesData, consultationsData]) => {
         setUser(userData);

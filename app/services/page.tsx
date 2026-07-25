@@ -1,4 +1,5 @@
 ﻿"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import PageTransition from "../components/PageTransition";
@@ -46,8 +47,24 @@ const processSteps = [
   { step: "04", title: "Recovery", description: "Progressive rehabilitation with measurable milestones and lasting results." },
 ];
 
+interface ContactContent {
+  contact_phone?: string;
+}
+
+const DEFAULT_PHONE = "+91 81519 12525";
+
 export default function ServicesPage() {
   const prefersReducedMotion = useReducedMotion();
+  const [phone, setPhone] = useState(DEFAULT_PHONE);
+
+  useEffect(() => {
+    fetch("/api/content")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.data?.contact_phone) setPhone(d.data.contact_phone);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <PageTransition>
@@ -223,10 +240,10 @@ export default function ServicesPage() {
                       <MoveRight className="h-4 w-4" />
                     </Link>
                     <a
-                      href="tel:+918151912525"
-                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-white/40 hover:bg-white/20"
-                    >
-                      Call Now
+                        href={`tel:${phone.replace(/\s/g, "")}`}
+                        className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-white/40 hover:bg-white/20"
+                      >
+                        Call Now
                     </a>
                   </div>
                 </div>

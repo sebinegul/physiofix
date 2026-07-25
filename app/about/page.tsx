@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from "next";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import PageTransition from "../components/PageTransition";
 import ScrollReveal from "../components/ui/ScrollReveal";
@@ -35,7 +36,27 @@ const expertise = [
   "Home physiotherapy and geriatric mobility support",
 ];
 
-export default function AboutPage() {
+async function getAboutContent() {
+  try {
+    const items = await prisma.siteContent.findMany();
+    const map: Record<string, string> = {};
+    for (const item of items) map[item.key] = item.value;
+    return map;
+  } catch {
+    return {};
+  }
+}
+
+const DEFAULT_ABOUT_TEXT = "Dr. Nishmitha R is a physiotherapist in sports science with over 5 years of experience helping patients recover from pain, injury, surgery, neurological challenges, and movement limitations with compassionate, hands-on care.";
+
+export default async function AboutPage() {
+  let aboutText = DEFAULT_ABOUT_TEXT;
+  try {
+    const contentMap = await getAboutContent();
+    if (contentMap.about_text) aboutText = contentMap.about_text;
+  } catch {
+    // use default
+  }
   return (
     <PageTransition>
       <main className="min-h-screen pt-28 pb-20">
@@ -47,7 +68,7 @@ export default function AboutPage() {
                 A trusted physiotherapist building a <GradientText>modern recovery</GradientText> experience.
               </h1>
               <p className="mb-8 text-lg leading-8 text-slate-600">
-                Dr. Nishmitha R is a physiotherapist in sports science with over 5 years of experience helping patients recover from pain, injury, surgery, neurological challenges, and movement limitations with compassionate, hands-on care.
+                {aboutText}
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link href="/contact" className="btn-primary">

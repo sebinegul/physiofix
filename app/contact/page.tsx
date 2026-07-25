@@ -1,20 +1,42 @@
-﻿"use client";
-import { useState } from "react";
-import PageTransition from "../components/PageTransition";
+﻿'use client';
+import { useState, useEffect } from 'react';
+import PageTransition from '../components/PageTransition';
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
 import { Sparkles, MapPin, Mail, Phone, Send, CheckCircle2 } from "lucide-react";
 
+interface ContactContent {
+  contact_address?: string;
+  contact_phone?: string;
+  contact_email?: string;
+}
+
+const DEFAULT_CONTACT = {
+  contact_address: '30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076',
+  contact_phone: '+91-8151912525',
+  contact_email: 'physiofix2525@gmail.com',
+} as const;
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
+    name: '',
+    phone: '',
     email: "",
     message: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [serverMessage, setServerMessage] = useState("");
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [serverMessage, setServerMessage] = useState('');
+  const [contactInfo, setContactInfo] = useState<ContactContent>(DEFAULT_CONTACT);
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.data) setContactInfo((prev) => ({ ...prev, ...d.data }));
+      })
+      .catch(() => {});
+  }, []);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -111,21 +133,21 @@ export default function ContactPage() {
                     <MapPin className="mt-0.5 h-5 w-5 text-blue-600" />
                     <div>
                       <p className="font-semibold text-slate-900">Clinic Address</p>
-                      <p className="text-sm leading-7 text-slate-600">30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076</p>
+                      <p className="text-sm leading-7 text-slate-600">{contactInfo.contact_address || DEFAULT_CONTACT.contact_address}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 rounded-2xl border border-blue-100/60 bg-blue-50/30 p-4 transition hover:border-blue-300">
                     <Phone className="mt-0.5 h-5 w-5 text-blue-600" />
                     <div>
                       <p className="font-semibold text-slate-900">Phone</p>
-                      <a href="tel:+918151912525" className="text-sm leading-7 text-slate-600 hover:text-blue-600">+91-8151912525</a>
+                      <a href={`tel:${(contactInfo.contact_phone ?? DEFAULT_CONTACT.contact_phone).replace(/\D/g, '')}`} className="text-sm leading-7 text-slate-600 hover:text-blue-600">{contactInfo.contact_phone ?? DEFAULT_CONTACT.contact_phone}</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 rounded-2xl border border-blue-100/60 bg-blue-50/30 p-4 transition hover:border-blue-300">
                     <Mail className="mt-0.5 h-5 w-5 text-blue-600" />
                     <div>
                       <p className="font-semibold text-slate-900">Email</p>
-                      <a href="mailto:physiofix2525@gmail.com" className="text-sm leading-7 text-slate-600 hover:text-blue-600">physiofix2525@gmail.com</a>
+                      <a href={`mailto:${contactInfo.contact_email || DEFAULT_CONTACT.contact_email}`} className="text-sm leading-7 text-slate-600 hover:text-blue-600">{contactInfo.contact_email || DEFAULT_CONTACT.contact_email}</a>
                     </div>
                   </div>
                 </div>

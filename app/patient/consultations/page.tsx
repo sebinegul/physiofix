@@ -27,16 +27,29 @@ export default function ConsultationsPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
 
     fetch('/api/consultations', {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return;
+        }
+        return r.json();
+      })
       .then((data) => {
-        setConsultations(
-          Array.isArray(data) ? data : data.data || data.consultations || []
-        );
+        if (data) {
+          setConsultations(
+            Array.isArray(data) ? data : data.data || data.consultations || []
+          );
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));

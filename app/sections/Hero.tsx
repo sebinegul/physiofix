@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Search, MapPin, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone } from "lucide-react";
@@ -8,10 +8,32 @@ import ScrollReveal from "../components/ui/ScrollReveal";
 
 const quickLinks = ["Back Pain", "Sports Injury", "Knee Rehab", "Shoulder Pain", "Post-Surgery", "Neck Pain"];
 
+interface ContentMap {
+  hero_title?: string;
+  hero_subtitle?: string;
+  contact_phone?: string;
+}
+
+const DEFAULT_CONTENT = {
+  hero_title: "Best Physiotherapy in JP Nagar, Bangalore",
+  hero_subtitle: "Your trusted partner in physiotherapy and rehabilitation — expert care for pain relief, mobility, sports recovery and confident movement in JP Nagar, Bangalore.",
+  contact_phone: "+91 81519 12525",
+} as const;
+
 export default function Hero() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const prefersReducedMotion = useReducedMotion();
+  const [content, setContent] = useState<ContentMap>(DEFAULT_CONTENT);
+
+  useEffect(() => {
+    fetch("/api/content")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.data) setContent((prev) => ({ ...prev, ...d.data }));
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28">
@@ -51,8 +73,7 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               className="mb-5 max-w-2xl text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl lg:text-[3.45rem]"
             >
-              Best Physiotherapy in JP Nagar,{" "}
-              <GradientText>Bangalore</GradientText>
+              <GradientText>{content.hero_title || DEFAULT_CONTENT.hero_title}</GradientText>
             </motion.h1>
 
             <motion.p
@@ -61,7 +82,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.35 }}
               className="mb-8 max-w-xl text-lg leading-8 text-slate-600"
             >
-              Your trusted partner in physiotherapy and rehabilitation — expert care for pain relief, mobility, sports recovery and confident movement in JP Nagar, Bangalore.
+              {content.hero_subtitle || DEFAULT_CONTENT.hero_subtitle}
             </motion.p>
 
             <motion.div
@@ -141,9 +162,9 @@ export default function Hero() {
               <Link href="/about" className="btn-primary">
                 Know More <ArrowRight className="h-4 w-4" />
               </Link>
-              <a href="tel:+918151912525" className="btn-ghost">
+              <a href={`tel:${(content.contact_phone ?? DEFAULT_CONTENT.contact_phone).replace(/\s/g, "")}`} className="btn-ghost">
                 <Phone className="h-4 w-4" />
-                +91 81519 12525
+                {content.contact_phone ?? DEFAULT_CONTENT.contact_phone}
               </a>
             </motion.div>
           </div>

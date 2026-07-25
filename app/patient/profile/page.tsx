@@ -63,13 +63,27 @@ export default function ProfilePage() {
 
   const fetchData = () => {
     const token = localStorage.getItem('token');
-    if (!token) return;
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
 
     const headers = { Authorization: `Bearer ${token}` };
 
+    const authFetch = (url: string) =>
+      fetch(url, { headers }).then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          throw new Error('Unauthorized');
+        }
+        return r.json();
+      });
+
     Promise.all([
-      fetch('/api/auth/me', { headers }).then((r) => r.json()),
-      fetch('/api/patients', { headers }).then((r) => r.json()),
+      authFetch('/api/auth/me'),
+      authFetch('/api/patients'),
     ])
       .then(([userData, patientData]) => {
         setUser(userData);
@@ -95,7 +109,10 @@ export default function ProfilePage() {
     setSaveSuccess(false);
 
     const token = localStorage.getItem('token');
-    if (!token || !patient) return;
+    if (!token || !patient) {
+      if (!token) window.location.href = '/login';
+      return;
+    }
 
     try {
       // Update patient data
@@ -107,6 +124,13 @@ export default function ProfilePage() {
         },
         body: JSON.stringify(formData),
       });
+
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return;
+      }
 
       if (!res.ok) {
         const data = await res.json();
