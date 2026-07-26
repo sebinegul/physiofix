@@ -1,6 +1,5 @@
 ﻿"use client";
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Star, Quote, MapPin, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
@@ -61,50 +60,96 @@ const testimonials = [
   },
 ];
 
+function TestimonialCard({ t }: { t: (typeof testimonials)[number] }) {
+  return (
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] transition-all duration-500 hover:-translate-y-1 hover:border-blue-200/60 hover:shadow-[0_20px_60px_rgba(59,130,246,0.1)] sm:p-6">
+      {/* Top accent line */}
+      <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+      {/* Quote icon */}
+      <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-500 transition-all duration-300 group-hover:bg-blue-100 group-hover:scale-110">
+        <Quote className="h-4 w-4" />
+      </div>
+
+      {/* Review text */}
+      <p className="mb-4 flex-1 text-sm leading-7 text-slate-600">
+        &ldquo;{t.text}&rdquo;
+      </p>
+
+      {/* Condition + Duration tags */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+          <BadgeCheck className="h-3 w-3" />
+          {t.condition}
+        </span>
+        <span className="inline-flex rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
+          {t.duration}
+        </span>
+      </div>
+
+      {/* Author */}
+      <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
+        <img src={t.img} alt={t.name} className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-slate-900">{t.name}</p>
+          <div className="flex items-center gap-1 text-xs text-slate-400">
+            <MapPin className="h-3 w-3" />
+            {t.location}
+          </div>
+        </div>
+        <div className="flex gap-0.5">
+          {[...Array(t.rating)].map((_, si) => (
+            <Star key={si} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Testimonials() {
-  const prefersReducedMotion = useReducedMotion();
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [page, setPage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Responsive items per page
+  useEffect(() => {
+    function update() {
+      const w = window.innerWidth;
+      if (w < 640) setItemsPerPage(1);
+      else if (w < 1024) setItemsPerPage(2);
+      else setItemsPerPage(3);
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+  const maxPage = totalPages - 1;
 
   const next = useCallback(() => {
-    setDirection(1);
-    setCurrent((prev) => (prev + 1) % testimonials.length);
-  }, []);
+    setPage((p) => (p >= maxPage ? 0 : p + 1));
+  }, [maxPage]);
 
   const prev = useCallback(() => {
-    setDirection(-1);
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, []);
-
-  const goTo = useCallback((index: number) => {
-    setDirection(index > current ? 1 : -1);
-    setCurrent(index);
-  }, [current]);
+    setPage((p) => (p <= 0 ? maxPage : p - 1));
+  }, [maxPage]);
 
   // Auto-advance
   useEffect(() => {
-    if (prefersReducedMotion || isPaused) return;
-    const timer = setInterval(next, 5000);
+    if (isPaused) return;
+    const timer = setInterval(next, 4000);
     return () => clearInterval(timer);
-  }, [next, prefersReducedMotion, isPaused]);
+  }, [next, isPaused]);
 
-  const variants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? 300 : -300,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (dir: number) => ({
-      x: dir > 0 ? -300 : 300,
-      opacity: 0,
-    }),
-  };
-
-  const t = testimonials[current];
+  const startIdx = page * itemsPerPage;
+  const visible = testimonials.slice(startIdx, startIdx + itemsPerPage);
+  // If last page has fewer items, also show from the beginning to fill
+  if (visible.length < itemsPerPage) {
+    visible.push(...testimonials.slice(0, itemsPerPage - visible.length));
+  }
 
   return (
     <section className="relative overflow-hidden py-12 sm:py-20" id="stories">
@@ -127,95 +172,48 @@ export default function Testimonials() {
 
         {/* Carousel */}
         <div
-          className="relative mx-auto max-w-3xl"
+          className="relative"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={current}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="relative overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)] sm:p-8"
-            >
-              {/* Top accent line */}
-              <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
-
-              {/* Quote icon */}
-              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-500">
-                <Quote className="h-4 w-4" />
-              </div>
-
-              {/* Review text */}
-              <p className="mb-6 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-                &ldquo;{t.text}&rdquo;
-              </p>
-
-              {/* Condition + Duration tags */}
-              <div className="mb-5 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
-                  <BadgeCheck className="h-3 w-3" />
-                  {t.condition}
-                </span>
-                <span className="inline-flex rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
-                  {t.duration}
-                </span>
-              </div>
-
-              {/* Author */}
-              <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
-                <img src={t.img} alt={t.name} className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-slate-900">{t.name}</p>
-                  <div className="flex items-center gap-1 text-xs text-slate-400">
-                    <MapPin className="h-3 w-3" />
-                    {t.location}
-                  </div>
-                </div>
-                <div className="flex gap-0.5">
-                  {[...Array(t.rating)].map((_, si) => (
-                    <Star key={si} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+          {/* Cards grid */}
+          <div ref={trackRef} className="grid gap-5" style={{ gridTemplateColumns: `repeat(${itemsPerPage}, 1fr)` }}>
+            {visible.map((t) => (
+              <TestimonialCard key={t.name} t={t} />
+            ))}
+          </div>
 
           {/* Navigation arrows */}
           <button
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-x-4 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-translate-x-6 sm:p-3"
-            aria-label="Previous testimonial"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-left-5 sm:p-3 lg:-left-6"
+            aria-label="Previous testimonials"
           >
             <ChevronLeft className="h-4 w-4 text-slate-600 sm:h-5 sm:w-5" />
           </button>
           <button
             onClick={next}
-            className="absolute right-0 top-1/2 translate-x-4 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:translate-x-6 sm:p-3"
-            aria-label="Next testimonial"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-right-5 sm:p-3 lg:-right-6"
+            aria-label="Next testimonials"
           >
             <ChevronRight className="h-4 w-4 text-slate-600 sm:h-5 sm:w-5" />
           </button>
+        </div>
 
-          {/* Dots */}
-          <div className="mt-6 flex items-center justify-center gap-2">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  i === current
-                    ? "w-8 bg-blue-600"
-                    : "w-2 bg-slate-300 hover:bg-slate-400"
-                }`}
-                aria-label={`Go to testimonial ${i + 1}`}
-              />
-            ))}
-          </div>
+        {/* Dots */}
+        <div className="mt-6 flex items-center justify-center gap-2">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === page
+                  ? "w-8 bg-blue-600"
+                  : "w-2 bg-slate-300 hover:bg-slate-400"
+              }`}
+              aria-label={`Go to page ${i + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>
