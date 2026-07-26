@@ -119,17 +119,17 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white"
+                  className="block rounded-xl px-3 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white"
                 >
                   {link.label}
                 </Link>
               </motion.div>
             ))}
             <div className="mt-3 flex gap-3 p-1">
-              <a href="tel:+918151912525" className="flex-1 rounded-xl border border-white/15 px-3 py-2.5 text-center text-sm font-semibold text-slate-200">
+              <a href="tel:+918****2525" className="flex-1 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200">
                 Call now
               </a>
-              <Link href="/contact" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-2.5 text-center text-sm font-semibold text-white">
+              <Link href="/contact" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-3 text-center text-sm font-semibold text-white">
                 Book visit <MoveRight className="h-4 w-4" />
               </Link>
             </div>

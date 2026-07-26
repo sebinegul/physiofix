@@ -13,7 +13,7 @@ const services = [
 
 export default function FindPhysio() {
   return (
-    <section id="specialties" className="py-20">
+    <section id="specialties" className="py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-12 lg:grid-cols-[0.92fr_1.08fr]">
           <ScrollReveal>

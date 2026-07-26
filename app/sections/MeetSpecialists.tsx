@@ -17,7 +17,7 @@ const treatments = [
 
 export default function MeetSpecialists() {
   return (
-    <section className="py-20" id="doctor">
+    <section className="py-12 sm:py-20" id="doctor">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="mb-10 text-center">
           <p className="mb-2 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Meet your physiotherapist</p>
@@ -34,7 +34,7 @@ export default function MeetSpecialists() {
                 <img
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=640&q=80"
                   alt="Dr.Nishmitha.R"
-                  className="h-[420px] w-full object-cover object-top transition duration-700 group-hover:scale-105"
+                  className="h-[280px] sm:h-[350px] lg:h-[420px] w-full object-cover object-top transition duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
                 <span className="absolute left-4 top-4 rounded-full bg-slate-950/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
@@ -59,7 +59,7 @@ export default function MeetSpecialists() {
                   <GraduationCap className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900">Dr.Nishmitha.R</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900">Dr.Nishmitha.R</h3>
                   <p className="text-sm text-blue-600">Master of Physiotherapy (MPT), Sports Science</p>
                 </div>
               </div>

@@ -65,7 +65,7 @@ export default function Testimonials() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden py-20" id="stories">
+    <section className="relative overflow-hidden py-12 sm:py-20" id="stories">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-blue-50/20 to-slate-50" />
       <div className="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-blue-400/8 blur-3xl" />

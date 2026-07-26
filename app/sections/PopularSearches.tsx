@@ -44,13 +44,13 @@ const treatmentList = [
 
 export default function PopularSearches() {
   return (
-    <section className="py-20" id="specializations">
+    <section className="py-12 sm:py-20" id="specializations">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="section-shell px-6 py-8 md:px-8 lg:px-10">
           <ScrollReveal className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">Specialization</p>
-              <h2 className="text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Conditions and treatments we support every day.</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Conditions and treatments we support every day.</h2>
             </div>
             <div className="flex flex-wrap gap-2">
               {categories.map((item) => (
@@ -80,7 +80,7 @@ export default function PopularSearches() {
                   <StaggerItem key={item.title}>
                     <Link
                       href={item.href}
-                      className="group relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-slate-200/80 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_20px_60px_rgba(59,130,246,0.15)]"
+                      className="group relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-slate-200/80 bg-white p-4 sm:p-5 transition-all duration-500 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_20px_60px_rgba(59,130,246,0.15)]"
                     >
                       {/* Gradient overlay on hover */}
                       <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 transition-opacity duration-500 group-hover:opacity-[0.04]`} />
