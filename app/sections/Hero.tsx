@@ -2,12 +2,19 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { Search, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone, Stethoscope, FileText, X } from "lucide-react";
 import GradientText from "../components/ui/GradientText";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
 const quickLinks = ["Back Pain", "Sports Injury", "Knee Rehab", "Shoulder Pain", "Post-Surgery", "Neck Pain"];
+
+const heroImages = [
+  { src: "https://images.unsplash.com/photo-1745327883389-17150e99dcf7?w=900&q=80", alt: "Cupping therapy treatment for muscle relief" },
+  { src: "https://images.unsplash.com/photo-1649751361457-01d3a696c7e6?w=900&q=80", alt: "Physiotherapist performing knee mobilisation" },
+  { src: "https://images.unsplash.com/photo-1746806942507-a7e93fdd6dd4?w=900&q=80", alt: "Clinical physical therapy and rehabilitation care" },
+  { src: "https://images.unsplash.com/photo-1754941622136-6664a3f50b2e?w=900&q=80", alt: "Electrotherapy TENS treatment on patient" },
+];
 
 interface ContentMap {
   hero_title?: string;
@@ -37,6 +44,15 @@ export default function Hero() {
   const [content, setContent] = useState<ContentMap>(DEFAULT_CONTENT);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [heroSlide, setHeroSlide] = useState(0);
+
+  // Auto-rotate hero carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     fetch("/api/content")
@@ -355,22 +371,43 @@ export default function Hero() {
             <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
             <div className="animate-float relative z-10 w-full rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
               <div className="relative h-[500px] overflow-hidden rounded-[1.5rem]">
-                <Image
-                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&q=80"
-                  alt="Dr.Nishmitha.R - Physiotherapist"
-                  fill
-                  className="object-cover object-top"
-                />
+                {/* Carousel images */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={heroSlide}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={heroImages[heroSlide].src}
+                      alt={heroImages[heroSlide].alt}
+                      fill
+                      className="object-cover object-top"
+                      priority={heroSlide === 0}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
+
+                {/* Top-left badge */}
                 <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur">
                   <PlayCircle className="h-4 w-4" />
                   Expert physiotherapy care
                 </div>
+
+                {/* Top-right card */}
                 <div className="animate-float-delayed absolute right-4 top-4 rounded-2xl border border-white/20 bg-white/90 p-4 shadow-xl">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Next slot</p>
                   <p className="mt-1 text-xl font-bold text-slate-900">Today · 3:00 PM</p>
                 </div>
-                <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">
+
+                {/* Bottom info card */}
+                <div className="absolute bottom-12 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-semibold text-white">Dr.Nishmitha.R</p>
@@ -380,6 +417,22 @@ export default function Hero() {
                       Available
                     </div>
                   </div>
+                </div>
+
+                {/* Carousel dots */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                  {heroImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setHeroSlide(i)}
+                      className={`rounded-full transition-all duration-300 ${
+                        i === heroSlide
+                          ? "h-2 w-6 bg-white"
+                          : "h-2 w-2 bg-white/40 hover:bg-white/60"
+                      }`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
