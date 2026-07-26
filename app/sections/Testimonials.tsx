@@ -1,8 +1,8 @@
 ﻿"use client";
-import { motion, useReducedMotion } from "framer-motion";
-import { Star, Quote, MapPin, BadgeCheck } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Star, Quote, MapPin, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
-import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer";
 
 const testimonials = [
   {
@@ -63,6 +63,48 @@ const testimonials = [
 
 export default function Testimonials() {
   const prefersReducedMotion = useReducedMotion();
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const next = useCallback(() => {
+    setDirection(1);
+    setCurrent((prev) => (prev + 1) % testimonials.length);
+  }, []);
+
+  const prev = useCallback(() => {
+    setDirection(-1);
+    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  }, []);
+
+  const goTo = useCallback((index: number) => {
+    setDirection(index > current ? 1 : -1);
+    setCurrent(index);
+  }, [current]);
+
+  // Auto-advance
+  useEffect(() => {
+    if (prefersReducedMotion || isPaused) return;
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, [next, prefersReducedMotion, isPaused]);
+
+  const variants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 300 : -300,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -300 : 300,
+      opacity: 0,
+    }),
+  };
+
+  const t = testimonials[current];
 
   return (
     <section className="relative overflow-hidden py-12 sm:py-20" id="stories">
@@ -83,54 +125,98 @@ export default function Testimonials() {
           </p>
         </ScrollReveal>
 
-        <StaggerContainer className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
-          {testimonials.map((t, i) => (
-            <StaggerItem key={t.name}>
-              <div className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)] transition-all duration-500 hover:-translate-y-1 hover:border-blue-200/60 hover:shadow-[0_20px_60px_rgba(59,130,246,0.1)] ${i === 0 ? "lg:row-span-2 lg:flex lg:flex-col lg:justify-between" : ""}`}>
-                {/* Top accent line */}
-                <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        {/* Carousel */}
+        <div
+          className="relative mx-auto max-w-3xl"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={current}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="relative overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-6 shadow-[0_4px_20px_rgba(15,23,42,0.04)] sm:p-8"
+            >
+              {/* Top accent line */}
+              <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
 
-                {/* Quote icon */}
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-500 transition-all duration-300 group-hover:bg-blue-100 group-hover:scale-110">
-                  <Quote className="h-4 w-4" />
-                </div>
+              {/* Quote icon */}
+              <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-500">
+                <Quote className="h-4 w-4" />
+              </div>
 
-                {/* Review text */}
-                <p className={`flex-1 text-slate-600 leading-7 ${i === 0 ? "text-base lg:text-lg" : "text-sm"}`}>
-                  &ldquo;{t.text}&rdquo;
-                </p>
+              {/* Review text */}
+              <p className="mb-6 text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+                &ldquo;{t.text}&rdquo;
+              </p>
 
-                {/* Condition + Duration tags */}
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
-                    <BadgeCheck className="h-3 w-3" />
-                    {t.condition}
-                  </span>
-                  <span className="inline-flex rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
-                    {t.duration}
-                  </span>
-                </div>
+              {/* Condition + Duration tags */}
+              <div className="mb-5 flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+                  <BadgeCheck className="h-3 w-3" />
+                  {t.condition}
+                </span>
+                <span className="inline-flex rounded-full border border-slate-100 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
+                  {t.duration}
+                </span>
+              </div>
 
-                {/* Author */}
-                <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
-                  <img src={t.img} alt={t.name} className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-slate-900">{t.name}</p>
-                    <div className="flex items-center gap-1 text-xs text-slate-400">
-                      <MapPin className="h-3 w-3" />
-                      {t.location}
-                    </div>
+              {/* Author */}
+              <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
+                <img src={t.img} alt={t.name} className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-slate-900">{t.name}</p>
+                  <div className="flex items-center gap-1 text-xs text-slate-400">
+                    <MapPin className="h-3 w-3" />
+                    {t.location}
                   </div>
-                  <div className="flex gap-0.5">
-                    {[...Array(t.rating)].map((_, si) => (
-                      <Star key={si} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
+                </div>
+                <div className="flex gap-0.5">
+                  {[...Array(t.rating)].map((_, si) => (
+                    <Star key={si} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  ))}
                 </div>
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation arrows */}
+          <button
+            onClick={prev}
+            className="absolute left-0 top-1/2 -translate-x-4 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-translate-x-6 sm:p-3"
+            aria-label="Previous testimonial"
+          >
+            <ChevronLeft className="h-4 w-4 text-slate-600 sm:h-5 sm:w-5" />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-0 top-1/2 translate-x-4 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:translate-x-6 sm:p-3"
+            aria-label="Next testimonial"
+          >
+            <ChevronRight className="h-4 w-4 text-slate-600 sm:h-5 sm:w-5" />
+          </button>
+
+          {/* Dots */}
+          <div className="mt-6 flex items-center justify-center gap-2">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === current
+                    ? "w-8 bg-blue-600"
+                    : "w-2 bg-slate-300 hover:bg-slate-400"
+                }`}
+                aria-label={`Go to testimonial ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

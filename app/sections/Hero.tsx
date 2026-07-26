@@ -105,7 +105,7 @@ export default function Hero() {
   const blogCount = results.filter((r) => r.type === "blog").length;
 
   return (
-    <section className="relative overflow-hidden pt-20 pb-12 sm:pt-28 sm:pb-20 md:pt-36 md:pb-28">
+    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-20 md:pt-36 md:pb-28">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
 
       {!prefersReducedMotion && (
@@ -138,10 +138,10 @@ export default function Hero() {
             </motion.div>
 
             {/* Mobile marquee */}
-            <div className="mb-6 md:hidden flex min-w-0 items-center gap-2 overflow-hidden rounded-full border border-blue-200/80 bg-white/70 py-2 shadow-sm backdrop-blur">
+            <div className="mb-6 md:hidden w-full flex items-center gap-2 overflow-hidden rounded-full border border-blue-200/80 bg-white/70 py-2 shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 flex-shrink-0 text-blue-500 ml-3" />
-              <div className="overflow-hidden flex-1 min-w-0">
-                <div className="animate-marquee whitespace-nowrap inline-flex items-center gap-6 overflow-hidden">
+              <div className="overflow-hidden flex-1 min-w-0 w-full">
+                <div className="animate-marquee whitespace-nowrap inline-flex items-center gap-6">
                   <span className="text-sm font-medium text-slate-700">Sports Rehabilitation</span>
                   <span className="text-sm font-medium text-slate-700">Ortho</span>
                   <span className="text-sm font-medium text-slate-700">Neuro</span>
@@ -235,7 +235,7 @@ export default function Hero() {
 
               {/* Search Results Dropdown */}
               {showResults && (
-                <div className="absolute left-0 right-0 sm:left-3 sm:right-3 top-full z-50 mt-2 max-h-[320px] w-full max-w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-[0_25px_80px_rgba(15,23,42,0.15)]">
+                <div className="absolute left-0 right-0 sm:left-3 sm:right-3 top-full z-50 mt-2 max-h-[320px] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-[0_25px_80px_rgba(15,23,42,0.15)]">
                   {searching ? (
                     <div className="flex items-center justify-center gap-2 px-4 py-8 text-sm text-slate-500">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
