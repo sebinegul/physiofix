@@ -1,45 +1,52 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { Mail, Lock, Loader2, AlertCircle, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, AlertCircle, Eye, EyeOff, ArrowLeft, Sparkles } from "lucide-react";
+
+/* ─── stagger animation variants ─── */
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.2 },
+  },
+};
+const staggerItem = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Invalid email or password");
-        return;
-      }
-
+      if (!res.ok) { setError(data.error || "Invalid email or password"); return; }
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      if (data.user.role === "admin") {
-        router.push("/dashboard");
-      } else {
-        router.push("/patient");
-      }
+      if (data.user.role === "admin") router.push("/dashboard");
+      else router.push("/patient");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -48,111 +55,173 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4">
-      {/* Background decorations */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-indigo-200/30 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-purple-100/20 blur-3xl" />
-      </div>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4 md:p-8">
+      {/* ─── Animated gradient background ─── */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(-45deg, #0c1a3a, #1e3a6e, #2563eb, #1e40af, #0f172a)", backgroundSize: "400% 400%", animation: "gradient-shift 15s ease infinite" }} />
 
-      {/* Back to home */}
-      <Link
-        href="/"
-        className="fixed top-6 left-6 flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-colors"
+      {/* ─── Floating glass orbs ─── */}
+      <div className="absolute -left-32 -top-32 h-[500px] w-[500px] animate-morph rounded-full bg-blue-500/15 blur-[100px]" />
+      <div className="absolute -bottom-40 -right-40 h-[450px] w-[450px] animate-morph rounded-full bg-indigo-500/15 blur-[100px]" />
+      <div className="absolute left-1/4 top-1/3 h-64 w-64 animate-float rounded-full bg-blue-400/10 blur-[60px]" />
+      <div className="absolute bottom-1/4 right-1/4 h-48 w-48 animate-float-delayed rounded-full bg-sky-400/10 blur-[50px]" />
+
+      {/* ─── Rotating decorative rings ─── */}
+      <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/[0.03]" />
+      <div className="absolute left-1/2 top-1/2 h-[450px] w-[450px] -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/[0.04]" style={{ animationDirection: "reverse", animationDuration: "25s" }} />
+
+      {/* ─── Back to home ─── */}
+      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+        <Link href="/" className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:text-white">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Link>
+      </motion.div>
+
+      {/* ─── Split-screen card ─── */}
+      <motion.div
+        initial={mounted ? false : { opacity: 0, y: 30, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full max-w-[900px] overflow-hidden rounded-3xl shadow-2xl shadow-slate-900/20 md:h-[560px] md:flex-row"
+        style={{ border: "1px solid rgba(255,255,255,0.15)" }}
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Home
-      </Link>
+        <div className="flex w-full flex-col md:flex-row">
+          {/* ─── Left Panel (blue gradient branding) ─── */}
+          <div className="relative hidden w-[45%] overflow-hidden bg-gradient-to-br from-slate-900 via-blue-800 to-blue-600 md:flex md:flex-col md:items-center md:justify-center">
+            {/* Animated gradient orbs */}
+            <div className="absolute -left-20 -top-20 h-72 w-72 animate-morph rounded-full bg-blue-400/20 blur-3xl" />
+            <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph rounded-full bg-indigo-500/20 blur-3xl" />
+            <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-sky-300/10 blur-2xl" />
+            <div className="absolute bottom-1/4 left-1/4 h-32 w-32 animate-float-delayed rounded-full bg-blue-300/10 blur-2xl" />
 
-      <div className="w-full max-w-md">
-        {/* Logo & branding */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl overflow-hidden shadow-lg shadow-blue-200/50 bg-white mb-4">
-            <Image
-              src="/logoShort.jpg"
-              alt="PhysioFix"
-              width={80}
-              height={80}
-              className="object-cover"
-              priority
-            />
+            {/* Rotating rings */}
+            <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" />
+            <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" style={{ animationDirection: "reverse", animationDuration: "30s" }} />
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center px-8 text-center">
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Welcome to</p>
+              <div className="mb-5 flex items-center justify-center">
+                <Image src="/logoShort.jpg" alt="PhysioFix" width={220} height={50} className="h-auto w-48 object-contain brightness-0 invert opacity-90" priority />
+              </div>
+              <div className="mb-5 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+              <p className="mb-2 text-sm leading-relaxed text-white/60">Expert physiotherapy care for your recovery journey</p>
+              <div className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <Sparkles className="h-3.5 w-3.5 text-blue-300" />
+                <span className="text-xs text-white/70">Your recovery is our priority</span>
+              </div>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-            Welcome Back
-          </h1>
-          <p className="text-slate-500 mt-1">
-            Sign in to your PhysioFix account
-          </p>
+
+          {/* ─── Mobile header ─── */}
+          <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-800 to-blue-600 md:hidden">
+            <div className="absolute -left-10 -top-10 h-40 w-40 animate-morph rounded-full bg-blue-400/20 blur-2xl" />
+            <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph rounded-full bg-indigo-500/20 blur-2xl" />
+            <div className="relative z-10">
+              <Image src="/logoShort.jpg" alt="PhysioFix" width={180} height={42} className="h-auto w-36 object-contain brightness-0 invert opacity-90" priority />
+            </div>
+          </div>
+
+          {/* ─── Right Panel (form) ─── */}
+          <div className="flex w-full flex-col justify-center bg-white px-8 py-10 md:w-[55%] md:px-12">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+              <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">Welcome Back</h1>
+              <p className="mt-2 text-[14px] text-gray-500">Sign in to access your PhysioFix account</p>
+            </motion.div>
+
+            {/* Step indicator */}
+            <div className="mt-6 flex items-center gap-2">
+              <div className="h-1.5 w-8 rounded-full bg-blue-600" />
+              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="mt-6">
+              <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-4">
+                {/* Error */}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} className="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/80 p-3.5 backdrop-blur-sm">
+                      <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                      <p className="text-sm text-red-600">{error}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Email */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="email" className="mb-1.5 block text-[13px] font-medium text-gray-600">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                  />
+                </motion.div>
+
+                {/* Password */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="password" className="mb-1.5 block text-[13px] font-medium text-gray-600">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="password" type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 pr-12 text-[15px] text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-blue-600" aria-label={showPassword ? "Hide password" : "Show password"}>
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Remember me + Forgot */}
+                <motion.div variants={staggerItem} className="flex items-center justify-between pt-1">
+                  <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-500">
+                    <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600/30" />
+                    Remember me
+                  </label>
+                  <button type="button" className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700">
+                    Forgot Password?
+                  </button>
+                </motion.div>
+
+                {/* Sign In button */}
+                <motion.div variants={staggerItem} className="pt-2">
+                  <button
+                    type="submit" disabled={loading}
+                    className="w-full rounded-2xl bg-gray-900 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <span className="relative flex items-center justify-center gap-2">
+                      {loading ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" />Signing in...</>
+                      ) : (
+                        <>Sign In</>
+                      )}
+                    </span>
+                  </button>
+                </motion.div>
+              </motion.div>
+            </form>
+
+            {/* Footer */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.5 }} className="mt-6 border-t border-gray-100 pt-5">
+              <p className="text-center text-sm text-gray-500">
+                Don&apos;t have an account?{" "}
+                <Link href="/" className="font-semibold text-blue-600 transition-colors hover:text-blue-700">
+                  Book a consultation
+                </Link>
+              </p>
+            </motion.div>
+          </div>
         </div>
+      </motion.div>
 
-        {/* Login card */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-blue-100/30 border border-white/60 p-8">
-          {error && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-6 text-sm">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-300/50 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-        </div>
-
-        <p className="text-center text-xs text-slate-400 mt-6">
-          &copy; {new Date().getFullYear()} PhysioFix. All rights reserved.
-        </p>
-      </div>
+      {/* ─── Subtle glow behind card ─── */}
+      <div className="absolute -inset-1 -z-10 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-blue-400/20 blur-xl opacity-50" />
     </div>
   );
 }

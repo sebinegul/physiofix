@@ -1,9 +1,9 @@
 ﻿"use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone } from "lucide-react";
+import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone, User, LogOut, ChevronDown, LayoutDashboard, Calendar, Dumbbell, Stethoscope, CircleUser } from "lucide-react";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
 
 const navLinks = [
@@ -18,19 +18,51 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userDropdown, setUserDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { openBookVisit } = useBookVisit();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
     setIsLoggedIn(!!token);
+    if (user) {
+      try {
+        const parsed = JSON.parse(user);
+        setUserName(parsed.name || "");
+        setUserRole(parsed.role || "");
+      } catch {}
+    }
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setUserName("");
+    setUserRole("");
+    window.location.href = "/";
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setUserDropdown(false);
+      }
+    };
+    if (userDropdown) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [userDropdown]);
 
   const handleBookVisit = () => {
     setOpen(false);
@@ -95,13 +127,99 @@ export default function Navbar() {
             <Phone className="h-3.5 w-3.5" />
             Call now
           </a>
-          <button
-            onClick={handleBookVisit}
-            className="btn-primary !px-4 !py-2 !text-sm"
-          >
-            <Sparkles className="h-4 w-4" />
-            Book visit
-          </button>
+
+          {isLoggedIn ? (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setUserDropdown(!userDropdown)}
+                className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2 transition hover:bg-white/15"
+              >
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-cyan-400">
+                  <User className="h-3.5 w-3.5 text-white" />
+                </div>
+                <span className="text-sm font-medium text-slate-200">
+                  {userName.split(" ")[0]}
+                </span>
+                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${userDropdown ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {userDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/95 shadow-2xl backdrop-blur-xl"
+                  >
+                    <div className="border-b border-white/10 px-4 py-3">
+                      <p className="text-sm font-medium text-white">{userName}</p>
+                      <p className="text-xs text-slate-400 capitalize">{userRole}</p>
+                    </div>
+                    <div className="p-1.5">
+                      <Link
+                        href={userRole === "admin" ? "/dashboard" : "/patient"}
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      >
+                        <LayoutDashboard className="h-4 w-4 text-blue-400" />
+                        My Dashboard
+                      </Link>
+                      <Link
+                        href="/patient/appointments"
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      >
+                        <Calendar className="h-4 w-4 text-emerald-400" />
+                        My Appointments
+                      </Link>
+                      <Link
+                        href="/patient/exercises"
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      >
+                        <Dumbbell className="h-4 w-4 text-orange-400" />
+                        My Exercises
+                      </Link>
+                      <Link
+                        href="/patient/consultations"
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      >
+                        <Stethoscope className="h-4 w-4 text-purple-400" />
+                        My Consultations
+                      </Link>
+                      <Link
+                        href="/patient/profile"
+                        onClick={() => setUserDropdown(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      >
+                        <CircleUser className="h-4 w-4 text-pink-400" />
+                        My Profile
+                      </Link>
+                    </div>
+                    <div className="border-t border-white/10 p-1.5">
+                      <button
+                        onClick={() => { handleLogout(); setUserDropdown(false); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <button
+              onClick={handleBookVisit}
+              className="btn-primary !px-4 !py-2 !text-sm"
+            >
+              <Sparkles className="h-4 w-4" />
+              Book visit
+            </button>
+          )}
         </div>
 
         <button
@@ -146,12 +264,32 @@ export default function Navbar() {
               <a href="tel:+918****2525" className="flex-1 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200">
                 Call now
               </a>
-              <button
-                onClick={handleBookVisit}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-3 text-center text-sm font-semibold text-white"
-              >
-                Book visit <MoveRight className="h-4 w-4" />
-              </button>
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href={userRole === "admin" ? "/dashboard" : "/patient"}
+                    onClick={() => setOpen(false)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => { handleLogout(); setOpen(false); }}
+                    className="flex items-center justify-center rounded-xl border border-white/15 px-3 py-3 text-slate-400 transition hover:text-white"
+                    title="Logout"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleBookVisit}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-3 text-center text-sm font-semibold text-white"
+                >
+                  Book visit <MoveRight className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </motion.div>
         )}

@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 import Script from "next/script";
 import { prisma } from "@/lib/prisma";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 import SiteShell from "./components/SiteShell";
 
@@ -16,6 +16,13 @@ const plusJakarta = Plus_Jakarta_Sans({
   display: "swap",
   variable: "--font-plus-jakarta",
   weight: ["400", "500", "600", "700", "800"],
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-dm-sans",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -112,7 +119,7 @@ export default async function RootLayout({
   const email = content.contact_email || "physiofix2525@gmail.com";
   const address = content.contact_address || "30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076";
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
+    <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${dmSans.variable}`}>
       <head>
         <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
         <link rel="manifest" href="/site.webmanifest" />

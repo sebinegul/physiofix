@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import {
   X,
   Loader2,
@@ -12,11 +13,13 @@ import {
   Check,
   CalendarDays,
   CalendarCheck,
-  Mail,
-  Lock,
+  AlertCircle,
   User,
   Phone,
-  AlertCircle,
+  Mail,
+  FileText,
+  Clock,
+  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
@@ -31,13 +34,16 @@ const APPOINTMENT_TYPES = [
   "General Consultation",
 ];
 
-const TIME_SLOTS = [
+const TIME_SLOTS_MORNING = [
   "9:00 AM",
   "9:30 AM",
   "10:00 AM",
   "10:30 AM",
   "11:00 AM",
   "11:30 AM",
+];
+
+const TIME_SLOTS_AFTERNOON = [
   "2:00 PM",
   "2:30 PM",
   "3:00 PM",
@@ -85,6 +91,28 @@ function formatDate(dateStr: string) {
   });
 }
 
+/* ─── stagger animation variants ─── */
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 8 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] as const },
+  },
+};
+
 /* ─── main component ─── */
 
 export default function BookVisitModal() {
@@ -95,7 +123,7 @@ export default function BookVisitModal() {
   // ---- state ----
   const [mode, setMode] = useState<Mode>("register");
   const [step, setStep] = useState<Step>(1);
-  const [direction, setDirection] = useState<1 | -1>(1); // 1 = forward, -1 = back
+  const [direction, setDirection] = useState<1 | -1>(1);
 
   // register form
   const [name, setName] = useState("");
@@ -108,6 +136,12 @@ export default function BookVisitModal() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState("");
+
+  // custom dropdown states
+  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
+  const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
+  const typeDropdownRef = useRef<HTMLDivElement>(null);
+  const timeDropdownRef = useRef<HTMLDivElement>(null);
 
   // login form
   const [loginEmail, setLoginEmail] = useState("");
@@ -124,8 +158,23 @@ export default function BookVisitModal() {
 
   const modalRef = useRef<HTMLDivElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
-  const firstSelectRef = useRef<HTMLSelectElement>(null);
+  const firstSelectRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  /* ─── close custom dropdowns on outside click ─── */
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (typeDropdownRef.current && !typeDropdownRef.current.contains(e.target as Node)) {
+        setTypeDropdownOpen(false);
+      }
+      if (timeDropdownRef.current && !timeDropdownRef.current.contains(e.target as Node)) {
+        setTimeDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   /* ─── detect login state on open ─── */
 
@@ -142,7 +191,7 @@ export default function BookVisitModal() {
     if (!isOpen) return;
     const token = localStorage.getItem("token");
     if (token) {
-      setMode("register"); // doesn't matter, step 2 doesn't show step 1
+      setMode("register");
       setStep(2);
     } else {
       setMode("register");
@@ -162,7 +211,7 @@ export default function BookVisitModal() {
         } else {
           firstSelectRef.current?.focus();
         }
-      }, 100);
+      }, 150);
       return () => clearTimeout(timer);
     } else {
       previousFocusRef.current?.focus();
@@ -231,6 +280,8 @@ export default function BookVisitModal() {
     setLoginEmail("");
     setLoginPassword("");
     setShowPassword(false);
+    setTypeDropdownOpen(false);
+    setTimeDropdownOpen(false);
     setErrors({});
     setLoading(false);
     setError(null);
@@ -244,7 +295,7 @@ export default function BookVisitModal() {
 
   /* ─── animation duration ─── */
 
-  const anim = prefersReducedMotion ? 0.01 : 0.25;
+  const anim = prefersReducedMotion ? 0.01 : 0.35;
 
   /* ─── validation: step 1 (register) ─── */
 
@@ -288,7 +339,6 @@ export default function BookVisitModal() {
     setLoading(true);
 
     try {
-      // 1) Register
       const res = await fetch("/api/book-consultation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -307,7 +357,6 @@ export default function BookVisitModal() {
 
       const generatedPassword: string = data.data.user.generatedPassword;
 
-      // 2) Auto-login to get JWT
       const loginRes = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -315,8 +364,6 @@ export default function BookVisitModal() {
       });
       const loginData = await loginRes.json();
       if (!loginRes.ok) {
-        // Registration succeeded but auto-login failed — still advance,
-        // but store the password so user can log in manually later
         setIsLoggedIn(false);
         setConfirmData({
           name: name.trim(),
@@ -335,7 +382,6 @@ export default function BookVisitModal() {
       localStorage.setItem("user", JSON.stringify(loginData.user));
       setIsLoggedIn(true);
 
-      // Store password for confirmation display
       setConfirmData({
         name: name.trim(),
         email: email.trim(),
@@ -393,7 +439,6 @@ export default function BookVisitModal() {
         return;
       }
 
-      // Merge appointment data into confirmation
       if (confirmData) {
         setConfirmData((prev) =>
           prev
@@ -408,7 +453,6 @@ export default function BookVisitModal() {
               }
         );
       } else {
-        // Logged-in user who skipped step 1
         const storedUser = localStorage.getItem("user");
         const user = storedUser ? JSON.parse(storedUser) : {};
         setConfirmData({
@@ -467,7 +511,6 @@ export default function BookVisitModal() {
       localStorage.setItem("user", JSON.stringify(data.user));
       setIsLoggedIn(true);
 
-      // Pre-fill confirm data with user info
       setConfirmData({
         name: data.user.name || "Patient",
         email: data.user.email || loginEmail.trim(),
@@ -525,32 +568,162 @@ export default function BookVisitModal() {
   /* ─── determine visible steps for indicator ─── */
 
   const totalSteps = 3;
-  const effectiveStep = mode === "login" ? step + 1 : step; // login skips visual step 1
+  const effectiveStep = mode === "login" ? step + 1 : step;
   const showIndicator = !confirmData || step !== 3;
-
-  /* ─── input class helper ─── */
-
-  const inputClass = (hasError?: string | boolean) =>
-    `w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20 ${
-      hasError && hasError !== ""
-        ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-        : "border-gray-200 focus:border-blue-400"
-    }`;
-
-  const selectClass = (hasError?: string | boolean) =>
-    `w-full appearance-none rounded-xl border bg-gray-50 px-4 py-3 pr-10 text-sm text-gray-900 outline-none transition focus:bg-white focus:ring-2 focus:ring-blue-500/20 ${
-      hasError && hasError !== ""
-        ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-        : "border-gray-200 focus:border-blue-500"
-    }`;
 
   /* ─── slide variants ─── */
 
   const slideVariants = {
-    enter: (d: number) => ({ x: d > 0 ? 80 : -80, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: number) => ({ x: d > 0 ? -80 : 80, opacity: 0 }),
+    enter: (d: number) => ({ x: d > 0 ? 60 : -60, opacity: 0, scale: 0.98 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0, scale: 0.98 }),
   };
+
+  /* ─── Custom Dropdown for Appointment Type ─── */
+
+  const TypeDropdown = () => (
+    <div ref={typeDropdownRef} className="relative">
+      <button
+        ref={firstSelectRef}
+        type="button"
+        onClick={() => {
+          setTypeDropdownOpen(!typeDropdownOpen);
+          if (errors.type) setErrors((p) => ({ ...p, type: undefined }));
+        }}
+        className={`flex w-full items-center justify-between rounded-2xl glass-input px-4 py-3.5 text-[15px] font-normal text-left outline-none ${
+          errors.type ? "glass-input-error" : ""
+        } ${type ? "text-gray-900" : "text-gray-400"}`}
+      >
+        <span>{type || "Select appointment type"}</span>
+        <ChevronRight
+          className={`h-4 w-4 text-primary-500 transition-transform duration-300 ${
+            typeDropdownOpen ? "rotate-90" : ""
+          }`}
+        />
+      </button>
+      <AnimatePresence>
+        {typeDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-primary-100/60 bg-white shadow-xl shadow-primary-500/5"
+          >
+            <div className="py-1.5">
+              {APPOINTMENT_TYPES.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => {
+                    setType(t);
+                    setTypeDropdownOpen(false);
+                    if (errors.type) setErrors((p) => ({ ...p, type: undefined }));
+                  }}
+                  className={`w-full px-4 py-2.5 text-left text-[15px] transition-all duration-200 ${
+                    type === t
+                      ? "bg-primary-50 font-medium text-primary-600"
+                      : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {errors.type && (
+        <p className="mt-1.5 text-xs text-red-500">{errors.type}</p>
+      )}
+    </div>
+  );
+
+  /* ─── Custom Dropdown for Time Slot ─── */
+
+  const TimeDropdown = () => (
+    <div ref={timeDropdownRef} className="relative">
+      <button
+        type="button"
+        onClick={() => {
+          setTimeDropdownOpen(!timeDropdownOpen);
+          if (errors.time) setErrors((p) => ({ ...p, time: undefined }));
+        }}
+        className={`flex w-full items-center justify-between rounded-2xl glass-input px-4 py-3.5 text-[15px] font-normal text-left outline-none ${
+          errors.time ? "glass-input-error" : ""
+        } ${time ? "text-gray-900" : "text-gray-400"}`}
+      >
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-primary-500" />
+          <span>{time || "Select a time slot"}</span>
+        </div>
+        <ChevronRight
+          className={`h-4 w-4 text-primary-500 transition-transform duration-300 ${
+            timeDropdownOpen ? "rotate-90" : ""
+          }`}
+        />
+      </button>
+      <AnimatePresence>
+        {timeDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute z-50 mt-2 max-h-60 w-full overflow-y-auto rounded-2xl border border-primary-100/60 bg-white shadow-xl shadow-primary-500/5 modal-scroll"
+          >
+            <div className="p-1.5">
+              <p className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-500/70">
+                Morning
+              </p>
+              {TIME_SLOTS_MORNING.map((slot) => (
+                <button
+                  key={slot}
+                  type="button"
+                  onClick={() => {
+                    setTime(slot);
+                    setTimeDropdownOpen(false);
+                    if (errors.time) setErrors((p) => ({ ...p, time: undefined }));
+                  }}
+                  className={`w-full rounded-xl px-4 py-2 text-left text-[14px] transition-all duration-200 ${
+                    time === slot
+                      ? "bg-primary-50 font-medium text-primary-600"
+                      : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
+                  }`}
+                >
+                  {slot}
+                </button>
+              ))}
+              <p className="mt-1 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-500/70">
+                Afternoon
+              </p>
+              {TIME_SLOTS_AFTERNOON.map((slot) => (
+                <button
+                  key={slot}
+                  type="button"
+                  onClick={() => {
+                    setTime(slot);
+                    setTimeDropdownOpen(false);
+                    if (errors.time) setErrors((p) => ({ ...p, time: undefined }));
+                  }}
+                  className={`w-full rounded-xl px-4 py-2 text-left text-[14px] transition-all duration-200 ${
+                    time === slot
+                      ? "bg-primary-50 font-medium text-primary-600"
+                      : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
+                  }`}
+                >
+                  {slot}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {errors.time && (
+        <p className="mt-1.5 text-xs text-red-500">{errors.time}</p>
+      )}
+    </div>
+  );
 
   /* ─── render ─── */
 
@@ -562,7 +735,7 @@ export default function BookVisitModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: anim }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-md"
           onClick={handleBackdropClick}
           role="dialog"
           aria-modal="true"
@@ -573,7 +746,7 @@ export default function BookVisitModal() {
             initial={
               prefersReducedMotion
                 ? { opacity: 1 }
-                : { opacity: 0, scale: 0.95, y: 20 }
+                : { opacity: 0, scale: 0.94, y: 24 }
             }
             animate={
               prefersReducedMotion
@@ -583,136 +756,186 @@ export default function BookVisitModal() {
             exit={
               prefersReducedMotion
                 ? { opacity: 0 }
-                : { opacity: 0, scale: 0.95, y: 20 }
+                : { opacity: 0, scale: 0.94, y: 24 }
             }
-            transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg overflow-hidden rounded-[1.5rem] border border-white/20 bg-white/80 shadow-2xl shadow-blue-500/10 backdrop-blur-xl max-h-[90vh] modal-scroll"
+            transition={{
+              duration: 0.45,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className="relative flex w-full max-w-[900px] flex-col overflow-hidden rounded-3xl shadow-2xl shadow-slate-900/20 md:h-[560px] md:flex-row"
+            style={{
+              border: "1px solid rgba(255,255,255,0.15)",
+            }}
           >
-            {/* ─── Header (not on confirmation) ─── */}
-            {step !== 3 && (
-              <div className="relative bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-6 py-5 sm:px-8">
-                <div className="absolute inset-0 bg-white/10" />
-                <div className="relative flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
-                      {mode === "login" ? (
-                        <Lock className="h-5 w-5 text-white" />
-                      ) : step === 1 ? (
-                        <CalendarDays className="h-5 w-5 text-white" />
-                      ) : (
-                        <CalendarCheck className="h-5 w-5 text-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold text-white sm:text-xl">
-                        {mode === "login"
-                          ? "Welcome Back"
-                          : step === 1
-                            ? "Book a Visit"
-                            : "Schedule Your Visit"}
-                      </h2>
-                      <p className="text-sm text-white/80">
-                        {mode === "login"
-                          ? "Sign in to your account"
-                          : step === 1
-                            ? "Tell us about yourself"
-                            : "Pick a time that works for you"}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleClose}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white transition hover:bg-white/30 backdrop-blur"
-                    aria-label="Close modal"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+            {/* ─── Left Panel (decorative — animated gradient with glass orbs) ─── */}
+            <div className="relative hidden w-[45%] overflow-hidden bg-gradient-to-br from-slate-900 via-primary-800 to-primary-600 md:flex md:flex-col md:items-center md:justify-center">
+              {/* Animated gradient orbs */}
+              <div className="absolute -left-20 -top-20 h-72 w-72 animate-morph rounded-full bg-primary-400/20 blur-3xl" />
+              <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph-reverse rounded-full bg-accent/20 blur-3xl" />
+              <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-cyan-300/10 blur-2xl" />
+              <div className="absolute bottom-1/4 left-1/4 h-32 w-32 animate-float-delayed rounded-full bg-emerald-400/10 blur-2xl" />
+
+              {/* Rotating ring decoration */}
+              <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" />
+              <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" style={{ animationDirection: "reverse", animationDuration: "30s" }} />
+
+              {/* Content */}
+              <div className="relative z-10 flex flex-col items-center px-8 text-center">
+                <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
+                  Welcome to
+                </p>
+
+                {/* PhysioFix Logo */}
+                <div className="mb-5 flex items-center justify-center">
+                  <Image
+                    src="/logoShort.jpg"
+                    alt="PhysioFix"
+                    width={220}
+                    height={50}
+                    className="h-auto w-48 object-contain brightness-0 invert opacity-90"
+                    priority
+                  />
+                </div>
+
+                <div className="mb-5 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+                <p className="mb-2 text-sm leading-relaxed text-white/60">
+                  Expert physiotherapy care for your recovery journey
+                </p>
+                <div className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                  <Sparkles className="h-3.5 w-3.5 text-primary-300" />
+                  <span className="text-xs text-white/70">Your recovery is our priority</span>
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* ─── Step indicator (not on confirmation) ─── */}
-            {step !== 3 && (
-              <div className="flex items-center justify-center gap-0 px-8 pt-5">
-                {[1, 2, 3].map((s, i) => {
-                  const visualStep =
-                    mode === "login" ? s + 1 : s;
-                  const isCompleted = step > s || (mode === "login" && step >= 2 && s <= 2);
-                  const isActive =
-                    (mode === "register" && step === s) ||
-                    (mode === "login" && step === 2 && s === 2) ||
-                    (mode === "login" && step === 1 && s === 1 && false); // login step = visual step 2
-
-                  // Simplified: for register mode, step directly maps
-                  // For login mode, step 2 maps to visual step 2
-                  const effectiveCurrentStep = mode === "login" ? step + 1 : step;
-
-                  const circleCompleted = effectiveCurrentStep > s;
-                  const circleActive = effectiveCurrentStep === s;
-
-                  return (
-                    <div key={s} className="flex items-center">
-                      {/* circle */}
-                      <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                          circleCompleted
-                            ? "bg-green-500 text-white"
-                            : circleActive
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-gray-400"
-                        }`}
-                      >
-                        {circleCompleted ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          s
-                        )}
-                      </div>
-                      {/* connecting line */}
-                      {i < 2 && (
-                        <div
-                          className={`h-0.5 w-10 sm:w-14 ${
-                            effectiveCurrentStep > s + 1
-                              ? "bg-green-500"
-                              : effectiveCurrentStep === s + 1
-                                ? "bg-gradient-to-r from-green-500 to-gray-200"
-                                : "bg-gray-200"
-                          }`}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
+            {/* Mobile header */}
+            <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-primary-800 to-primary-600 md:hidden">
+              <div className="absolute -left-10 -top-10 h-40 w-40 animate-morph rounded-full bg-primary-400/20 blur-2xl" />
+              <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph-reverse rounded-full bg-accent/20 blur-2xl" />
+              <div className="relative z-10">
+                <Image
+                  src="/logoShort.jpg"
+                  alt="PhysioFix"
+                  width={180}
+                  height={42}
+                  className="h-auto w-36 object-contain brightness-0 invert opacity-90"
+                  priority
+                />
               </div>
-            )}
+            </div>
 
-            {/* ─── Content area with AnimatePresence for step transitions ─── */}
-            <div className="relative overflow-hidden">
-              <AnimatePresence mode="wait" custom={direction}>
-                {/* ─── STEP 1: Register / Login ─── */}
-                {step === 1 && mode === "register" && (
-                  <motion.form
-                    key="step1-register"
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
-                    onSubmit={handleStep1Submit}
-                    className="p-6 sm:p-8"
+            {/* ─── Right Panel (form) ─── */}
+            <div className="relative flex w-full flex-col bg-white/95 backdrop-blur-xl md:w-[55%]">
+              {/* Close button */}
+              <button
+                onClick={handleClose}
+                className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-xl text-gray-400 transition-all duration-300 hover:bg-gray-100 hover:text-gray-600"
+                aria-label="Close modal"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              {/* Header area */}
+              {step !== 3 && (
+                <div className="px-8 pt-6 pb-2 md:px-8">
+                  <motion.h2
+                    key={`title-${step}-${mode}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-heading text-[1.65rem] font-bold text-gray-900"
                   >
-                    <div className="space-y-4">
-                      {/* Name */}
-                      <div>
-                        <label
-                          htmlFor="bv-name"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Full Name <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    {mode === "login"
+                      ? "Welcome Back"
+                      : step === 1
+                        ? "Book a Visit"
+                        : "Schedule Your Visit"}
+                  </motion.h2>
+                  <motion.p
+                    key={`subtitle-${step}-${mode}`}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-1 text-[14px] text-gray-500"
+                  >
+                    {mode === "login"
+                      ? "Sign in to your account"
+                      : step === 1
+                        ? "Tell us about yourself"
+                        : "Pick a time that works for you"}
+                  </motion.p>
+
+                  {/* Step indicator with progress bar */}
+                  {showIndicator && (
+                    <div className="mt-4 flex items-center gap-3">
+                      {[1, 2, 3].map((s) => {
+                        const circleCompleted = effectiveStep > s;
+                        const circleActive = effectiveStep === s;
+                        return (
+                          <div key={s} className="flex items-center gap-1.5">
+                            <div
+                              className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold transition-all duration-400 ${
+                                circleCompleted
+                                  ? "bg-gradient-to-br from-primary-500 to-accent text-white shadow-md shadow-primary-500/25"
+                                  : circleActive
+                                    ? "bg-primary-500 text-white shadow-md shadow-primary-500/25"
+                                    : "bg-gray-100 text-gray-400"
+                              }`}
+                            >
+                              {circleCompleted ? (
+                                <Check className="h-3 w-3" />
+                              ) : (
+                                s
+                              )}
+                            </div>
+                            {s < 3 && (
+                              <div
+                                className={`h-0.5 w-8 rounded-full transition-all duration-500 ${
+                                  effectiveStep > s
+                                    ? "bg-gradient-to-r from-primary-500 to-accent"
+                                    : "bg-gray-100"
+                                }`}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── Scrollable content area ─── */}
+              <div className="flex-1 overflow-y-auto px-8 py-5 md:px-8 md:py-5 modal-scroll">
+                <AnimatePresence mode="wait" custom={direction}>
+                  {/* ─── STEP 1: Register / Login ─── */}
+                  {step === 1 && mode === "register" && (
+                    <motion.form
+                      key="step1-register"
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
+                      onSubmit={handleStep1Submit}
+                    >
+                      <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="show"
+                        className="space-y-3.5"
+                      >
+                        {/* Name */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-name"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <User className="h-3.5 w-3.5 text-primary-500" />
+                            Full Name <span className="text-red-500">*</span>
+                          </label>
                           <input
                             ref={firstInputRef}
                             id="bv-name"
@@ -723,25 +946,25 @@ export default function BookVisitModal() {
                               if (errors.name) setErrors((p) => ({ ...p, name: undefined }));
                             }}
                             autoComplete="name"
-                            className={`${inputClass(errors.name)} pl-10`}
+                            className={`w-full rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none placeholder:text-gray-400 ${
+                              errors.name ? "glass-input-error" : ""
+                            }`}
                             placeholder="Enter your full name"
                           />
-                        </div>
-                        {errors.name && (
-                          <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>
-                        )}
-                      </div>
+                          {errors.name && (
+                            <p className="mt-1.5 text-xs text-red-500">{errors.name}</p>
+                          )}
+                        </motion.div>
 
-                      {/* Phone */}
-                      <div>
-                        <label
-                          htmlFor="bv-phone"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Phone Number <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        {/* Phone */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-phone"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <Phone className="h-3.5 w-3.5 text-primary-500" />
+                            Phone Number <span className="text-red-500">*</span>
+                          </label>
                           <input
                             id="bv-phone"
                             type="tel"
@@ -751,25 +974,25 @@ export default function BookVisitModal() {
                               if (errors.phone) setErrors((p) => ({ ...p, phone: undefined }));
                             }}
                             autoComplete="tel"
-                            className={`${inputClass(errors.phone)} pl-10`}
+                            className={`w-full rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none placeholder:text-gray-400 ${
+                              errors.phone ? "glass-input-error" : ""
+                            }`}
                             placeholder="+91 98765 43210"
                           />
-                        </div>
-                        {errors.phone && (
-                          <p className="mt-1.5 text-xs text-red-500">{errors.phone}</p>
-                        )}
-                      </div>
+                          {errors.phone && (
+                            <p className="mt-1.5 text-xs text-red-500">{errors.phone}</p>
+                          )}
+                        </motion.div>
 
-                      {/* Email */}
-                      <div>
-                        <label
-                          htmlFor="bv-email"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Email Address <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        {/* Email */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-email"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <Mail className="h-3.5 w-3.5 text-primary-500" />
+                            Email Address <span className="text-red-500">*</span>
+                          </label>
                           <input
                             id="bv-email"
                             type="email"
@@ -779,108 +1002,117 @@ export default function BookVisitModal() {
                               if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
                             }}
                             autoComplete="email"
-                            className={`${inputClass(errors.email)} pl-10`}
+                            className={`w-full rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none placeholder:text-gray-400 ${
+                              errors.email ? "glass-input-error" : ""
+                            }`}
                             placeholder="you@example.com"
                           />
-                        </div>
-                        {errors.email && (
-                          <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>
+                          {errors.email && (
+                            <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>
+                          )}
+                        </motion.div>
+
+                        {/* Pain description */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-notes"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <FileText className="h-3.5 w-3.5 text-primary-500" />
+                            Pain / injury description
+                          </label>
+                          <p className="mb-1 text-[11px] text-gray-400">Optional</p>
+                          <textarea
+                            id="bv-notes"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            rows={3}
+                            className="w-full resize-none rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none placeholder:text-gray-400"
+                            placeholder="e.g. I've been having lower back pain for 2 weeks..."
+                          />
+                        </motion.div>
+
+                        {/* Error */}
+                        {error && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/80 p-3.5 backdrop-blur-sm"
+                          >
+                            <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                            <p className="text-sm text-red-600">{error}</p>
+                          </motion.div>
                         )}
-                      </div>
 
-                      {/* Pain description */}
-                      <div>
-                        <label
-                          htmlFor="bv-notes"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
+                        {/* Already have an account? */}
+                        <p className="text-center text-[13px] text-gray-500">
+                          Already have an account?{" "}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setErrors({});
+                              setError(null);
+                              setMode("login");
+                            }}
+                            className="font-semibold text-primary-600 transition-colors hover:text-primary-700"
+                          >
+                            Login
+                          </button>
+                        </p>
+
+                        {/* Next button */}
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="btn-premium w-full"
                         >
-                          Pain / injury description
-                        </label>
-                        <p className="mb-1.5 text-xs text-gray-400">Optional</p>
-                        <textarea
-                          id="bv-notes"
-                          value={notes}
-                          onChange={(e) => setNotes(e.target.value)}
-                          rows={3}
-                          className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                          placeholder="e.g. I've been having lower back pain for 2 weeks..."
-                        />
-                      </div>
-                    </div>
+                          {loading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Creating account...
+                            </>
+                          ) : (
+                            <>
+                              Continue
+                              <ChevronRight className="h-4 w-4" />
+                            </>
+                          )}
+                        </button>
 
-                    {/* Error */}
-                    {error && (
-                      <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
-                        <p className="text-sm text-red-600">{error}</p>
-                      </div>
-                    )}
+                        <p className="text-center text-[11px] text-gray-400">
+                          Your account will be created with an auto-generated password.
+                        </p>
+                      </motion.div>
+                    </motion.form>
+                  )}
 
-                    {/* Already have an account? */}
-                    <p className="mt-4 text-center text-sm text-gray-500">
-                      Already have an account?{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setErrors({});
-                          setError(null);
-                          setMode("login");
-                        }}
-                        className="font-semibold text-blue-600 transition hover:text-blue-700"
-                      >
-                        Login
-                      </button>
-                    </p>
-
-                    {/* Next button */}
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:shadow-xl hover:shadow-blue-500/30 disabled:cursor-not-allowed disabled:opacity-70"
+                  {/* ─── Login view ─── */}
+                  {step === 1 && mode === "login" && (
+                    <motion.form
+                      key="step1-login"
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
+                      onSubmit={handleLoginSubmit}
                     >
-                      {loading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Creating account...
-                        </>
-                      ) : (
-                        <>
-                          Next
-                          <ChevronRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </button>
-
-                    <p className="mt-3 text-center text-xs text-gray-400">
-                      Your account will be created with an auto-generated password.
-                    </p>
-                  </motion.form>
-                )}
-
-                {/* ─── Login view (inside the same modal) ─── */}
-                {step === 1 && mode === "login" && (
-                  <motion.form
-                    key="step1-login"
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
-                    onSubmit={handleLoginSubmit}
-                    className="p-6 sm:p-8"
-                  >
-                    <div className="space-y-4">
-                      {/* Email */}
-                      <div>
-                        <label
-                          htmlFor="bv-login-email"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Email Address <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                      <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="show"
+                        className="space-y-3.5"
+                      >
+                        {/* Email */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-login-email"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <Mail className="h-3.5 w-3.5 text-primary-500" />
+                            Email Address <span className="text-red-500">*</span>
+                          </label>
                           <input
                             ref={firstInputRef}
                             id="bv-login-email"
@@ -891,454 +1123,394 @@ export default function BookVisitModal() {
                               if (errors.email) setErrors((p) => ({ ...p, email: undefined }));
                             }}
                             autoComplete="email"
-                            className={`${inputClass(errors.email)} pl-10`}
+                            className={`w-full rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none placeholder:text-gray-400 ${
+                              errors.email ? "glass-input-error" : ""
+                            }`}
                             placeholder="you@example.com"
                           />
-                        </div>
-                        {errors.email && (
-                          <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>
-                        )}
-                      </div>
+                          {errors.email && (
+                            <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>
+                          )}
+                        </motion.div>
 
-                      {/* Password */}
-                      <div>
-                        <label
-                          htmlFor="bv-login-password"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Password <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                          <input
-                            id="bv-login-password"
-                            type={showPassword ? "text" : "password"}
-                            value={loginPassword}
-                            onChange={(e) => {
-                              setLoginPassword(e.target.value);
-                              if (errors.password) setErrors((p) => ({ ...p, password: undefined }));
-                            }}
-                            autoComplete="current-password"
-                            className={`${inputClass(errors.password)} pl-10 pr-10`}
-                            placeholder="••••••••"
-                          />
+                        {/* Password */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-login-password"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <svg className="h-3.5 w-3.5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Password <span className="text-red-500">*</span>
+                          </label>
+                          <div className="relative">
+                            <input
+                              id="bv-login-password"
+                              type={showPassword ? "text" : "password"}
+                              value={loginPassword}
+                              onChange={(e) => {
+                                setLoginPassword(e.target.value);
+                                if (errors.password) setErrors((p) => ({ ...p, password: undefined }));
+                              }}
+                              autoComplete="current-password"
+                              className={`w-full rounded-2xl glass-input px-4 py-3 pr-11 text-[15px] text-gray-900 outline-none placeholder:text-gray-400 ${
+                                errors.password ? "glass-input-error" : ""
+                              }`}
+                              placeholder="Enter your password"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-primary-500"
+                              aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                              {showPassword ? (
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                              ) : (
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                              )}
+                            </button>
+                          </div>
+                          {errors.password && (
+                            <p className="mt-1.5 text-xs text-red-500">{errors.password}</p>
+                          )}
+                        </motion.div>
+
+                        {/* Error */}
+                        {error && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/80 p-3.5 backdrop-blur-sm"
+                          >
+                            <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                            <p className="text-sm text-red-600">{error}</p>
+                          </motion.div>
+                        )}
+
+                        {/* Back to registration */}
+                        <p className="text-center text-[13px] text-gray-500">
+                          Don&apos;t have an account?{" "}
                           <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-gray-600"
-                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            onClick={() => {
+                              setErrors({});
+                              setError(null);
+                              setMode("register");
+                            }}
+                            className="font-semibold text-primary-600 transition-colors hover:text-primary-700"
                           >
-                            {showPassword ? (
-                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                              </svg>
+                            Register
+                          </button>
+                        </p>
+
+                        {/* Sign In button */}
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="btn-premium w-full"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Signing in...
+                            </>
+                          ) : (
+                            "Sign In"
+                          )}
+                        </button>
+                      </motion.div>
+                    </motion.form>
+                  )}
+
+                  {/* ─── STEP 2: Schedule ─── */}
+                  {step === 2 && (
+                    <motion.form
+                      key="step2"
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
+                      onSubmit={handleStep2Submit}
+                    >
+                      <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="show"
+                        className="space-y-3.5"
+                      >
+                        {/* Appointment Type — custom dropdown */}
+                        <motion.div variants={staggerItem}>
+                          <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600">
+                            <CalendarCheck className="h-3.5 w-3.5 text-primary-500" />
+                            Appointment Type <span className="text-red-500">*</span>
+                          </label>
+                          <TypeDropdown />
+                        </motion.div>
+
+                        {/* Date */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-date"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <CalendarDays className="h-3.5 w-3.5 text-primary-500" />
+                            Preferred Date <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            id="bv-date"
+                            type="date"
+                            value={date}
+                            onChange={(e) => {
+                              setDate(e.target.value);
+                              if (errors.date) setErrors((p) => ({ ...p, date: undefined }));
+                            }}
+                            min={todayStr()}
+                            className={`w-full rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none ${
+                              errors.date ? "glass-input-error" : ""
+                            }`}
+                          />
+                          {errors.date && (
+                            <p className="mt-1.5 text-xs text-red-500">{errors.date}</p>
+                          )}
+                        </motion.div>
+
+                        {/* Time — custom dropdown */}
+                        <motion.div variants={staggerItem}>
+                          <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600">
+                            <Clock className="h-3.5 w-3.5 text-primary-500" />
+                            Preferred Time <span className="text-red-500">*</span>
+                          </label>
+                          <TimeDropdown />
+                        </motion.div>
+
+                        {/* Additional Notes */}
+                        <motion.div variants={staggerItem}>
+                          <label
+                            htmlFor="bv-additional-notes"
+                            className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
+                          >
+                            <FileText className="h-3.5 w-3.5 text-primary-500" />
+                            Additional Notes
+                          </label>
+                          <p className="mb-1 text-[11px] text-gray-400">Optional</p>
+                          <textarea
+                            id="bv-additional-notes"
+                            value={additionalNotes}
+                            onChange={(e) => setAdditionalNotes(e.target.value)}
+                            rows={3}
+                            className="w-full resize-none rounded-2xl glass-input px-4 py-3 text-[15px] text-gray-900 outline-none placeholder:text-gray-400"
+                            placeholder="Any specific concerns or requests..."
+                          />
+                        </motion.div>
+
+                        {/* Error */}
+                        {error && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/80 p-3.5 backdrop-blur-sm"
+                          >
+                            <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+                            <p className="text-sm text-red-600">{error}</p>
+                          </motion.div>
+                        )}
+
+                        {/* Buttons */}
+                        <div className="flex gap-3 pt-1">
+                          <button
+                            type="button"
+                            onClick={goBack}
+                            className="btn-ghost-premium"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                            Back
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className="btn-premium flex-1"
+                          >
+                            {loading ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Booking...
+                              </>
                             ) : (
-                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
+                              <>
+                                Book Appointment
+                                <ChevronRight className="h-4 w-4" />
+                              </>
                             )}
                           </button>
                         </div>
-                        {errors.password && (
-                          <p className="mt-1.5 text-xs text-red-500">{errors.password}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Error */}
-                    {error && (
-                      <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
-                        <p className="text-sm text-red-600">{error}</p>
-                      </div>
-                    )}
-
-                    {/* Back to registration */}
-                    <p className="mt-4 text-center text-sm text-gray-500">
-                      Don&apos;t have an account?{" "}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setErrors({});
-                          setError(null);
-                          setMode("register");
-                        }}
-                        className="font-semibold text-blue-600 transition hover:text-blue-700"
-                      >
-                        Register
-                      </button>
-                    </p>
-
-                    {/* Sign In button */}
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:shadow-xl hover:shadow-blue-500/30 disabled:cursor-not-allowed disabled:opacity-70"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Signing in...
-                        </>
-                      ) : (
-                        "Sign In"
-                      )}
-                    </button>
-                  </motion.form>
-                )}
-
-                {/* ─── STEP 2: Schedule ─── */}
-                {step === 2 && (
-                  <motion.form
-                    key="step2"
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
-                    onSubmit={handleStep2Submit}
-                    className="p-6 sm:p-8"
-                  >
-                    <div className="space-y-4">
-                      {/* Appointment Type */}
-                      <div>
-                        <label
-                          htmlFor="bv-type"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Appointment Type <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <select
-                            ref={firstSelectRef}
-                            id="bv-type"
-                            value={type}
-                            onChange={(e) => {
-                              setType(e.target.value);
-                              if (errors.type) setErrors((p) => ({ ...p, type: undefined }));
-                            }}
-                            className={selectClass(errors.type)}
-                          >
-                            <option value="">Select appointment type</option>
-                            {APPOINTMENT_TYPES.map((t) => (
-                              <option key={t} value={t}>
-                                {t}
-                              </option>
-                            ))}
-                          </select>
-                          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                            <svg
-                              className="h-4 w-4 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                        {errors.type && (
-                          <p className="mt-1 text-xs text-red-500">{errors.type}</p>
-                        )}
-                      </div>
-
-                      {/* Date */}
-                      <div>
-                        <label
-                          htmlFor="bv-date"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Preferred Date <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          id="bv-date"
-                          type="date"
-                          value={date}
-                          onChange={(e) => {
-                            setDate(e.target.value);
-                            if (errors.date) setErrors((p) => ({ ...p, date: undefined }));
-                          }}
-                          min={todayStr()}
-                          className={inputClass(errors.date)}
-                        />
-                        {errors.date && (
-                          <p className="mt-1 text-xs text-red-500">{errors.date}</p>
-                        )}
-                      </div>
-
-                      {/* Time */}
-                      <div>
-                        <label
-                          htmlFor="bv-time"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Preferred Time <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <select
-                            id="bv-time"
-                            value={time}
-                            onChange={(e) => {
-                              setTime(e.target.value);
-                              if (errors.time) setErrors((p) => ({ ...p, time: undefined }));
-                            }}
-                            className={selectClass(errors.time)}
-                          >
-                            <option value="">Select a time slot</option>
-                            <optgroup label="Morning">
-                              {TIME_SLOTS.slice(0, 6).map((slot) => (
-                                <option key={slot} value={slot}>
-                                  {slot}
-                                </option>
-                              ))}
-                            </optgroup>
-                            <optgroup label="Afternoon">
-                              {TIME_SLOTS.slice(6).map((slot) => (
-                                <option key={slot} value={slot}>
-                                  {slot}
-                                </option>
-                              ))}
-                            </optgroup>
-                          </select>
-                          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                            <svg
-                              className="h-4 w-4 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                        {errors.time && (
-                          <p className="mt-1 text-xs text-red-500">{errors.time}</p>
-                        )}
-                      </div>
-
-                      {/* Additional Notes */}
-                      <div>
-                        <label
-                          htmlFor="bv-additional-notes"
-                          className="mb-1.5 block text-sm font-medium text-gray-700"
-                        >
-                          Additional Notes
-                        </label>
-                        <p className="mb-1.5 text-xs text-gray-400">Optional</p>
-                        <textarea
-                          id="bv-additional-notes"
-                          value={additionalNotes}
-                          onChange={(e) => setAdditionalNotes(e.target.value)}
-                          rows={3}
-                          className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                          placeholder="Any specific concerns or requests..."
-                        />
-                      </div>
-                    </div>
-
-                    {/* Error */}
-                    {error && (
-                      <div className="mt-4 flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 p-3">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
-                        <p className="text-sm text-red-600">{error}</p>
-                      </div>
-                    )}
-
-                    {/* Buttons */}
-                    <div className="mt-5 flex gap-3">
-                      <button
-                        type="button"
-                        onClick={goBack}
-                        className="flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:shadow-xl hover:shadow-blue-500/30 disabled:cursor-not-allowed disabled:opacity-70"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Booking...
-                          </>
-                        ) : (
-                          <>
-                            Book Appointment
-                            <ChevronRight className="h-4 w-4" />
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </motion.form>
-                )}
-
-                {/* ─── STEP 3: Confirmation ─── */}
-                {step === 3 && confirmData && (
-                  <motion.div
-                    key="step3"
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
-                    className="p-6 sm:p-8"
-                  >
-                    {/* Close button for step 3 */}
-                    <button
-                      onClick={handleClose}
-                      className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200 hover:text-gray-700"
-                      aria-label="Close modal"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-
-                    <div className="mb-6 flex flex-col items-center text-center">
-                      <motion.div
-                        initial={prefersReducedMotion ? {} : { scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 15,
-                          delay: 0.1,
-                        }}
-                        className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100"
-                      >
-                        <CheckCircle2 className="h-8 w-8 text-emerald-600" />
                       </motion.div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        Your visit is booked!
-                      </h3>
-                      <p className="mt-2 text-sm text-gray-500">
-                        We&apos;ll confirm your appointment shortly. You&apos;ll receive an email with the details.
-                      </p>
-                    </div>
+                    </motion.form>
+                  )}
 
-                    {/* Password card (new users only) */}
-                    {confirmData.generatedPassword && (
-                      <div className="mb-4 rounded-xl border border-blue-100 bg-blue-50/50 p-5">
-                        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-blue-600">
-                          Your Login Credentials
-                        </p>
-                        <div className="space-y-3">
-                          <div>
-                            <p className="text-xs text-gray-500">Email</p>
-                            <p className="font-medium text-gray-900">
-                              {confirmData.email}
+                  {/* ─── STEP 3: Confirmation ─── */}
+                  {step === 3 && confirmData && (
+                    <motion.div
+                      key="step3"
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: anim, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        animate="show"
+                        className="flex flex-col"
+                      >
+                        {/* Success header */}
+                        <motion.div variants={staggerItem} className="flex flex-col items-center text-center">
+                          <motion.div
+                            initial={prefersReducedMotion ? {} : { scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 200,
+                              damping: 15,
+                              delay: 0.15,
+                            }}
+                            className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-accent-light to-accent shadow-lg shadow-accent/25"
+                          >
+                            <CheckCircle2 className="h-8 w-8 text-white" />
+                          </motion.div>
+                          <h3 className="font-heading text-xl font-bold text-gray-900">
+                            Your visit is booked!
+                          </h3>
+                          <p className="mt-2 text-sm text-gray-500">
+                            We&apos;ll confirm your appointment shortly. You&apos;ll receive an email with the details.
+                          </p>
+                        </motion.div>
+
+                        {/* Password card (new users only) */}
+                        {confirmData.generatedPassword && (
+                          <motion.div variants={staggerItem} className="mt-5 overflow-hidden rounded-2xl border border-cyan-100 bg-gradient-to-br from-cyan-50/80 to-primary-50/60 p-5 backdrop-blur-sm">
+                            <p className="mb-3 text-[11px] font-bold uppercase tracking-wider text-primary-600">
+                              Your Login Credentials
                             </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500">Password</p>
-                            <div className="flex items-center gap-2">
-                              <code className="inline-block rounded-lg bg-indigo-100 px-3 py-1.5 font-mono text-sm font-bold text-indigo-700">
-                                {confirmData.generatedPassword}
-                              </code>
-                              <button
-                                type="button"
-                                onClick={handleCopyPassword}
-                                className="flex h-8 items-center gap-1 rounded-lg border border-gray-200 bg-white px-2.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50"
-                              >
-                                {copied ? (
-                                  <>
-                                    <Check className="h-3.5 w-3.5 text-green-500" />
-                                    Copied
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="h-3.5 w-3.5" />
-                                    Copy
-                                  </>
-                                )}
-                              </button>
+                            <div className="space-y-3">
+                              <div>
+                                <p className="text-[11px] text-gray-500">Email</p>
+                                <p className="font-medium text-gray-900">
+                                  {confirmData.email}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-[11px] text-gray-500">Password</p>
+                                <div className="flex items-center gap-2">
+                                  <code className="inline-block rounded-xl bg-white/80 px-3 py-1.5 font-mono text-sm font-bold text-primary-700 shadow-sm">
+                                    {confirmData.generatedPassword}
+                                  </code>
+                                  <button
+                                    type="button"
+                                    onClick={handleCopyPassword}
+                                    className="flex h-8 items-center gap-1.5 rounded-xl border border-primary-100 bg-white/80 px-2.5 text-xs font-medium text-primary-600 transition-all duration-300 hover:bg-primary-50 hover:border-primary-200"
+                                  >
+                                    {copied ? (
+                                      <>
+                                        <Check className="h-3.5 w-3.5 text-accent" />
+                                        Copied
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Copy className="h-3.5 w-3.5" />
+                                        Copy
+                                      </>
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                          </motion.div>
+                        )}
 
-                    {/* Appointment summary */}
-                    {confirmData.date && (
-                      <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50/50 p-5">
-                        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-blue-600">
-                          Appointment Details
-                        </p>
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3">
-                            <CalendarDays className="h-4 w-4 text-blue-500" />
-                            <div>
-                              <p className="text-xs text-gray-500">Date</p>
-                              <p className="font-medium text-gray-900">
-                                {formatDate(confirmData.date)}
-                              </p>
+                        {/* Appointment summary */}
+                        {confirmData.date && (
+                          <motion.div variants={staggerItem} className="mt-4 overflow-hidden rounded-2xl border border-accent/10 bg-gradient-to-br from-emerald-50/80 to-accent/5 p-5 backdrop-blur-sm">
+                            <p className="mb-3 text-[11px] font-bold uppercase tracking-wider text-accent">
+                              Appointment Details
+                            </p>
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10">
+                                  <CalendarDays className="h-4 w-4 text-accent" />
+                                </div>
+                                <div>
+                                  <p className="text-[11px] text-gray-500">Date</p>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {formatDate(confirmData.date)}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10">
+                                  <Clock className="h-4 w-4 text-accent" />
+                                </div>
+                                <div>
+                                  <p className="text-[11px] text-gray-500">Time</p>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {confirmData.time}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10">
+                                  <CalendarCheck className="h-4 w-4 text-accent" />
+                                </div>
+                                <div>
+                                  <p className="text-[11px] text-gray-500">Type</p>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {confirmData.type}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <div>
-                              <p className="text-xs text-gray-500">Time</p>
-                              <p className="font-medium text-gray-900">
-                                {confirmData.time}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <CalendarCheck className="h-4 w-4 text-blue-500" />
-                            <div>
-                              <p className="text-xs text-gray-500">Type</p>
-                              <p className="font-medium text-gray-900">
-                                {confirmData.type}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                          </motion.div>
+                        )}
 
-                    {/* Buttons */}
-                    <div className="space-y-3">
-                      <button
-                        onClick={() => {
-                          handleClose();
-                          router.push("/patient");
-                        }}
-                        className="w-full rounded-xl bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:shadow-xl hover:shadow-blue-500/30"
-                      >
-                        Go to Dashboard
-                      </button>
-                      <button
-                        onClick={handleClose}
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
-                      >
-                        Done
-                      </button>
-                    </div>
+                        {/* Buttons */}
+                        <motion.div variants={staggerItem} className="mt-5 space-y-2.5">
+                          <button
+                            onClick={() => {
+                              handleClose();
+                              router.push("/patient");
+                            }}
+                            className="btn-premium w-full"
+                          >
+                            Go to Dashboard
+                          </button>
+                          <button
+                            onClick={handleClose}
+                            className="btn-ghost-premium w-full"
+                          >
+                            Done
+                          </button>
+                        </motion.div>
 
-                    {confirmData.generatedPassword && (
-                      <p className="mt-4 text-center text-xs text-gray-400">
-                        We&apos;ve also sent these details to your email address.
-                      </p>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                        {confirmData.generatedPassword && (
+                          <motion.p variants={staggerItem} className="mt-4 text-center text-[11px] text-gray-400">
+                            We&apos;ve also sent these details to your email address.
+                          </motion.p>
+                        )}
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </motion.div>
         </motion.div>
