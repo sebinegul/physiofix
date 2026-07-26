@@ -99,16 +99,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-100">
-          <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-blue-100/50 flex-shrink-0">
-            <Image src="/physiofix.png" alt="PhysioFix" width={36} height={36} className="object-cover" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <span className="font-bold text-slate-900 text-sm" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-              PhysioFix
-            </span>
-            <span className="block text-[10px] font-medium text-blue-500 uppercase tracking-wider">Admin Panel</span>
-          </div>
+        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100">
+          <Image
+            src="/physiofix.png"
+            alt="PhysioFix"
+            width={180}
+            height={54}
+            className="h-14 w-auto flex-shrink-0"
+          />
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600">
             <X className="w-5 h-5" />
           </button>

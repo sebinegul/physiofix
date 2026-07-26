@@ -109,21 +109,14 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
         `}
       >
         {/* Sidebar Header */}
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
-          <div className="relative w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-500">
-            <Image
-              src="/physiofix.png"
-              alt="PhysioFix"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold text-gray-900 font-display truncate">
-              PhysioFix
-            </h1>
-            <p className="text-xs text-primary-500 font-medium">Patient Portal</p>
-          </div>
+        <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100">
+          <Image
+            src="/physiofix.png"
+            alt="PhysioFix"
+            width={180}
+            height={54}
+            className="h-14 w-auto flex-shrink-0"
+          />
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-1 rounded-lg hover:bg-gray-100 text-gray-400"
