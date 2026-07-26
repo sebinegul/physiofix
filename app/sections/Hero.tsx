@@ -203,7 +203,7 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
               id="find"
               ref={searchRef}
-              className="relative z-10 gradient-border rounded-2xl bg-white/70 p-2.5 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3"
+              className="relative z-10 gradient-border w-[400px] max-w-full sm:w-[480px] md:w-full rounded-2xl bg-white/70 p-2.5 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
                 <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 sm:rounded-2xl sm:px-4">
