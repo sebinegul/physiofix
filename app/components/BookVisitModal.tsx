@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
+import { useToast } from "@/app/contexts/ToastContext";
 
 /* ─── constants ─── */
 
@@ -119,6 +120,7 @@ export default function BookVisitModal() {
   const { isOpen, closeBookVisit } = useBookVisit();
   const router = useRouter();
   const prefersReducedMotion = useReducedMotion();
+  const { showToast } = useToast();
 
   // ---- state ----
   const [mode, setMode] = useState<Mode>("register");
@@ -352,6 +354,7 @@ export default function BookVisitModal() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Something went wrong. Please try again.");
+        showToast("Registration failed. Please try again.", "error");
         return;
       }
 
@@ -381,6 +384,8 @@ export default function BookVisitModal() {
       localStorage.setItem("token", loginData.token);
       localStorage.setItem("user", JSON.stringify(loginData.user));
       setIsLoggedIn(true);
+      window.dispatchEvent(new Event("auth-changed"));
+      showToast("Account created! Check your email for credentials.", "success");
 
       setConfirmData({
         name: name.trim(),
@@ -467,6 +472,7 @@ export default function BookVisitModal() {
 
       setDirection(1);
       setStep(3);
+      showToast("Appointment booked successfully!", "success");
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
@@ -505,11 +511,14 @@ export default function BookVisitModal() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Invalid email or password");
+        showToast("Invalid email or password.", "error");
         return;
       }
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       setIsLoggedIn(true);
+      window.dispatchEvent(new Event("auth-changed"));
+      showToast("Welcome back! You are now signed in.", "success");
 
       setConfirmData({
         name: data.user.name || "Patient",

@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import AnimatedBackground from "./ui/AnimatedBackground";
 import { BookVisitProvider } from "@/app/contexts/BookVisitContext";
 import BookVisitModal from "./BookVisitModal";
+import { ToastProvider } from "@/app/contexts/ToastContext";
 
 const HIDE_SHELL_PREFIXES = ["/login", "/dashboard", "/patient"];
 
@@ -15,16 +16,18 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   const hideShell = HIDE_SHELL_PREFIXES.some((p) => pathname.startsWith(p));
 
   if (hideShell) {
-    return <>{children}</>;
+    return <ToastProvider>{children}</ToastProvider>;
   }
 
   return (
-    <BookVisitProvider>
-      <AnimatedBackground />
-      <Navbar />
-      {children}
-      <Footer />
-      <BookVisitModal />
-    </BookVisitProvider>
+    <ToastProvider>
+      <BookVisitProvider>
+        <AnimatedBackground />
+        <Navbar />
+        {children}
+        <Footer />
+        <BookVisitModal />
+      </BookVisitProvider>
+    </ToastProvider>
   );
 }

@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone, User, LogOut, ChevronDown, LayoutDashboard, Calendar, Dumbbell, Stethoscope, CircleUser } from "lucide-react";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
+import { useToast } from "@/app/contexts/ToastContext";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -24,8 +25,10 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { openBookVisit } = useBookVisit();
+  const { showToast } = useToast();
 
-  useEffect(() => {
+  /* ─── read auth state from localStorage ─── */
+  const readAuth = () => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     setIsLoggedIn(!!token);
@@ -35,7 +38,24 @@ export default function Navbar() {
         setUserName(parsed.name || "");
         setUserRole(parsed.role || "");
       } catch {}
+    } else {
+      setUserName("");
+      setUserRole("");
     }
+  };
+
+  // Read on mount
+  useEffect(() => {
+    readAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Re-read whenever another component fires 'auth-changed'
+  useEffect(() => {
+    const handler = () => readAuth();
+    window.addEventListener("auth-changed", handler);
+    return () => window.removeEventListener("auth-changed", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = () => {
@@ -44,6 +64,8 @@ export default function Navbar() {
     setIsLoggedIn(false);
     setUserName("");
     setUserRole("");
+    window.dispatchEvent(new Event("auth-changed"));
+    showToast("You have been logged out.", "info");
     window.location.href = "/";
   };
 

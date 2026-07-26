@@ -5,9 +5,66 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, AlertCircle, Eye, EyeOff, ArrowLeft, Sparkles } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Sparkles,
+  User,
+  Phone,
+  Mail,
+  FileText,
+  CalendarDays,
+  Clock,
+  CheckCircle2,
+  Check,
+  Copy,
+  ChevronLeft,
+} from "lucide-react";
+import { useToast } from "@/app/contexts/ToastContext";
+
+/* ─── constants ─── */
+
+const APPOINTMENT_TYPES = [
+  "Initial Assessment",
+  "Follow-up Session",
+  "Sports Rehabilitation",
+  "Post-Surgery Recovery",
+  "General Consultation",
+];
+
+const TIME_SLOTS_MORNING = [
+  "9:00 AM",
+  "9:30 AM",
+  "10:00 AM",
+  "10:30 AM",
+  "11:00 AM",
+  "11:30 AM",
+];
+
+const TIME_SLOTS_AFTERNOON = [
+  "2:00 PM",
+  "2:30 PM",
+  "3:00 PM",
+  "3:30 PM",
+  "4:00 PM",
+  "4:30 PM",
+];
+
+/* ─── types ─── */
+
+type View = "login" | "register" | "schedule" | "success";
+
+/* ─── helpers ─── */
+
+function todayStr() {
+  return new Date().toISOString().split("T")[0];
+}
 
 /* ─── stagger animation variants ─── */
+
 const staggerContainer = {
   hidden: { opacity: 0 },
   show: {
@@ -17,21 +74,89 @@ const staggerContainer = {
 };
 const staggerItem = {
   hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const },
+  },
 };
+
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 60 : -60,
+    opacity: 0,
+  }),
+  center: { x: 0, opacity: 1 },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -60 : 60,
+    opacity: 0,
+  }),
+};
+
+/* ─── main component ─── */
 
 export default function LoginPage() {
   const router = useRouter();
+  const { showToast } = useToast();
+
+  // ---- view state ----
+  const [view, setView] = useState<View>("login");
+  const [direction, setDirection] = useState(1);
+
+  // ---- login form ----
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  // ---- register form (Step 1) ----
+  const [regName, setRegName] = useState("");
+  const [regPhone, setRegPhone] = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regNotes, setRegNotes] = useState("");
+
+  // ---- schedule form (Step 2) ----
+  const [schedType, setSchedType] = useState("");
+  const [schedDate, setSchedDate] = useState("");
+  const [schedTime, setSchedTime] = useState("");
+  const [schedNotes, setSchedNotes] = useState("");
+
+  // ---- shared ----
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
+  // ---- success data ----
+  const [successData, setSuccessData] = useState<{
+    name: string;
+    email: string;
+    generatedPassword: string;
+    type: string;
+    date: string;
+    time: string;
+  } | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = async (e: FormEvent) => {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  /* ─── view navigation ─── */
+
+  const goTo = (v: View) => {
+    setDirection(1);
+    setView(v);
+    setError("");
+  };
+
+  const goBack = () => {
+    setDirection(-1);
+    setView("login");
+    setError("");
+  };
+
+  /* ─── login submit ─── */
+
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -42,9 +167,15 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Invalid email or password"); return; }
+      if (!res.ok) {
+        setError(data.error || "Invalid email or password");
+        showToast("Invalid email or password.", "error");
+        return;
+      }
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-changed"));
+      showToast("Welcome back!", "success");
       if (data.user.role === "admin") router.push("/dashboard");
       else router.push("/patient");
     } catch {
@@ -54,80 +185,197 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4 md:p-8">
-      {/* ─── Animated gradient background ─── */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(-45deg, #0c1a3a, #1e3a6e, #2563eb, #1e40af, #0f172a)", backgroundSize: "400% 400%", animation: "gradient-shift 15s ease infinite" }} />
+  /* ─── register submit (Step 1 → book-consultation) ─── */
 
-      {/* ─── Floating glass orbs ─── */}
-      <div className="absolute -left-32 -top-32 h-[500px] w-[500px] animate-morph rounded-full bg-blue-500/15 blur-[100px]" />
-      <div className="absolute -bottom-40 -right-40 h-[450px] w-[450px] animate-morph rounded-full bg-indigo-500/15 blur-[100px]" />
-      <div className="absolute left-1/4 top-1/3 h-64 w-64 animate-float rounded-full bg-blue-400/10 blur-[60px]" />
-      <div className="absolute bottom-1/4 right-1/4 h-48 w-48 animate-float-delayed rounded-full bg-sky-400/10 blur-[50px]" />
+  const handleRegister = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-      {/* ─── Rotating decorative rings ─── */}
-      <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/[0.03]" />
-      <div className="absolute left-1/2 top-1/2 h-[450px] w-[450px] -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/[0.04]" style={{ animationDirection: "reverse", animationDuration: "25s" }} />
+    // Basic validation
+    if (!regName.trim()) {
+      setError("Full name is required");
+      return;
+    }
+    if (!regPhone.trim()) {
+      setError("Phone number is required");
+      return;
+    }
+    if (!regEmail.trim()) {
+      setError("Email address is required");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail.trim())) {
+      setError("Please enter a valid email address");
+      return;
+    }
 
-      {/* ─── Back to home ─── */}
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <Link href="/" className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10 hover:text-white">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
-      </motion.div>
+    setLoading(true);
+    try {
+      const res = await fetch("/api/book-consultation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: regName.trim(),
+          phone: regPhone.trim(),
+          email: regEmail.trim(),
+          notes: regNotes.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        showToast("Registration failed. Please try again.", "error");
+        return;
+      }
 
-      {/* ─── Split-screen card ─── */}
-      <motion.div
-        initial={mounted ? false : { opacity: 0, y: 30, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-[900px] overflow-hidden rounded-3xl shadow-2xl shadow-slate-900/20 md:h-[560px] md:flex-row"
-        style={{ border: "1px solid rgba(255,255,255,0.15)" }}
-      >
-        <div className="flex w-full flex-col md:flex-row">
-          {/* ─── Left Panel (blue gradient branding) ─── */}
-          <div className="relative hidden w-[45%] overflow-hidden bg-gradient-to-br from-slate-900 via-blue-800 to-blue-600 md:flex md:flex-col md:items-center md:justify-center">
-            {/* Animated gradient orbs */}
-            <div className="absolute -left-20 -top-20 h-72 w-72 animate-morph rounded-full bg-blue-400/20 blur-3xl" />
-            <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph rounded-full bg-indigo-500/20 blur-3xl" />
-            <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-sky-300/10 blur-2xl" />
-            <div className="absolute bottom-1/4 left-1/4 h-32 w-32 animate-float-delayed rounded-full bg-blue-300/10 blur-2xl" />
+      const generatedPassword: string = data.data.user.generatedPassword;
 
-            {/* Rotating rings */}
-            <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" />
-            <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" style={{ animationDirection: "reverse", animationDuration: "30s" }} />
+      // Auto-login
+      const loginRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: regEmail.trim(),
+          password: generatedPassword,
+        }),
+      });
+      const loginData = await loginRes.json();
+      if (loginRes.ok) {
+        localStorage.setItem("token", loginData.token);
+        localStorage.setItem("user", JSON.stringify(loginData.user));
+        window.dispatchEvent(new Event("auth-changed"));
+      }
 
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center px-8 text-center">
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">Welcome to</p>
-              <div className="mb-5 flex items-center justify-center">
-                <Image src="/logoShort.jpg" alt="PhysioFix" width={220} height={50} className="h-auto w-48 object-contain brightness-0 invert opacity-90" priority />
-              </div>
-              <div className="mb-5 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-              <p className="mb-2 text-sm leading-relaxed text-white/60">Expert physiotherapy care for your recovery journey</p>
-              <div className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-                <Sparkles className="h-3.5 w-3.5 text-blue-300" />
-                <span className="text-xs text-white/70">Your recovery is our priority</span>
-              </div>
-            </div>
-          </div>
+      showToast("Account created! You can now schedule your visit.", "success");
 
-          {/* ─── Mobile header ─── */}
-          <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-800 to-blue-600 md:hidden">
-            <div className="absolute -left-10 -top-10 h-40 w-40 animate-morph rounded-full bg-blue-400/20 blur-2xl" />
-            <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph rounded-full bg-indigo-500/20 blur-2xl" />
-            <div className="relative z-10">
-              <Image src="/logoShort.jpg" alt="PhysioFix" width={180} height={42} className="h-auto w-36 object-contain brightness-0 invert opacity-90" priority />
-            </div>
-          </div>
+      setSuccessData({
+        name: regName.trim(),
+        email: regEmail.trim(),
+        generatedPassword,
+        type: "",
+        date: "",
+        time: "",
+      });
 
-          {/* ─── Right Panel (form) ─── */}
-          <div className="flex w-full flex-col justify-center bg-white px-8 py-10 md:w-[55%] md:px-12">
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-              <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">Welcome Back</h1>
-              <p className="mt-2 text-[14px] text-gray-500">Sign in to access your PhysioFix account</p>
-            </motion.div>
+      goTo("schedule");
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ─── schedule submit (Step 2 → appointments) ─── */
+
+  const handleSchedule = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!schedType) {
+      setError("Please select an appointment type");
+      return;
+    }
+    if (!schedDate) {
+      setError("Please select a date");
+      return;
+    }
+    if (schedDate <= todayStr()) {
+      setError("Date must be in the future");
+      return;
+    }
+    if (!schedTime) {
+      setError("Please select a time slot");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("You must be logged in to book an appointment.");
+        return;
+      }
+
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          date: schedDate,
+          time: schedTime,
+          type: schedType,
+          notes: schedNotes.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      setSuccessData((prev) =>
+        prev
+          ? { ...prev, type: schedType, date: schedDate, time: schedTime }
+          : null
+      );
+
+      showToast("Appointment booked successfully!", "success");
+      goTo("success");
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ─── render helpers ─── */
+
+  const renderError = () => (
+    <AnimatePresence>
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -8, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -8, scale: 0.98 }}
+          className="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/80 p-3.5 backdrop-blur-sm"
+        >
+          <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
+          <p className="text-sm text-red-600">{error}</p>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  const inputClass =
+    "w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10";
+
+  const labelClass =
+    "mb-1.5 block text-[13px] font-medium text-gray-600";
+
+  /* ─── right panel content based on view ─── */
+
+  const renderFormContent = () => {
+    switch (view) {
+      /* ─── LOGIN ─── */
+      case "login":
+        return (
+          <motion.div
+            key="login"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">
+              Welcome Back
+            </h1>
+            <p className="mt-2 text-[14px] text-gray-500">
+              Sign in to access your PhysioFix account
+            </p>
 
             {/* Step indicator */}
             <div className="mt-6 flex items-center gap-2">
@@ -136,55 +384,79 @@ export default function LoginPage() {
               <div className="h-1.5 w-8 rounded-full bg-gray-200" />
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="mt-6">
-              <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-4">
-                {/* Error */}
-                <AnimatePresence>
-                  {error && (
-                    <motion.div initial={{ opacity: 0, y: -8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} className="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/80 p-3.5 backdrop-blur-sm">
-                      <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-500" />
-                      <p className="text-sm text-red-600">{error}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            <form onSubmit={handleLogin} className="mt-6">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+                className="space-y-4"
+              >
+                {renderError()}
 
                 {/* Email */}
                 <motion.div variants={staggerItem}>
-                  <label htmlFor="email" className="mb-1.5 block text-[13px] font-medium text-gray-600">
+                  <label htmlFor="email" className={labelClass}>
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
-                    id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                    className={inputClass}
                   />
                 </motion.div>
 
                 {/* Password */}
                 <motion.div variants={staggerItem}>
-                  <label htmlFor="password" className="mb-1.5 block text-[13px] font-medium text-gray-600">
+                  <label htmlFor="password" className={labelClass}>
                     Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
-                      id="password" type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)}
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 pr-12 text-[15px] text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10"
+                      className={`${inputClass} pr-12`}
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-blue-600" aria-label={showPassword ? "Hide password" : "Show password"}>
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-blue-600"
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </motion.div>
 
                 {/* Remember me + Forgot */}
-                <motion.div variants={staggerItem} className="flex items-center justify-between pt-1">
+                <motion.div
+                  variants={staggerItem}
+                  className="flex items-center justify-between pt-1"
+                >
                   <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-500">
-                    <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600/30" />
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600/30"
+                    />
                     Remember me
                   </label>
-                  <button type="button" className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700">
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
+                  >
                     Forgot Password?
                   </button>
                 </motion.div>
@@ -192,12 +464,16 @@ export default function LoginPage() {
                 {/* Sign In button */}
                 <motion.div variants={staggerItem} className="pt-2">
                   <button
-                    type="submit" disabled={loading}
+                    type="submit"
+                    disabled={loading}
                     className="w-full rounded-2xl bg-gray-900 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" />Signing in...</>
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Signing in...
+                        </>
                       ) : (
                         <>Sign In</>
                       )}
@@ -207,21 +483,591 @@ export default function LoginPage() {
               </motion.div>
             </form>
 
-            {/* Footer */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.5 }} className="mt-6 border-t border-gray-100 pt-5">
+            {/* Footer toggle */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="mt-6 border-t border-gray-100 pt-5"
+            >
               <p className="text-center text-sm text-gray-500">
                 Don&apos;t have an account?{" "}
-                <Link href="/" className="font-semibold text-blue-600 transition-colors hover:text-blue-700">
+                <button
+                  type="button"
+                  onClick={() => goTo("register")}
+                  className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                >
                   Book a consultation
-                </Link>
+                </button>
               </p>
             </motion.div>
+          </motion.div>
+        );
+
+      /* ─── REGISTER (Step 1) ─── */
+      case "register":
+        return (
+          <motion.div
+            key="register"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">
+              Let&apos;s get you started
+            </h1>
+            <p className="mt-2 text-[14px] text-gray-500">
+              Tell us about yourself and your condition
+            </p>
+
+            {/* Step indicator */}
+            <div className="mt-6 flex items-center gap-2">
+              <div className="h-1.5 w-8 rounded-full bg-blue-600" />
+              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+            </div>
+
+            <form onSubmit={handleRegister} className="mt-6">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+                className="space-y-4"
+              >
+                {renderError()}
+
+                {/* Name */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="reg-name" className={labelClass}>
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      id="reg-name"
+                      type="text"
+                      required
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      placeholder="John Doe"
+                      className={`${inputClass} pl-10`}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Phone */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="reg-phone" className={labelClass}>
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      id="reg-phone"
+                      type="tel"
+                      required
+                      value={regPhone}
+                      onChange={(e) => setRegPhone(e.target.value)}
+                      placeholder="+91 98765 43210"
+                      className={`${inputClass} pl-10`}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Email */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="reg-email" className={labelClass}>
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      id="reg-email"
+                      type="email"
+                      required
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className={`${inputClass} pl-10`}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Pain description */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="reg-notes" className={labelClass}>
+                    Pain / Injury Description
+                  </label>
+                  <div className="relative">
+                    <FileText className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
+                    <textarea
+                      id="reg-notes"
+                      rows={3}
+                      value={regNotes}
+                      onChange={(e) => setRegNotes(e.target.value)}
+                      placeholder="Describe your pain or injury..."
+                      className={`${inputClass} resize-none pl-10`}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Next button */}
+                <motion.div variants={staggerItem} className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <span className="relative flex items-center justify-center gap-2">
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        <>Next → Schedule Visit</>
+                      )}
+                    </span>
+                  </button>
+                </motion.div>
+              </motion.div>
+            </form>
+
+            {/* Footer toggle */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="mt-6 border-t border-gray-100 pt-5"
+            >
+              <p className="text-center text-sm text-gray-500">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => goTo("login")}
+                  className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                >
+                  Sign in
+                </button>
+              </p>
+            </motion.div>
+          </motion.div>
+        );
+
+      /* ─── SCHEDULE (Step 2) ─── */
+      case "schedule":
+        return (
+          <motion.div
+            key="schedule"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={goBack}
+                className="rounded-xl border border-gray-200 p-2 transition-colors hover:bg-gray-50"
+                aria-label="Back to registration"
+              >
+                <ChevronLeft className="h-4 w-4 text-gray-600" />
+              </button>
+              <div>
+                <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">
+                  Schedule Your Visit
+                </h1>
+                <p className="mt-1 text-[14px] text-gray-500">
+                  Choose your preferred appointment time
+                </p>
+              </div>
+            </div>
+
+            {/* Step indicator */}
+            <div className="mt-6 flex items-center gap-2">
+              <div className="h-1.5 w-8 rounded-full bg-green-500" />
+              <div className="h-1.5 w-8 rounded-full bg-blue-600" />
+              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+            </div>
+
+            <form onSubmit={handleSchedule} className="mt-6">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+                className="space-y-4"
+              >
+                {renderError()}
+
+                {/* Appointment Type */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="sched-type" className={labelClass}>
+                    Appointment Type <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <CalendarDays className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <select
+                      id="sched-type"
+                      required
+                      value={schedType}
+                      onChange={(e) => setSchedType(e.target.value)}
+                      className={`${inputClass} appearance-none pl-10`}
+                    >
+                      <option value="">Select type...</option>
+                      {APPOINTMENT_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </motion.div>
+
+                {/* Preferred Date */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="sched-date" className={labelClass}>
+                    Preferred Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="sched-date"
+                    type="date"
+                    required
+                    min={new Date(Date.now() + 86400000)
+                      .toISOString()
+                      .split("T")[0]}
+                    value={schedDate}
+                    onChange={(e) => setSchedDate(e.target.value)}
+                    className={inputClass}
+                  />
+                </motion.div>
+
+                {/* Preferred Time */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="sched-time" className={labelClass}>
+                    Preferred Time <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Clock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <select
+                      id="sched-time"
+                      required
+                      value={schedTime}
+                      onChange={(e) => setSchedTime(e.target.value)}
+                      className={`${inputClass} appearance-none pl-10`}
+                    >
+                      <option value="">Select time...</option>
+                      <optgroup label="Morning">
+                        {TIME_SLOTS_MORNING.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Afternoon">
+                        {TIME_SLOTS_AFTERNOON.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
+                  </div>
+                </motion.div>
+
+                {/* Additional Notes */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="sched-notes" className={labelClass}>
+                    Additional Notes
+                  </label>
+                  <textarea
+                    id="sched-notes"
+                    rows={3}
+                    value={schedNotes}
+                    onChange={(e) => setSchedNotes(e.target.value)}
+                    placeholder="Any special requests or notes..."
+                    className={`${inputClass} resize-none`}
+                  />
+                </motion.div>
+
+                {/* Book Appointment button */}
+                <motion.div variants={staggerItem} className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <span className="relative flex items-center justify-center gap-2">
+                      {loading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Booking...
+                        </>
+                      ) : (
+                        <>Book Appointment</>
+                      )}
+                    </span>
+                  </button>
+                </motion.div>
+              </motion.div>
+            </form>
+          </motion.div>
+        );
+
+      /* ─── SUCCESS ─── */
+      case "success":
+        return (
+          <motion.div
+            key="success"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            className="flex flex-col items-center text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                delay: 0.1,
+              }}
+            >
+              <CheckCircle2 className="mb-4 h-16 w-16 text-green-500" />
+            </motion.div>
+
+            <h1 className="font-serif text-[26px] font-bold leading-tight tracking-tight text-gray-900">
+              You&apos;re All Set!
+            </h1>
+            <p className="mt-2 text-[14px] text-gray-500">
+              Your appointment has been booked successfully
+            </p>
+
+            {successData?.generatedPassword && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mt-6 w-full rounded-2xl border border-blue-100 bg-blue-50/50 p-4"
+              >
+                <p className="mb-2 text-sm font-medium text-gray-700">
+                  Your login credentials:
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Email:</span>{" "}
+                  {successData?.email}
+                </p>
+                <div className="mt-1 flex items-center gap-2">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Password:</span>{" "}
+                    {successData?.generatedPassword}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        successData?.generatedPassword || ""
+                      );
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-blue-100 hover:text-blue-600"
+                    title="Copy password"
+                  >
+                    {copied ? (
+                      <Check className="h-3.5 w-3.5 text-green-500" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-gray-500">
+                  You&apos;ve been auto-logged in. A welcome email with your
+                  credentials has also been sent.
+                </p>
+              </motion.div>
+            )}
+
+            {successData?.type && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="mt-4 w-full rounded-2xl border border-green-100 bg-green-50/50 p-4"
+              >
+                <p className="mb-1 text-sm font-medium text-gray-700">
+                  Appointment Details:
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Type:</span>{" "}
+                  {successData?.type}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Date:</span>{" "}
+                  {successData?.date}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Time:</span>{" "}
+                  {successData?.time}
+                </p>
+              </motion.div>
+            )}
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-6 flex w-full gap-3"
+            >
+              <button
+                type="button"
+                onClick={() => router.push("/patient")}
+                className="flex-1 rounded-2xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg"
+              >
+                Go to Dashboard
+              </button>
+            </motion.div>
+          </motion.div>
+        );
+    }
+  };
+
+  /* ─── left panel content (tagline changes per view) ─── */
+
+  const leftPanelTagline = () => {
+    switch (view) {
+      case "register":
+        return "Start your recovery journey with expert physiotherapy care";
+      case "schedule":
+        return "Pick a time that works for you — we'll take care of the rest";
+      case "success":
+        return "We look forward to seeing you at your appointment!";
+      default:
+        return "Expert physiotherapy care for your recovery journey";
+    }
+  };
+
+  return (
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50 p-4 md:p-8">
+      {/* ─── Subtle background decorative elements ─── */}
+      <div className="absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-[100px]" />
+      <div className="absolute -bottom-40 -right-40 h-[450px] w-[450px] rounded-full bg-indigo-100/30 blur-[100px]" />
+      <div className="absolute left-1/4 top-1/3 h-64 w-64 rounded-full bg-blue-200/20 blur-[60px]" />
+
+      {/* ─── Back to home ─── */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <Link
+          href="/"
+          className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 px-4 py-2 text-sm text-gray-600 backdrop-blur-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:text-blue-700 hover:shadow-sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Link>
+      </motion.div>
+
+      {/* ─── Split-screen card ─── */}
+      <motion.div
+        initial={
+          mounted ? false : { opacity: 0, y: 30, scale: 0.96 }
+        }
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full max-w-[900px] overflow-hidden rounded-3xl border border-gray-200/60 bg-white shadow-2xl shadow-slate-200/50 md:h-[580px] md:flex-row"
+      >
+        <div className="flex w-full flex-col md:flex-row">
+          {/* ─── Left Panel (blue gradient branding) ─── */}
+          <div className="relative hidden w-[45%] overflow-hidden bg-gradient-to-br from-slate-900 via-blue-800 to-blue-600 md:flex md:flex-col md:items-center md:justify-center">
+            {/* Animated gradient orbs */}
+            <div className="absolute -left-20 -top-20 h-72 w-72 animate-morph rounded-full bg-blue-400/20 blur-3xl" />
+            <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph rounded-full bg-indigo-500/20 blur-3xl" />
+            <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-sky-300/10 blur-2xl" />
+
+            {/* Rotating rings */}
+            <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" />
+            <div
+              className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5"
+              style={{
+                animationDirection: "reverse",
+                animationDuration: "30s",
+              }}
+            />
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center px-8 text-center">
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
+                Welcome to
+              </p>
+              <div className="mb-5 flex items-center justify-center">
+                <Image
+                  src="/logoShort.jpg"
+                  alt="PhysioFix"
+                  width={220}
+                  height={50}
+                  className="h-auto w-48 rounded-xl object-contain"
+                  priority
+                />
+              </div>
+              <div className="mb-5 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={view}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3 }}
+                  className="mb-2 text-sm leading-relaxed text-white/60"
+                >
+                  {leftPanelTagline()}
+                </motion.p>
+              </AnimatePresence>
+              <div className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+                <Sparkles className="h-3.5 w-3.5 text-blue-300" />
+                <span className="text-xs text-white/70">
+                  Your recovery is our priority
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── Mobile header ─── */}
+          <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-800 to-blue-600 md:hidden">
+            <div className="absolute -left-10 -top-10 h-40 w-40 animate-morph rounded-full bg-blue-400/20 blur-2xl" />
+            <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph rounded-full bg-indigo-500/20 blur-2xl" />
+            <div className="relative z-10">
+              <Image
+                src="/logoShort.jpg"
+                alt="PhysioFix"
+                width={180}
+                height={42}
+                className="h-auto w-36 rounded-lg object-contain"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* ─── Right Panel (form) ─── */}
+          <div className="flex w-full flex-col justify-center bg-white px-8 py-10 md:w-[55%] md:px-12">
+            <AnimatePresence mode="wait" custom={direction}>
+              {renderFormContent()}
+            </AnimatePresence>
           </div>
         </div>
       </motion.div>
 
       {/* ─── Subtle glow behind card ─── */}
-      <div className="absolute -inset-1 -z-10 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-blue-400/20 blur-xl opacity-50" />
+      <div className="absolute -inset-1 -z-10 rounded-3xl bg-gradient-to-r from-blue-300/20 via-indigo-300/10 to-blue-300/20 blur-xl opacity-50" />
     </div>
   );
 }
