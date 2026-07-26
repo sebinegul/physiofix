@@ -158,7 +158,7 @@ export default function Hero() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-5 max-w-2xl text-4xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-5xl lg:text-[3.45rem]"
+              className="mb-4 max-w-2xl text-3xl font-black leading-[1.15] tracking-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-[3.45rem]"
             >
               <GradientText>{content.hero_title || DEFAULT_CONTENT.hero_title}</GradientText>
             </motion.h1>
@@ -167,7 +167,7 @@ export default function Hero() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.35 }}
-              className="mb-8 max-w-xl text-lg leading-8 text-slate-600"
+              className="mb-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8"
             >
               {content.hero_subtitle || DEFAULT_CONTENT.hero_subtitle}
             </motion.p>
@@ -176,15 +176,15 @@ export default function Hero() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
-              className="mb-10 flex flex-wrap gap-3"
+              className="mb-8 flex flex-wrap gap-2 sm:gap-3"
             >
               <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/75 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm">
-                <Users className="h-4 w-4 text-blue-600" />
-                Personalised recovery plans
+                <Users className="h-3.5 w-3.5 text-blue-600 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">Personalised recovery plans</span>
               </div>
               <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/75 px-3 py-2 text-sm font-medium text-slate-700 shadow-sm">
-                <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                5+ years trusted care
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 sm:h-4 sm:w-4" />
+                <span className="text-xs sm:text-sm">5+ years trusted care</span>
               </div>
             </motion.div>
 
@@ -195,10 +195,10 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
               id="find"
               ref={searchRef}
-              className="relative z-10 gradient-border rounded-[1.5rem] bg-white/70 p-3 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl"
+              className="relative z-10 gradient-border rounded-2xl bg-white/70 p-2.5 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
-                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-2">
+                <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 sm:rounded-2xl sm:px-4">
                   <Search className="h-5 w-5 flex-shrink-0 text-slate-400" />
                   <input
                     ref={inputRef}
@@ -304,7 +304,7 @@ export default function Hero() {
 
               {/* Popular Searches */}
               <div className="mt-4 px-1">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Popular searches</p>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 sm:text-xs sm:tracking-[0.25em]">Popular searches</p>
                 <div className="flex flex-wrap gap-2">
                   {quickLinks.map((tag, i) => (
                     <motion.button
@@ -313,7 +313,7 @@ export default function Hero() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.7 + i * 0.05 }}
                       onClick={() => handleQuickLink(tag)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition hover:shadow-sm ${
+                      className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition hover:shadow-sm sm:px-3 sm:py-1.5 sm:text-xs ${
                         query === tag
                           ? "border-blue-400 bg-blue-50 text-blue-600"
                           : "border-slate-200 bg-white/70 text-slate-600 hover:border-blue-400 hover:text-blue-600"
@@ -330,12 +330,12 @@ export default function Hero() {
               initial={prefersReducedMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.9 }}
-              className="mt-6 flex flex-wrap gap-3"
+              className="mt-5 flex flex-wrap gap-2 sm:gap-3"
             >
-              <Link href="/about" className="btn-primary">
+              <Link href="/about" className="btn-primary !px-4 !py-2.5 !text-xs sm:!px-5 sm:!py-3 sm:!text-sm">
                 Know More <ArrowRight className="h-4 w-4" />
               </Link>
-              <a href={`tel:${(content.contact_phone ?? DEFAULT_CONTENT.contact_phone).replace(/\s/g, "")}`} className="btn-ghost">
+              <a href={`tel:${(content.contact_phone ?? DEFAULT_CONTENT.contact_phone).replace(/\s/g, "")}`} className="btn-ghost !px-4 !py-2.5 !text-xs sm:!px-5 sm:!py-3 sm:!text-sm">
                 <Phone className="h-4 w-4" />
                 {content.contact_phone ?? DEFAULT_CONTENT.contact_phone}
               </a>
