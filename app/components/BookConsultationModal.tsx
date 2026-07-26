@@ -7,6 +7,7 @@ import { X, Loader2, CheckCircle2, CalendarDays } from "lucide-react";
 interface BookConsultationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenLogin?: () => void;
 }
 
 interface FormData {
@@ -31,6 +32,7 @@ interface SuccessData {
 export default function BookConsultationModal({
   isOpen,
   onClose,
+  onOpenLogin,
 }: BookConsultationModalProps) {
   const prefersReducedMotion = useReducedMotion();
   const [formData, setFormData] = useState<FormData>({
@@ -223,7 +225,7 @@ export default function BookConsultationModal({
                 : { opacity: 0, scale: 0.95, y: 20 }
             }
             transition={{ duration: animationDuration, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-lg overflow-hidden rounded-[1.25rem] border border-white/20 bg-white/95 shadow-[0_25px_80px_rgba(15,23,42,0.25)] backdrop-blur-xl max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-lg overflow-hidden rounded-[1.25rem] border border-white/20 bg-white/95 shadow-[0_25px_80px_rgba(15,23,42,0.25)] backdrop-blur-xl max-h-[90vh] modal-scroll"
           >
             {/* Decorative gradient header */}
             {!successData && (
@@ -321,6 +323,18 @@ export default function BookConsultationModal({
                 >
                   Got it!
                 </button>
+
+                {onOpenLogin && (
+                  <button
+                    onClick={() => {
+                      handleClose();
+                      onOpenLogin();
+                    }}
+                    className="mt-3 w-full rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
+                  >
+                    🔑 Login Now
+                  </button>
+                )}
               </div>
             ) : (
               /* Form state */
@@ -438,6 +452,23 @@ export default function BookConsultationModal({
                   <div className="mt-4 rounded-xl border border-red-100 bg-red-50 p-3">
                     <p className="text-sm text-red-600">{submitError}</p>
                   </div>
+                )}
+
+                {/* Already have an account? Login */}
+                {onOpenLogin && (
+                  <p className="mt-4 text-center text-sm text-gray-500">
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleClose();
+                        onOpenLogin();
+                      }}
+                      className="font-semibold text-blue-600 transition hover:text-blue-700"
+                    >
+                      Login
+                    </button>
+                  </p>
                 )}
 
                 {/* Submit button */}

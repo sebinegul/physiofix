@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireAuth } from "@/lib/auth";
+import { sendEmail } from "@/lib/email";
+import {
+  getAppointmentConfirmationTemplate,
+  getAppointmentAdminTemplate,
+} from "@/lib/email-templates";
 
 export async function GET(request: NextRequest) {
   try {
@@ -82,6 +87,36 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Send emails asynchronously (fire-and-forget)
+    const adminEmail = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
+    const dateStr = appointment.date.toISOString();
+
+    // Patient confirmation email
+    sendEmail({
+      to: [appointment.user.email],
+      ...getAppointmentConfirmationTemplate({
+        patientName: appointment.user.name,
+        date: dateStr,
+        time: appointment.time,
+        type: appointment.type,
+        notes: appointment.notes || undefined,
+      }),
+      category: "Appointment",
+    }).catch((err) => console.error("Failed to send appointment confirmation email:", err));
+
+    // Admin notification email
+    sendEmail({
+      to: [adminEmail],
+      ...getAppointmentAdminTemplate({
+        patientName: appointment.user.name,
+        patientEmail: appointment.user.email,
+        date: dateStr,
+        time: appointment.time,
+        type: appointment.type,
+      }),
+      category: "Appointment",
+    }).catch((err) => console.error("Failed to send appointment admin email:", err));
 
     return NextResponse.json(appointment, { status: 201 });
   } catch (error: any) {

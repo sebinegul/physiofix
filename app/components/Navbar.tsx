@@ -18,7 +18,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const { openModal } = useBookConsultation();
+  const { openModal, openLogin } = useBookConsultation();
 
   const marqueeText = "Rehabilitation | Ortho Rehabilitation | Neuro Rehabilitation | Home Care Physiotherapy Services";
 
@@ -92,6 +92,12 @@ export default function Navbar() {
             Call now
           </a>
           <button
+            onClick={openLogin}
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+          >
+            Login
+          </button>
+          <button
             onClick={handleBookVisit}
             className="btn-primary !px-4 !py-2 !text-sm"
           >
@@ -142,6 +148,15 @@ export default function Navbar() {
               <a href="tel:+918****2525" className="flex-1 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200">
                 Call now
               </a>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  openLogin();
+                }}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+              >
+                Login
+              </button>
               <button
                 onClick={handleBookVisit}
                 className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-3 text-center text-sm font-semibold text-white"

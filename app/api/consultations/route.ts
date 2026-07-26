@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireAuth } from "@/lib/auth";
+import { sendEmail } from "@/lib/email";
+import {
+  getConsultationSummaryTemplate,
+  getConsultationAdminTemplate,
+} from "@/lib/email-templates";
 
 export async function GET(request: NextRequest) {
   try {
@@ -102,6 +107,36 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    // Send emails asynchronously (fire-and-forget)
+    const adminEmail = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
+    const patientName = consultation.patient.user.name;
+    const patientEmail = consultation.patient.user.email;
+
+    // Patient consultation summary email
+    sendEmail({
+      to: [patientEmail],
+      ...getConsultationSummaryTemplate({
+        patientName,
+        diagnosis: consultation.diagnosis,
+        treatment: consultation.treatment,
+        followUpDate: consultation.followUpDate
+          ? consultation.followUpDate.toISOString()
+          : undefined,
+      }),
+      category: "Consultation",
+    }).catch((err) => console.error("Failed to send consultation summary email:", err));
+
+    // Admin notification email
+    sendEmail({
+      to: [adminEmail],
+      ...getConsultationAdminTemplate({
+        patientName,
+        diagnosis: consultation.diagnosis,
+        treatment: consultation.treatment,
+      }),
+      category: "Consultation",
+    }).catch((err) => console.error("Failed to send consultation admin email:", err));
 
     return NextResponse.json(consultation, { status: 201 });
   } catch (error: any) {
