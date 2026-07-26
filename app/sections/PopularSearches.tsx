@@ -85,7 +85,7 @@ export default function PopularSearches() {
                       {/* Gradient overlay on hover */}
                       <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 transition-opacity duration-500 group-hover:opacity-[0.04]`} />
 
-                      <div className="relative flex items-start gap-4">
+                      <div className="relative flex flex-1 items-start gap-4">
                         <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${item.lightBg} transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg`}>
                           <Icon className={`h-5 w-5 ${item.iconColor} transition-transform duration-500 group-hover:scale-110`} />
                         </div>
@@ -96,7 +96,7 @@ export default function PopularSearches() {
                       </div>
 
                       {/* Bottom bar that slides in on hover */}
-                      <div className="relative mt-4 flex items-center gap-2 overflow-hidden">
+                      <div className="relative mt-auto pt-4 flex items-center gap-2 overflow-hidden">
                         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent transition-all duration-500 group-hover:via-blue-200" />
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 transition-all duration-500 group-hover:translate-x-0 group-hover:text-blue-600">
                           Learn more
@@ -116,23 +116,6 @@ export default function PopularSearches() {
             </div>
           </ScrollReveal>
 
-          {/* Specialty cards grid - NOW ON BOTTOM */}
-          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" stagger={0.07}>
-            {specialties.map((specialty) => {
-              const Icon = specialty.icon;
-              return (
-                <StaggerItem key={specialty.name}>
-                  <TiltCard className={`rounded-[1.25rem] border bg-gradient-to-br ${specialty.bg} p-4 text-left ${specialty.border} ${specialty.active ? "ring-2 ring-blue-400/60" : ""}`}>
-                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 shadow-sm">
-                      <Icon className={`h-5 w-5 ${specialty.color}`} />
-                    </div>
-                    <p className={`text-sm font-semibold ${specialty.color}`}>{specialty.name}</p>
-                    <p className="mt-2 text-xs text-slate-500">{specialty.detail}</p>
-                  </TiltCard>
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
         </div>
       </div>
     </section>
