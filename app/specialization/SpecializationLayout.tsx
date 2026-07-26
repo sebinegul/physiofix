@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle2, Phone, Sparkles, ArrowRight } from "lucide-rea
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
 import PageTransition from "../components/PageTransition";
-import { useBookConsultation } from "../components/BookConsultationContext";
+import { useBookVisit } from "@/app/contexts/BookVisitContext";
 
 interface Benefit {
   title: string;
@@ -38,7 +38,7 @@ export default function SpecializationLayout({
   children,
 }: SpecializationLayoutProps) {
   const prefersReducedMotion = useReducedMotion();
-  const { openModal } = useBookConsultation();
+  const { openBookVisit } = useBookVisit();
 
   return (
     <PageTransition>
@@ -113,7 +113,7 @@ export default function SpecializationLayout({
                   transition={{ duration: 0.6, delay: 0.45 }}
                   className="flex flex-wrap gap-3"
                 >
-                  <button onClick={openModal} className="btn-primary">
+                  <button onClick={openBookVisit} className="btn-primary">
                     <Phone className="h-4 w-4" />
                     Book Consultation
                   </button>

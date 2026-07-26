@@ -92,17 +92,18 @@ export async function POST(request: NextRequest) {
         notes: notes || null,
         followUpDate: followUpDate ? new Date(followUpDate) : null,
       },
+    });
+
+    // Fetch patient + user info separately (Neon HTTP doesn't support include on create)
+    const patientWithUser = await prisma.patient.findUnique({
+      where: { id: patientId },
       include: {
-        patient: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                email: true,
-                name: true,
-                phone: true,
-              },
-            },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            phone: true,
           },
         },
       },
@@ -110,8 +111,8 @@ export async function POST(request: NextRequest) {
 
     // Send emails asynchronously (fire-and-forget)
     const adminEmail = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
-    const patientName = consultation.patient.user.name;
-    const patientEmail = consultation.patient.user.email;
+    const patientName = patientWithUser?.user.name || "Patient";
+    const patientEmail = patientWithUser?.user.email || "";
 
     // Patient consultation summary email
     sendEmail({

@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import AnimatedBackground from "./ui/AnimatedBackground";
-import { BookConsultationProvider } from "./BookConsultationContext";
+import { BookVisitProvider } from "@/app/contexts/BookVisitContext";
+import BookVisitModal from "./BookVisitModal";
 
 const HIDE_SHELL_PREFIXES = ["/login", "/dashboard", "/patient"];
 
@@ -18,11 +19,12 @@ export default function SiteShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <BookConsultationProvider>
+    <BookVisitProvider>
       <AnimatedBackground />
       <Navbar />
       {children}
       <Footer />
-    </BookConsultationProvider>
+      <BookVisitModal />
+    </BookVisitProvider>
   );
 }
