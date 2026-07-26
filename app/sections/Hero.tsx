@@ -1,8 +1,8 @@
 ﻿"use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Search, MapPin, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone } from "lucide-react";
+import { Search, MapPin, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone, Stethoscope, FileText, X } from "lucide-react";
 import GradientText from "../components/ui/GradientText";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
@@ -14,6 +14,13 @@ interface ContentMap {
   contact_phone?: string;
 }
 
+interface SearchResult {
+  type: "service" | "blog";
+  title: string;
+  description: string;
+  href: string;
+}
+
 const DEFAULT_CONTENT = {
   hero_title: "Best Physiotherapy in JP Nagar, Bangalore",
   hero_subtitle: "Your trusted partner in physiotherapy and rehabilitation, expert care for pain relief, mobility, sports recovery and confident movement in JP Nagar, Bangalore.",
@@ -22,9 +29,13 @@ const DEFAULT_CONTENT = {
 
 export default function Hero() {
   const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [searching, setSearching] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const [content, setContent] = useState<ContentMap>(DEFAULT_CONTENT);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/content")
@@ -34,6 +45,64 @@ export default function Hero() {
       })
       .catch(() => {});
   }, []);
+
+  // Debounced search
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setSearching(true);
+      fetch(`/api/search?q=${encodeURIComponent(query)}`)
+        .then((r) => r.json())
+        .then((d) => {
+          setResults(d?.data || []);
+          setShowResults(true);
+        })
+        .catch(() => {
+          setResults([]);
+        })
+        .finally(() => setSearching(false));
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Close results on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleQuickLink = useCallback((tag: string) => {
+    setQuery(tag);
+    setShowResults(false);
+    // Focus the search input after setting query
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }, []);
+
+  const handleSearch = useCallback(() => {
+    if (query.trim()) {
+      setShowResults(true);
+    }
+  }, [query]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setShowResults(false);
+    }
+  }, []);
+
+  const serviceCount = results.filter((r) => r.type === "service").length;
+  const blogCount = results.filter((r) => r.type === "blog").length;
 
   return (
     <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28">
@@ -57,15 +126,37 @@ export default function Hero() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="relative z-10">
+            {/* Desktop: static pill. Mobile: marquee */}
             <motion.div
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-white/70 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm backdrop-blur"
+              className="mb-6 hidden md:inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-white/70 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm backdrop-blur"
             >
               <Sparkles className="h-4 w-4 text-blue-500" />
               Sports Rehabilitation • Ortho • Neuro • Home Care
             </motion.div>
+
+            {/* Mobile marquee */}
+            <div className="mb-6 md:hidden overflow-hidden rounded-full border border-blue-200/80 bg-white/70 px-3 py-2 shadow-sm backdrop-blur">
+              <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <Sparkles className="h-4 w-4 text-blue-500" />
+                  Sports Rehabilitation
+                </span>
+                <span className="text-sm font-medium text-slate-700">Ortho</span>
+                <span className="text-sm font-medium text-slate-700">Neuro</span>
+                <span className="text-sm font-medium text-slate-700">Home Care</span>
+                {/* Duplicate for seamless loop */}
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <Sparkles className="h-4 w-4 text-blue-500" />
+                  Sports Rehabilitation
+                </span>
+                <span className="text-sm font-medium text-slate-700">Ortho</span>
+                <span className="text-sm font-medium text-slate-700">Neuro</span>
+                <span className="text-sm font-medium text-slate-700">Home Care</span>
+              </div>
+            </div>
 
             <motion.h1
               initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
@@ -101,40 +192,125 @@ export default function Hero() {
               </div>
             </motion.div>
 
+            {/* Search Section */}
             <motion.div
               initial={prefersReducedMotion ? false : { opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
               id="find"
-              className="gradient-border rounded-[1.5rem] bg-white/70 p-3 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl"
+              ref={searchRef}
+              className="relative gradient-border rounded-[1.5rem] bg-white/70 p-3 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
                 <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3">
-                  <Search className="h-4 w-4 flex-shrink-0 text-slate-400" />
+                  <Search className="h-5 w-5 flex-shrink-0 text-slate-400" />
                   <input
+                    ref={inputRef}
                     type="text"
                     placeholder="Condition, physio or treatment"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onFocus={() => query.trim() && results.length > 0 && setShowResults(true)}
+                    onKeyDown={handleKeyDown}
                     className="flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
                   />
+                  {query && (
+                    <button
+                      onClick={() => { setQuery(""); setResults([]); setShowResults(false); }}
+                      className="flex-shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
-                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3">
-                  <MapPin className="h-4 w-4 flex-shrink-0 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="JP Nagar, Bangalore"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-                  />
+                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/40 bg-slate-50/50 px-4 py-3 opacity-60 cursor-not-allowed">
+                  <MapPin className="h-5 w-5 flex-shrink-0 text-slate-400" />
+                  <span className="flex-1 bg-transparent text-sm text-slate-500">JP Nagar, Bangalore</span>
                 </div>
-                <button className="btn-primary !rounded-2xl">
-                  <Search className="h-4 w-4" />
+                <button onClick={handleSearch} className="btn-primary !rounded-2xl">
+                  <Search className="h-5 w-5" />
                   Search
                 </button>
               </div>
 
+              {/* Search Results Dropdown */}
+              {showResults && (
+                <div className="absolute left-3 right-3 top-full z-50 mt-2 max-h-[320px] overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-[0_25px_80px_rgba(15,23,42,0.15)]">
+                  {searching ? (
+                    <div className="flex items-center justify-center gap-2 px-4 py-8 text-sm text-slate-500">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                      Searching...
+                    </div>
+                  ) : results.length === 0 ? (
+                    <div className="px-4 py-8 text-center">
+                      <Search className="mx-auto mb-2 h-8 w-8 text-slate-300" />
+                      <p className="text-sm font-medium text-slate-500">No results found for &ldquo;{query}&rdquo;</p>
+                      <p className="mt-1 text-xs text-slate-400">Try searching for a treatment, condition or service</p>
+                    </div>
+                  ) : (
+                    <div className="py-2">
+                      {/* Services */}
+                      {serviceCount > 0 && (
+                        <div>
+                          <div className="flex items-center gap-2 px-4 py-2">
+                            <Stethoscope className="h-3.5 w-3.5 text-blue-500" />
+                            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Services & Treatments</p>
+                          </div>
+                          {results.filter((r) => r.type === "service").map((result) => (
+                            <Link
+                              key={result.href}
+                              href={result.href}
+                              onClick={() => { setShowResults(false); setQuery(""); }}
+                              className="flex items-start gap-3 px-4 py-2.5 transition hover:bg-blue-50"
+                            >
+                              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                                <Stethoscope className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold text-slate-900">{result.title}</p>
+                                <p className="truncate text-xs text-slate-500">{result.description}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Divider */}
+                      {serviceCount > 0 && blogCount > 0 && (
+                        <div className="mx-4 my-1 border-t border-slate-100" />
+                      )}
+
+                      {/* Blog Posts */}
+                      {blogCount > 0 && (
+                        <div>
+                          <div className="flex items-center gap-2 px-4 py-2">
+                            <FileText className="h-3.5 w-3.5 text-emerald-500" />
+                            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Blog Posts</p>
+                          </div>
+                          {results.filter((r) => r.type === "blog").map((result) => (
+                            <Link
+                              key={result.href}
+                              href={result.href}
+                              onClick={() => { setShowResults(false); setQuery(""); }}
+                              className="flex items-start gap-3 px-4 py-2.5 transition hover:bg-blue-50"
+                            >
+                              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                                <FileText className="h-4 w-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold text-slate-900">{result.title}</p>
+                                <p className="truncate text-xs text-slate-500">{result.description}</p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Popular Searches */}
               <div className="mt-4 px-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Popular searches</p>
                 <div className="flex flex-wrap gap-2">
@@ -144,7 +320,12 @@ export default function Hero() {
                       initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.7 + i * 0.05 }}
-                      className="rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-blue-400 hover:text-blue-600 hover:shadow-sm"
+                      onClick={() => handleQuickLink(tag)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition hover:shadow-sm ${
+                        query === tag
+                          ? "border-blue-400 bg-blue-50 text-blue-600"
+                          : "border-slate-200 bg-white/70 text-slate-600 hover:border-blue-400 hover:text-blue-600"
+                      }`}
                     >
                       {tag}
                     </motion.button>
