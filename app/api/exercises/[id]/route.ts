@@ -46,7 +46,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, description, category, difficulty, duration, instructions, imageUrl } = body;
+    const { name, description, category, difficulty, duration, instructions, imageUrl, gifUrl, videoUrl } = body;
 
     const exercise = await prisma.exercise.update({
       where: { id: params.id },
@@ -58,6 +58,8 @@ export async function PUT(
         ...(duration !== undefined && { duration }),
         ...(instructions !== undefined && { instructions }),
         ...(imageUrl !== undefined && { imageUrl }),
+        ...(gifUrl !== undefined && { gifUrl }),
+        ...(videoUrl !== undefined && { videoUrl }),
       },
     });
 

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   try {
     await requireAdmin(request);
     const body = await request.json();
-    const { name, description, category, difficulty, duration, instructions, imageUrl } = body;
+    const { name, description, category, difficulty, duration, instructions, imageUrl, gifUrl, videoUrl } = body;
 
     if (!name || !description || !category || !difficulty || !duration || !instructions) {
       return NextResponse.json(
@@ -46,6 +46,8 @@ export async function POST(request: NextRequest) {
         duration,
         instructions,
         imageUrl: imageUrl || null,
+        gifUrl: gifUrl || null,
+        videoUrl: videoUrl || null,
       },
     });
 

@@ -11,6 +11,9 @@ import {
   Loader2,
   AlertCircle,
   Filter,
+  Film,
+  Image as ImageIcon,
+  Link,
 } from "lucide-react";
 
 interface Exercise {
@@ -22,6 +25,8 @@ interface Exercise {
   duration: string;
   instructions: string;
   imageUrl: string | null;
+  gifUrl: string | null;
+  videoUrl: string | null;
 }
 
 const CATEGORIES = ["stretching", "strengthening", "balance", "flexibility", "cardio", "rehabilitation", "other"];
@@ -70,6 +75,8 @@ export default function ExercisesPage() {
   const [duration, setDuration] = useState("");
   const [instructions, setInstructions] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [gifUrl, setGifUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
 
   const loadExercises = async () => {
     const data = await apiFetch<Exercise[]>("/api/exercises");
@@ -85,14 +92,14 @@ export default function ExercisesPage() {
     return matchSearch && matchCategory;
   });
 
-  const resetForm = () => { setName(""); setDescription(""); setCategory("stretching"); setDifficulty("medium"); setDuration(""); setInstructions(""); setImageUrl(""); setEditingEx(null); setError(""); };
+  const resetForm = () => { setName(""); setDescription(""); setCategory("stretching"); setDifficulty("medium"); setDuration(""); setInstructions(""); setImageUrl(""); setGifUrl(""); setVideoUrl(""); setEditingEx(null); setError(""); };
   const openAdd = () => { resetForm(); setShowModal(true); };
-  const openEdit = (e: Exercise) => { setEditingEx(e); setName(e.name); setDescription(e.description); setCategory(e.category); setDifficulty(e.difficulty); setDuration(e.duration); setInstructions(e.instructions); setImageUrl(e.imageUrl || ""); setShowModal(true); };
+  const openEdit = (e: Exercise) => { setEditingEx(e); setName(e.name); setDescription(e.description); setCategory(e.category); setDifficulty(e.difficulty); setDuration(e.duration); setInstructions(e.instructions); setImageUrl(e.imageUrl || ""); setGifUrl(e.gifUrl || ""); setVideoUrl(e.videoUrl || ""); setShowModal(true); };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFormLoading(true); setError("");
-    const body = { name, description, category, difficulty, duration, instructions, imageUrl: imageUrl || null };
+    const body = { name, description, category, difficulty, duration, instructions, imageUrl: imageUrl || null, gifUrl: gifUrl || null, videoUrl: videoUrl || null };
 
     if (editingEx) {
       const res = await apiFetch(`/api/exercises/${editingEx.id}`, { method: "PUT", body: JSON.stringify(body) });
@@ -158,6 +165,21 @@ export default function ExercisesPage() {
                 </div>
               </div>
               <p className="text-sm text-slate-600 line-clamp-2 flex-1">{ex.description}</p>
+              {/* GIF / Video badges */}
+              {(ex.gifUrl || ex.videoUrl) && (
+                <div className="flex items-center gap-1.5 mt-2">
+                  {ex.gifUrl && (
+                    <a href={ex.gifUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors">
+                      <ImageIcon className="w-3 h-3" /> GIF
+                    </a>
+                  )}
+                  {ex.videoUrl && (
+                    <a href={ex.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors">
+                      <Film className="w-3 h-3" /> Video
+                    </a>
+                  )}
+                </div>
+              )}
               <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full capitalize ${DIFFICULTY_COLORS[ex.difficulty] || DIFFICULTY_COLORS.medium}`}>{ex.difficulty}</span>
                 <span className="text-xs text-slate-400">{ex.duration}</span>
@@ -195,6 +217,8 @@ export default function ExercisesPage() {
               </div>
               <div><label className="block text-xs font-medium text-slate-600 mb-1">Instructions *</label><textarea required value={instructions} onChange={(e) => setInstructions(e.target.value)} rows={3} className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none" /></div>
               <div><label className="block text-xs font-medium text-slate-600 mb-1">Image URL</label><input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none" /></div>
+              <div><label className="block text-xs font-medium text-slate-600 mb-1">GIF URL</label><input value={gifUrl} onChange={(e) => setGifUrl(e.target.value)} placeholder="https://media.giphy.com/..." className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none" /></div>
+              <div><label className="block text-xs font-medium text-slate-600 mb-1">Video URL (YouTube)</label><input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none" /></div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => { setShowModal(false); resetForm(); }} className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
                 <button type="submit" disabled={formLoading} className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-60">

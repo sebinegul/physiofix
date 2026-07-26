@@ -30,19 +30,20 @@ model PasswordReset {
 }
 
 model Patient {
-  id            String    @id @default(uuid())
-  userId        String    @unique
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dateOfBirth   String?
-  gender        String?
-  address       String?
+  id               String    @id @default(uuid())
+  userId           String    @unique
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth      String?
+  gender           String?
+  address          String?
   emergencyContact String?
-  medicalHistory  String?
-  allergies     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  consultations Consultation[]
+  medicalHistory   String?
+  allergies        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  consultations    Consultation[]
   assignedExercises AssignedExercise[]
+  exercisePlans    ExercisePlan[]
 }
 
 model Exercise {
@@ -54,22 +55,25 @@ model Exercise {
   duration      String    // e.g., "10 minutes"
   instructions  String
   imageUrl      String?
+  gifUrl        String?   // GIF URL for exercise reference (patient view)
+  videoUrl      String?   // YouTube embed URL for exercise reference
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   assignedExercises AssignedExercise[]
+  exercisePlanItems ExercisePlanItem[]
 }
 
 model Appointment {
-  id            String    @id @default(uuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date          DateTime
-  time          String
-  type          String    // e.g., "consultation", "follow-up", "assessment"
-  status        String    @default("pending") // "pending", "confirmed", "completed", "cancelled"
-  notes         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime
+  time      String
+  type      String   // e.g., "consultation", "follow-up", "assessment"
+  status    String   @default("pending") // "pending", "confirmed", "completed", "cancelled"
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Consultation {
@@ -83,6 +87,7 @@ model Consultation {
   followUpDate  DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  exercisePlans ExercisePlan[]
 }
 
 model AssignedExercise {
@@ -100,11 +105,52 @@ model AssignedExercise {
   updatedAt     DateTime  @updatedAt
 }
 
+// NEW: Multi-day exercise plan tied to a consultation
+model ExercisePlan {
+  id              String    @id @default(uuid())
+  consultationId  String
+  consultation    Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  totalDays       Int       // Number of days in the program
+  title           String?   // e.g., "Knee Rehab Week 1"
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  dailyPlans      DailyPlan[]
+}
+
+// NEW: One per day in the plan
+model DailyPlan {
+  id              String    @id @default(uuid())
+  exercisePlanId  String
+  exercisePlan    ExercisePlan @relation(fields: [exercisePlanId], references: [id], onDelete: Cascade)
+  dayNumber       Int       // 1, 2, 3, etc.
+  label           String?   // e.g., "Day 1", "Day 2"
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  items           ExercisePlanItem[]
+}
+
+// NEW: Individual exercise item for a specific day
+model ExercisePlanItem {
+  id              String    @id @default(uuid())
+  dailyPlanId     String
+  dailyPlan       DailyPlan @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  exerciseId      String
+  exercise        Exercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets            Int       // Number of sets
+  durationSeconds Int       // How long each set lasts in seconds
+  sortOrder       Int       @default(0) // Order of exercise within the day
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
 model SiteContent {
-  id            String    @id @default(uuid())
-  key           String    @unique
-  value         String
-  updatedAt     DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
 }
 
 model BlogPost {
