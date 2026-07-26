@@ -744,7 +744,7 @@ export default function BookVisitModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: anim }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-blue-950/50 via-slate-900/40 to-indigo-950/40 p-4 backdrop-blur-md"
           onClick={handleBackdropClick}
           role="dialog"
           aria-modal="true"
@@ -771,18 +771,15 @@ export default function BookVisitModal() {
               duration: 0.45,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="relative flex w-full max-w-[900px] flex-col overflow-hidden rounded-3xl shadow-2xl shadow-slate-900/20 md:h-[560px] md:flex-row"
-            style={{
-              border: "1px solid rgba(255,255,255,0.15)",
-            }}
+            className="relative flex w-full max-w-[900px] flex-col overflow-hidden rounded-3xl border border-white/60 bg-white/80 shadow-lg shadow-blue-100/30 backdrop-blur-xl md:h-[560px] md:flex-row"
           >
             {/* ─── Left Panel (decorative — animated gradient with glass orbs) ─── */}
-            <div className="relative hidden w-[45%] overflow-hidden bg-gradient-to-br from-slate-900 via-primary-800 to-primary-600 md:flex md:flex-col md:items-center md:justify-center">
+            <div className="relative hidden w-[45%] overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400 md:flex md:flex-col md:items-center md:justify-center">
               {/* Animated gradient orbs */}
-              <div className="absolute -left-20 -top-20 h-72 w-72 animate-morph rounded-full bg-primary-400/20 blur-3xl" />
-              <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph-reverse rounded-full bg-accent/20 blur-3xl" />
-              <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-cyan-300/10 blur-2xl" />
-              <div className="absolute bottom-1/4 left-1/4 h-32 w-32 animate-float-delayed rounded-full bg-emerald-400/10 blur-2xl" />
+              <div className="absolute -left-20 -top-20 h-72 w-72 animate-morph rounded-full bg-blue-300/20 blur-3xl" />
+              <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph-reverse rounded-full bg-cyan-300/20 blur-3xl" />
+              <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-blue-200/10 blur-2xl" />
+              <div className="absolute bottom-1/4 left-1/4 h-32 w-32 animate-float-delayed rounded-full bg-indigo-300/10 blur-2xl" />
 
               {/* Rotating ring decoration */}
               <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" />
@@ -819,9 +816,9 @@ export default function BookVisitModal() {
             </div>
 
             {/* Mobile header */}
-            <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-primary-800 to-primary-600 md:hidden">
-              <div className="absolute -left-10 -top-10 h-40 w-40 animate-morph rounded-full bg-primary-400/20 blur-2xl" />
-              <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph-reverse rounded-full bg-accent/20 blur-2xl" />
+            <div className="relative flex h-28 items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400 md:hidden">
+              <div className="absolute -left-10 -top-10 h-40 w-40 animate-morph rounded-full bg-blue-300/20 blur-2xl" />
+              <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph-reverse rounded-full bg-cyan-300/20 blur-2xl" />
               <div className="relative z-10">
                 <Image
                   src="/physiofix.png"
@@ -835,15 +832,27 @@ export default function BookVisitModal() {
             </div>
 
             {/* ─── Right Panel (form) ─── */}
-            <div className="relative flex w-full flex-col bg-white/95 backdrop-blur-xl md:w-[55%]">
+            <div className="relative flex w-full flex-col bg-white/80 backdrop-blur-xl md:w-[55%]">
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-xl text-gray-400 transition-all duration-300 hover:bg-gray-100 hover:text-gray-600"
+                className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-xl text-gray-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-500"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
               </button>
+
+              {/* Mobile-only logo at top of form panel */}
+              <div className="flex items-center justify-center pt-5 md:hidden">
+                <Image
+                  src="/physiofix.png"
+                  alt="PhysioFix"
+                  width={140}
+                  height={32}
+                  className="h-auto w-28 object-contain"
+                  priority
+                />
+              </div>
 
               {/* Header area */}
               {step !== 3 && (
@@ -886,10 +895,10 @@ export default function BookVisitModal() {
                             <div
                               className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold transition-all duration-400 ${
                                 circleCompleted
-                                  ? "bg-gradient-to-br from-primary-500 to-accent text-white shadow-md shadow-primary-500/25"
+                                  ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/25"
                                   : circleActive
-                                    ? "bg-primary-500 text-white shadow-md shadow-primary-500/25"
-                                    : "bg-gray-100 text-gray-400"
+                                    ? "bg-blue-500 text-white shadow-md shadow-blue-500/25"
+                                    : "bg-slate-100 text-slate-400"
                               }`}
                             >
                               {circleCompleted ? (
@@ -902,8 +911,8 @@ export default function BookVisitModal() {
                               <div
                                 className={`h-0.5 w-8 rounded-full transition-all duration-500 ${
                                   effectiveStep > s
-                                    ? "bg-gradient-to-r from-primary-500 to-accent"
-                                    : "bg-gray-100"
+                                    ? "bg-gradient-to-r from-blue-500 to-blue-400"
+                                    : "bg-slate-100"
                                 }`}
                               />
                             )}
@@ -942,7 +951,7 @@ export default function BookVisitModal() {
                             htmlFor="bv-name"
                             className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
                           >
-                            <User className="h-3.5 w-3.5 text-primary-500" />
+                            <User className="h-3.5 w-3.5 text-blue-500" />
                             Full Name <span className="text-red-500">*</span>
                           </label>
                           <input
@@ -971,7 +980,7 @@ export default function BookVisitModal() {
                             htmlFor="bv-phone"
                             className="mb-1.5 flex items-center gap-1.5 text-[13px] font-medium text-gray-600"
                           >
-                            <Phone className="h-3.5 w-3.5 text-primary-500" />
+                            <Phone className="h-3.5 w-3.5 text-blue-500" />
                             Phone Number <span className="text-red-500">*</span>
                           </label>
                           <input

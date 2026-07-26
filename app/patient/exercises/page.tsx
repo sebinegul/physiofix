@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Info,
   Volume2,
+  VolumeX,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -81,6 +82,20 @@ function playBeep() {
     osc.stop(ctx.currentTime + 0.5);
   } catch {
     /* audio not available */
+  }
+}
+
+/** Web Speech API helper – speaks text when enabled */
+function speak(text: string) {
+  try {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1.1;
+    utter.volume = 0.8;
+    window.speechSynthesis.speak(utter);
+  } catch {
+    /* speech not available */
   }
 }
 
@@ -247,9 +262,11 @@ function TimerRing({
 function ExerciseTimerCard({
   item,
   onComplete,
+  speakEnabled,
 }: {
   item: ExerciseItem;
   onComplete: () => void;
+  speakEnabled: boolean;
 }) {
   const totalSets = item.sets;
   const duration = item.durationSeconds || 30;
@@ -259,6 +276,8 @@ function ExerciseTimerCard({
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const speakEnabledRef = useRef(speakEnabled);
+  speakEnabledRef.current = speakEnabled;
 
   // Cleanup on unmount
   useEffect(() => {
@@ -281,6 +300,7 @@ function ExerciseTimerCard({
           if (currentSet >= totalSets) {
             // All sets done
             setTimeout(() => {
+              if (speakEnabledRef.current) speak('Great job! Exercise complete!');
               setIsComplete(true);
               onComplete();
             }, 600);
@@ -305,7 +325,28 @@ function ExerciseTimerCard({
   }, [isRunning, currentSet, totalSets, duration, onComplete]);
 
   const handleStart = () => {
-    if (timeLeft > 0) setIsRunning(true);
+    if (timeLeft > 0) {
+      if (speakEnabled) {
+        window.speechSynthesis?.cancel();
+        if (currentSet === 1 && timeLeft === duration) {
+          // First set – "Three, two, one, go!" countdown
+          const words = ['Three', 'Two', 'One', 'Go!'];
+          words.forEach((word, i) => {
+            setTimeout(() => {
+              playBeep();
+              speak(word);
+            }, i * 1000);
+          });
+          setTimeout(() => setIsRunning(true), 4000);
+        } else {
+          // Subsequent set – announce
+          speak(`Set ${currentSet} starting`);
+          setIsRunning(true);
+        }
+      } else {
+        setIsRunning(true);
+      }
+    }
   };
 
   const handlePause = () => {
@@ -424,11 +465,13 @@ function ExerciseCard({
   index,
   onComplete,
   isCompleted,
+  speakEnabled,
 }: {
   item: ExerciseItem;
   index: number;
   onComplete: () => void;
   isCompleted: boolean;
+  speakEnabled: boolean;
 }) {
   const [showInstructions, setShowInstructions] = useState(false);
   const ex = item.exercise;
@@ -576,7 +619,7 @@ function ExerciseCard({
       {/* Timer */}
       {!isCompleted && (
         <div className="px-5 pb-5 pt-2">
-          <ExerciseTimerCard item={item} onComplete={onComplete} />
+          <ExerciseTimerCard item={item} onComplete={onComplete} speakEnabled={speakEnabled} />
         </div>
       )}
 
@@ -605,6 +648,7 @@ export default function ExercisesPage() {
   const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set());
   const [dayFullyComplete, setDayFullyComplete] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [speakEnabled, setSpeakEnabled] = useState(true);
 
   // Fetch exercise plans
   useEffect(() => {
@@ -666,8 +710,19 @@ export default function ExercisesPage() {
         next.add(exerciseKey);
         return next;
       });
+      // Announce next exercise
+      if (speakEnabled && currentDay) {
+        const completedItem = currentDay.items.find(
+          (item) => `${currentDay.dayNumber}-${item.sortOrder}` === exerciseKey,
+        );
+        const completedIdx = currentDay.items.indexOf(completedItem!);
+        const nextItem = currentDay.items[completedIdx + 1];
+        if (nextItem) {
+          setTimeout(() => speak(`Next exercise: ${nextItem.exercise.name}`), 1200);
+        }
+      }
     },
-    [],
+    [speakEnabled, currentDay],
   );
 
   // Check if day is fully complete
@@ -679,11 +734,12 @@ export default function ExercisesPage() {
     if (allDone && currentDay.items.length > 0 && !dayFullyComplete) {
       setDayFullyComplete(true);
       setShowConfetti(true);
+      if (speakEnabled) speak('Great job! Exercise complete!');
       // Auto-hide confetti after 5 seconds
       const timer = setTimeout(() => setShowConfetti(false), 5000);
       return () => clearTimeout(timer);
     }
-  }, [completedExercises, currentDay, dayFullyComplete]);
+  }, [completedExercises, currentDay, dayFullyComplete, speakEnabled]);
 
   /* -------------------------------------------------------------- */
   /*  Loading skeleton                                                */
@@ -740,13 +796,35 @@ export default function ExercisesPage() {
 
       <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 font-display">
-            My Exercises
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Follow your personalized exercise plan day by day.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 font-display">
+              My Exercises
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Follow your personalized exercise plan day by day.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              const next = !speakEnabled;
+              setSpeakEnabled(next);
+              if (!next) window.speechSynthesis?.cancel();
+            }}
+            title={speakEnabled ? 'Voice instructions ON – click to disable' : 'Voice instructions OFF – click to enable'}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all border ${
+              speakEnabled
+                ? 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100'
+                : 'bg-slate-50 text-gray-400 border-slate-200 hover:bg-slate-100'
+            }`}
+          >
+            {speakEnabled ? (
+              <Volume2 className="w-4 h-4" />
+            ) : (
+              <VolumeX className="w-4 h-4" />
+            )}
+            {speakEnabled ? 'Voice On' : 'Voice Off'}
+          </button>
         </div>
 
         {/* Plan Selector (if multiple plans) */}
@@ -937,6 +1015,7 @@ export default function ExercisesPage() {
                   index={index}
                   onComplete={() => handleExerciseComplete(key)}
                   isCompleted={completedExercises.has(key)}
+                  speakEnabled={speakEnabled}
                 />
               );
             })}
