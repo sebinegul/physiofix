@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Search, MapPin, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone, Stethoscope, FileText, X } from "lucide-react";
+import { Search, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone, Stethoscope, FileText, X } from "lucide-react";
 import GradientText from "../components/ui/GradientText";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
@@ -138,20 +138,15 @@ export default function Hero() {
             </motion.div>
 
             {/* Mobile marquee */}
-            <div className="mb-6 md:hidden overflow-hidden rounded-full border border-blue-200/80 bg-white/70 px-3 py-2 shadow-sm backdrop-blur">
+            <div className="mb-6 md:hidden flex items-center gap-2 overflow-hidden rounded-full border border-blue-200/80 bg-white/70 pl-3 pr-3 py-2 shadow-sm backdrop-blur">
+              <Sparkles className="h-4 w-4 flex-shrink-0 text-blue-500" />
               <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
-                  <Sparkles className="h-4 w-4 text-blue-500" />
-                  Sports Rehabilitation
-                </span>
+                <span className="text-sm font-medium text-slate-700">Sports Rehabilitation</span>
                 <span className="text-sm font-medium text-slate-700">Ortho</span>
                 <span className="text-sm font-medium text-slate-700">Neuro</span>
                 <span className="text-sm font-medium text-slate-700">Home Care</span>
                 {/* Duplicate for seamless loop */}
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-700">
-                  <Sparkles className="h-4 w-4 text-blue-500" />
-                  Sports Rehabilitation
-                </span>
+                <span className="text-sm font-medium text-slate-700">Sports Rehabilitation</span>
                 <span className="text-sm font-medium text-slate-700">Ortho</span>
                 <span className="text-sm font-medium text-slate-700">Neuro</span>
                 <span className="text-sm font-medium text-slate-700">Home Care</span>
@@ -199,10 +194,10 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
               id="find"
               ref={searchRef}
-              className="relative gradient-border rounded-[1.5rem] bg-white/70 p-3 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl"
+              className="relative z-10 gradient-border rounded-[1.5rem] bg-white/70 p-3 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
-                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3">
+                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-2">
                   <Search className="h-5 w-5 flex-shrink-0 text-slate-400" />
                   <input
                     ref={inputRef}
@@ -223,11 +218,7 @@ export default function Hero() {
                     </button>
                   )}
                 </div>
-                <div className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200/40 bg-slate-50/50 px-4 py-3 opacity-60 cursor-not-allowed">
-                  <MapPin className="h-5 w-5 flex-shrink-0 text-slate-400" />
-                  <span className="flex-1 bg-transparent text-sm text-slate-500">JP Nagar, Bangalore</span>
-                </div>
-                <button onClick={handleSearch} className="btn-primary !rounded-2xl">
+                <button onClick={handleSearch} className="btn-primary !rounded-2xl !px-4 !py-2">
                   <Search className="h-5 w-5" />
                   Search
                 </button>

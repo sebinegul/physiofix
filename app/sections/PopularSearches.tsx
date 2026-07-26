@@ -1,6 +1,6 @@
 ﻿import Link from "next/link";
 import {
-  ArrowRight, HeartPulse, Activity, Bone, Brain, Home, Wind, Syringe, Dumbbell,
+  ArrowRight, HeartPulse, Activity, Brain, Home, Wind, Dumbbell,
   Hand, Zap, Stethoscope, AlignCenter, Layers, ShieldCheck,
 } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
@@ -15,12 +15,17 @@ const categories = [
 ];
 
 const specialties: { name: string; icon: LucideIcon; bg: string; border: string; color: string; detail: string; active?: boolean }[] = [
-  { name: "Sports Rehab", icon: Activity, bg: "from-orange-500/12 to-amber-400/8", border: "border-orange-200/70", color: "text-orange-600", detail: "Return to sport safely" },
-  { name: "Orthopaedic", icon: Bone, bg: "from-sky-500/12 to-cyan-400/8", border: "border-sky-200/70", color: "text-sky-600", detail: "Back and joint care" },
-  { name: "Neurological", icon: Brain, bg: "from-violet-500/12 to-fuchsia-400/8", border: "border-violet-200/70", color: "text-violet-600", detail: "Balance and coordination" },
-  { name: "Post-Surgical", icon: Syringe, bg: "from-rose-500/12 to-red-400/8", border: "border-rose-200/70", color: "text-rose-600", detail: "Strength rebuilding", active: true },
-  { name: "Home Care", icon: Home, bg: "from-emerald-500/12 to-green-400/8", border: "border-emerald-200/70", color: "text-emerald-600", detail: "Comfortable visits at home" },
-  { name: "Posture", icon: Wind, bg: "from-blue-500/12 to-cyan-400/8", border: "border-blue-200/70", color: "text-blue-600", detail: "Alignment and breathing" },
+  { name: "Chiropractic Care", icon: AlignCenter, bg: "from-rose-500/12 to-red-400/8", border: "border-rose-200/70", color: "text-rose-600", detail: "Spinal and joint alignment" },
+  { name: "Myofascial Release", icon: Dumbbell, bg: "from-indigo-500/12 to-blue-400/8", border: "border-indigo-200/70", color: "text-indigo-500", detail: "Trigger point and muscle release" },
+  { name: "Manual Therapy", icon: Hand, bg: "from-emerald-500/12 to-green-400/8", border: "border-emerald-200/70", color: "text-emerald-600", detail: "Hands-on movement improvement" },
+  { name: "Physiotherapy At Home", icon: Home, bg: "from-emerald-500/12 to-green-400/8", border: "border-emerald-200/70", color: "text-emerald-600", detail: "Comfortable visits at home" },
+  { name: "Geriatric Physiotherapy", icon: HeartPulse, bg: "from-rose-500/12 to-red-400/8", border: "border-rose-200/70", color: "text-rose-500", detail: "Elderly mobility and balance" },
+  { name: "Sports Rehabilitation", icon: Activity, bg: "from-orange-500/12 to-amber-400/8", border: "border-orange-200/70", color: "text-orange-600", detail: "Return to sport safely" },
+  { name: "Cupping Therapy", icon: Layers, bg: "from-violet-500/12 to-purple-400/8", border: "border-violet-200/70", color: "text-violet-600", detail: "Circulation and muscle relief" },
+  { name: "Neuro Rehabilitation", icon: Brain, bg: "from-violet-500/12 to-fuchsia-400/8", border: "border-violet-200/70", color: "text-violet-600", detail: "Balance and coordination" },
+  { name: "Electrotherapy", icon: Zap, bg: "from-amber-500/12 to-yellow-400/8", border: "border-amber-200/70", color: "text-amber-600", detail: "Pain relief and muscle recovery" },
+  { name: "Posture Correction", icon: Wind, bg: "from-blue-500/12 to-cyan-400/8", border: "border-blue-200/70", color: "text-blue-600", detail: "Alignment and sustainable habits" },
+  { name: "Post Surgery Rehabilitation", icon: ShieldCheck, bg: "from-sky-500/12 to-cyan-400/8", border: "border-sky-200/70", color: "text-sky-600", detail: "Strength rebuilding after surgery" },
 ];
 
 const treatmentList = [
@@ -57,7 +62,7 @@ export default function PopularSearches() {
             </div>
           </ScrollReveal>
 
-          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6" stagger={0.07}>
+          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" stagger={0.07}>
             {specialties.map((specialty) => {
               const Icon = specialty.icon;
               return (
