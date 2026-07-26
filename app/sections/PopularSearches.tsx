@@ -29,18 +29,17 @@ const specialties: { name: string; icon: LucideIcon; bg: string; border: string;
 ];
 
 const treatmentList = [
-  { title: "Physiotherapy Assessment", description: "Personalised evaluation to identify pain, mobility and strength concerns early.", href: "/specialization/physiotherapyAssessment", icon: Stethoscope, color: "from-blue-500 to-blue-600", lightBg: "bg-blue-50", iconColor: "text-blue-600" },
-  { title: "Electrotherapy", description: "Gentle electrical stimulation to reduce pain, relax muscles and support healing.", href: "/specialization/electrotherapy", icon: Zap, color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50", iconColor: "text-amber-600" },
-  { title: "Manual Therapy", description: "Hands-on techniques to improve movement, ease tension and reduce discomfort.", href: "/specialization/manualTherapy", icon: Hand, color: "from-emerald-500 to-green-500", lightBg: "bg-emerald-50", iconColor: "text-emerald-600" },
-  { title: "Cupping Therapy", description: "Relieves stiffness, supports circulation and eases muscle tightness.", href: "/specialization/cuppingTherapy", icon: Layers, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50", iconColor: "text-violet-600" },
-  { title: "Chiropractic Care", description: "Spinal and joint care to restore alignment, mobility and comfort.", href: "/specialization/chiropracticCare", icon: AlignCenter, color: "from-rose-500 to-pink-500", lightBg: "bg-rose-50", iconColor: "text-rose-600" },
-  { title: "Myofascial Release", description: "Focused release techniques for tight muscles, trigger points and restricted mobility.", href: "/specialization/softTissueManipulation", icon: Dumbbell, color: "from-indigo-500 to-blue-500", lightBg: "bg-indigo-50", iconColor: "text-indigo-500" },
-  { title: "Sports Rehabilitation", description: "Recovery plans for sprains, strains, ACL rehab, tendon issues and return-to-sport readiness.", href: "/specialization/sportsPhysio", icon: Activity, color: "from-teal-500 to-emerald-500", lightBg: "bg-teal-50", iconColor: "text-teal-600" },
-  { title: "Neuro Rehabilitation", description: "Guided support for coordination, balance, gait, and movement-based recovery after neurological challenges.", href: "/specialization/neuroRehabilitation", icon: Brain, color: "from-violet-500 to-purple-600", lightBg: "bg-purple-50", iconColor: "text-purple-600" },
-  { title: "Geriatric Physiotherapy", description: "Comprehensive care for elderly patients focusing on mobility, balance and fall prevention.", href: "/specialization/geriatricPhysio", icon: HeartPulse, color: "from-rose-400 to-red-500", lightBg: "bg-rose-50", iconColor: "text-rose-500" },
-  { title: "Physiotherapy At Home", description: "Convenient sessions at home for recovery, mobility and comfort.", href: "/specialization/homePhysio", icon: Home, color: "from-emerald-400 to-green-500", lightBg: "bg-emerald-50", iconColor: "text-emerald-500" },
-  { title: "Post-Surgery Rehab", description: "Structured care after surgery with pain relief, strength rebuilding and confidence in movement.", href: "/specialization/postSurgeryRehabilitation", icon: ShieldCheck, color: "from-sky-500 to-cyan-500", lightBg: "bg-sky-50", iconColor: "text-sky-600" },
-  { title: "Posture Correction", description: "Movement-based support to improve alignment, reduce strain and build sustainable habits.", href: "/specialization/postureCorrection", icon: Wind, color: "from-blue-400 to-indigo-500", lightBg: "bg-blue-50", iconColor: "text-blue-500" },
+  { title: "Chiropractic Care", description: "Restores spine and joint alignment to reduce pain and improve body function.", href: "/specialization/chiropracticCare", icon: AlignCenter, color: "from-rose-500 to-pink-500", lightBg: "bg-rose-50", iconColor: "text-rose-600" },
+  { title: "Myofascial Release", description: "Releases tight fascia to reduce muscle tension and improve mobility.", href: "/specialization/softTissueManipulation", icon: Dumbbell, color: "from-indigo-500 to-blue-500", lightBg: "bg-indigo-50", iconColor: "text-indigo-500" },
+  { title: "Manual Therapy", description: "Hands-on techniques to improve movement, relax muscles, and reduce pain.", href: "/specialization/manualTherapy", icon: Hand, color: "from-emerald-500 to-green-500", lightBg: "bg-emerald-50", iconColor: "text-emerald-600" },
+  { title: "Physiotherapy At Home", description: "Personalised physiotherapy sessions delivered at home for faster recovery.", href: "/specialization/homePhysio", icon: Home, color: "from-emerald-400 to-green-500", lightBg: "bg-emerald-50", iconColor: "text-emerald-500" },
+  { title: "Geriatric Physiotherapy", description: "Improves mobility, strength, and independence in elderly individuals.", href: "/specialization/geriatricPhysio", icon: HeartPulse, color: "from-rose-400 to-red-500", lightBg: "bg-rose-50", iconColor: "text-rose-500" },
+  { title: "Sports Rehabilitation", description: "Recovery support for sports injuries, overuse pain, strengthening, and return-to-play progression.", href: "/specialization/sportsPhysio", icon: Activity, color: "from-teal-500 to-emerald-500", lightBg: "bg-teal-50", iconColor: "text-teal-600" },
+  { title: "Cupping Therapy", description: "Reduces muscle tension, improves blood flow, and promotes healing.", href: "/specialization/cuppingTherapy", icon: Layers, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50", iconColor: "text-violet-600" },
+  { title: "Neuro Rehabilitation", description: "Supports movement, coordination, and balance recovery after neurological conditions.", href: "/specialization/neuroRehabilitation", icon: Brain, color: "from-violet-500 to-purple-600", lightBg: "bg-purple-50", iconColor: "text-purple-600" },
+  { title: "Electrotherapy", description: "Uses electrical stimulation to reduce pain and support muscle recovery.", href: "/specialization/electrotherapy", icon: Zap, color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50", iconColor: "text-amber-600" },
+  { title: "Posture Correction", description: "Corrects postural imbalances and improves spinal alignment.", href: "/specialization/postureCorrection", icon: Wind, color: "from-blue-400 to-indigo-500", lightBg: "bg-blue-50", iconColor: "text-blue-500" },
+  { title: "Post Surgery Rehabilitation", description: "Restores strength, mobility, and confidence after surgical procedures.", href: "/specialization/postSurgeryRehabilitation", icon: ShieldCheck, color: "from-sky-500 to-cyan-500", lightBg: "bg-sky-50", iconColor: "text-sky-600" },
 ];
 
 export default function PopularSearches() {
@@ -62,25 +61,8 @@ export default function PopularSearches() {
             </div>
           </ScrollReveal>
 
-          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" stagger={0.07}>
-            {specialties.map((specialty) => {
-              const Icon = specialty.icon;
-              return (
-                <StaggerItem key={specialty.name}>
-                  <TiltCard className={`rounded-[1.25rem] border bg-gradient-to-br ${specialty.bg} p-4 text-left ${specialty.border} ${specialty.active ? "ring-2 ring-blue-400/60" : ""}`}>
-                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 shadow-sm">
-                      <Icon className={`h-5 w-5 ${specialty.color}`} />
-                    </div>
-                    <p className={`text-sm font-semibold ${specialty.color}`}>{specialty.name}</p>
-                    <p className="mt-2 text-xs text-slate-500">{specialty.detail}</p>
-                  </TiltCard>
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
-
-          {/* Interactive treatment cards */}
-          <ScrollReveal className="mt-10">
+          {/* Treatment cards with "Click to learn more" - NOW ON TOP */}
+          <ScrollReveal className="mb-10">
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-2xl bg-blue-100 p-2.5 text-blue-600">
                 <HeartPulse className="h-5 w-5" />
@@ -133,6 +115,24 @@ export default function PopularSearches() {
               </Link>
             </div>
           </ScrollReveal>
+
+          {/* Specialty cards grid - NOW ON BOTTOM */}
+          <StaggerContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" stagger={0.07}>
+            {specialties.map((specialty) => {
+              const Icon = specialty.icon;
+              return (
+                <StaggerItem key={specialty.name}>
+                  <TiltCard className={`rounded-[1.25rem] border bg-gradient-to-br ${specialty.bg} p-4 text-left ${specialty.border} ${specialty.active ? "ring-2 ring-blue-400/60" : ""}`}>
+                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 shadow-sm">
+                      <Icon className={`h-5 w-5 ${specialty.color}`} />
+                    </div>
+                    <p className={`text-sm font-semibold ${specialty.color}`}>{specialty.name}</p>
+                    <p className="mt-2 text-xs text-slate-500">{specialty.detail}</p>
+                  </TiltCard>
+                </StaggerItem>
+              );
+            })}
+          </StaggerContainer>
         </div>
       </div>
     </section>
