@@ -144,8 +144,9 @@ export default function PatientDashboard() {
       authFetch('/api/patients'),
       authFetch('/api/appointments'),
       authFetch('/api/consultations'),
+      authFetch('/api/exercise-plans'),
     ])
-      .then(([userData, patientData, appointmentsData, consultationsData]) => {
+      .then(([userData, patientData, appointmentsData, consultationsData, plansData]) => {
         setUser(userData?.user || userData);
         const patientRecord = Array.isArray(patientData?.data) ? patientData.data[0] : patientData;
         setPatient(patientRecord);
@@ -155,6 +156,31 @@ export default function PatientDashboard() {
             : appointmentsData.data || appointmentsData.appointments || [],
         );
         setExercises(patientRecord?.assignedExercises || []);
+        // Also extract exercises from exercise plans
+        const planExercises = (plansData?.data || []).flatMap((plan: any) =>
+          (plan.dailyPlans || []).flatMap((dp: any) =>
+            (dp.items || []).map((item: any) => ({
+              id: item.id || `${plan.id}-${dp.dayNumber}-${item.exerciseId}`,
+              sets: item.sets,
+              reps: item.durationSeconds || 10,
+              frequency: `Day ${dp.dayNumber}`,
+              notes: item.notes || null,
+              assignedDate: plan.createdAt,
+              exercise: item.exercise || { id: item.exerciseId, name: 'Exercise', description: '', category: '', difficulty: '', duration: '' },
+            }))
+          )
+        );
+        setExercises((prev) => {
+          const combined = [...prev, ...planExercises];
+          // Deduplicate by exercise name
+          const seen = new Set<string>();
+          return combined.filter((ae) => {
+            const key = ae.exercise.name;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+        });
         setConsultations(
           Array.isArray(consultationsData)
             ? consultationsData

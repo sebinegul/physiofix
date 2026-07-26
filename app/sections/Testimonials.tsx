@@ -207,13 +207,15 @@ export default function Testimonials() {
             <button
               key={i}
               onClick={() => setPage(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
+              className="flex h-11 w-11 items-center justify-center p-[13px]"
+              aria-label={`Go to page ${i + 1}`}
+            >
+              <span className={`h-2 rounded-full transition-all duration-300 ${
                 i === page
                   ? "w-8 bg-blue-600"
                   : "w-2 bg-slate-300 hover:bg-slate-400"
-              }`}
-              aria-label={`Go to page ${i + 1}`}
-            />
+              }`} />
+            </button>
           ))}
         </div>
       </div>

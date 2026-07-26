@@ -13,9 +13,21 @@ import {
   Dumbbell,
   Copy,
   Check,
+  Eye,
+  Stethoscope,
+  Heart,
+  FileText,
 } from "lucide-react";
 
 /* ─────────────────────────── Types ─────────────────────────── */
+
+interface TreatmentPlanItem {
+  title: string;
+  description: string;
+  duration: string;
+  frequency: string;
+  days: number;
+}
 
 interface Consultation {
   id: string;
@@ -25,6 +37,7 @@ interface Consultation {
   treatment: string;
   notes: string | null;
   followUpDate: string | null;
+  treatmentPlan?: TreatmentPlanItem[] | string | null;
   patient?: { id: string; user?: { name: string } };
 }
 
@@ -120,6 +133,22 @@ async function apiFetch<T>(
   }
 }
 
+/* ─────────────────────────── Helpers ───────────────────────── */
+
+function parseTreatmentPlan(raw: unknown): TreatmentPlanItem[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw as TreatmentPlanItem[];
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as TreatmentPlanItem[]) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 /* ─────────────────────────── Component ─────────────────────── */
 
 export default function ConsultationsPage() {
@@ -139,6 +168,12 @@ export default function ConsultationsPage() {
   const [treatment, setTreatment] = useState("");
   const [notes, setNotes] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");
+
+  /* ── Treatment plan items state (for add/edit modal) ── */
+  const [treatmentPlanItems, setTreatmentPlanItems] = useState<TreatmentPlanItem[]>([]);
+
+  /* ── View modal state ── */
+  const [viewConsultation, setViewConsultation] = useState<Consultation | null>(null);
 
   /* ── Exercise planner state ── */
   const [showPlanner, setShowPlanner] = useState(false);
@@ -202,6 +237,28 @@ export default function ConsultationsPage() {
       c.treatment.toLowerCase().includes(search.toLowerCase())
   );
 
+  /* ── Treatment plan items helpers ── */
+  const addTreatmentPlanItem = () => {
+    setTreatmentPlanItems([
+      ...treatmentPlanItems,
+      { title: "", description: "", duration: "", frequency: "", days: 1 },
+    ]);
+  };
+
+  const updateTreatmentPlanItem = (
+    index: number,
+    field: keyof TreatmentPlanItem,
+    value: string | number
+  ) => {
+    const updated = [...treatmentPlanItems];
+    updated[index] = { ...updated[index], [field]: value };
+    setTreatmentPlanItems(updated);
+  };
+
+  const removeTreatmentPlanItem = (index: number) => {
+    setTreatmentPlanItems(treatmentPlanItems.filter((_, i) => i !== index));
+  };
+
   /* ── Consultation CRUD ── */
   const resetForm = () => {
     setPatientId("");
@@ -210,6 +267,7 @@ export default function ConsultationsPage() {
     setTreatment("");
     setNotes("");
     setFollowUpDate("");
+    setTreatmentPlanItems([]);
     setEditing(null);
     setError("");
   };
@@ -227,6 +285,8 @@ export default function ConsultationsPage() {
     setTreatment(c.treatment);
     setNotes(c.notes || "");
     setFollowUpDate(c.followUpDate ? c.followUpDate.split("T")[0] : "");
+    // Parse existing treatment plan items
+    setTreatmentPlanItems(parseTreatmentPlan(c.treatmentPlan));
     setShowModal(true);
   };
 
@@ -242,6 +302,12 @@ export default function ConsultationsPage() {
       notes,
     };
     if (followUpDate) body.followUpDate = new Date(followUpDate).toISOString();
+    // Include treatment plan items as JSON
+    if (treatmentPlanItems.length > 0) {
+      body.treatmentPlan = treatmentPlanItems;
+    } else {
+      body.treatmentPlan = null;
+    }
 
     if (editing) {
       const res = await apiFetch(`/api/consultations/${editing.id}`, {
@@ -267,6 +333,15 @@ export default function ConsultationsPage() {
     if (!confirm("Delete this consultation?")) return;
     await apiFetch(`/api/consultations/${id}`, { method: "DELETE" });
     loadData();
+  };
+
+  /* ── View detail helpers ── */
+  const getViewPatientName = (c: Consultation) => {
+    return c.patient?.user?.name || getPatientName(c.patientId);
+  };
+
+  const getRelatedExercisePlan = (consultationId: string) => {
+    return exercisePlans.find((ep) => ep.consultationId === consultationId) || null;
   };
 
   /* ── Exercise Planner helpers ── */
@@ -610,14 +685,23 @@ export default function ConsultationsPage() {
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
                           <button
+                            onClick={() => setViewConsultation(c)}
+                            className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                            title="View details"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          <button
                             onClick={() => openEdit(c)}
                             className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                            title="Edit"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(c.id)}
                             className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                            title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -723,7 +807,236 @@ export default function ConsultationsPage() {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════
-           Consultation Modal
+           Consultation Detail Modal (View)
+           ═══════════════════════════════════════════════════════════ */}
+      {viewConsultation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setViewConsultation(null)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-slate-100 rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-xl">
+                  <Stethoscope className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2
+                    className="text-lg font-bold text-slate-900"
+                    style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}
+                  >
+                    Consultation Details
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {getViewPatientName(viewConsultation)} — {formatDate(viewConsultation.date)}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewConsultation(null)}
+                className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Patient & Date bar */}
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 text-sm font-semibold">
+                  <Heart className="w-3.5 h-3.5" />
+                  {getViewPatientName(viewConsultation)}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 text-slate-600 text-sm">
+                  <Calendar className="w-3.5 h-3.5" />
+                  {formatDate(viewConsultation.date)}
+                </span>
+                {viewConsultation.followUpDate && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 text-sm">
+                    <Calendar className="w-3.5 h-3.5" />
+                    Follow-up: {formatDate(viewConsultation.followUpDate)}
+                  </span>
+                )}
+              </div>
+
+              {/* Diagnosis */}
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Stethoscope className="w-3.5 h-3.5" />
+                  Diagnosis
+                </h3>
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                    {viewConsultation.diagnosis}
+                  </p>
+                </div>
+              </div>
+
+              {/* Treatment */}
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Heart className="w-3.5 h-3.5" />
+                  Treatment
+                </h3>
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                    {viewConsultation.treatment}
+                  </p>
+                </div>
+              </div>
+
+              {/* Treatment Plan Items */}
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5" />
+                  Treatment Plan Items
+                </h3>
+                {(() => {
+                  const items = parseTreatmentPlan(viewConsultation.treatmentPlan);
+                  if (items.length === 0) {
+                    return (
+                      <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center">
+                        <p className="text-sm text-slate-400 italic">
+                          No treatment plan items added
+                        </p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="space-y-3">
+                      {items.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-slate-50 rounded-xl p-3 border border-slate-200"
+                        >
+                          <p className="text-sm font-bold text-slate-800 mb-1">
+                            {item.title}
+                          </p>
+                          {item.description && (
+                            <p className="text-xs text-slate-600 mb-2 whitespace-pre-wrap">
+                              {item.description}
+                            </p>
+                          )}
+                          <div className="flex flex-wrap items-center gap-2">
+                            {item.duration && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-700">
+                                ⏱ {item.duration}
+                              </span>
+                            )}
+                            {item.frequency && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-100 text-indigo-700">
+                                🔄 {item.frequency}
+                              </span>
+                            )}
+                            {item.days > 0 && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-700">
+                                📅 {item.days} {item.days === 1 ? "day" : "days"}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Notes */}
+              {viewConsultation.notes && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    Notes
+                  </h3>
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                      {viewConsultation.notes}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Associated Exercise Plan */}
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Dumbbell className="w-3.5 h-3.5" />
+                  Associated Exercise Plan
+                </h3>
+                {(() => {
+                  const ep = getRelatedExercisePlan(viewConsultation.id);
+                  if (!ep) {
+                    return (
+                      <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center">
+                        <p className="text-sm text-slate-400 italic">
+                          No exercise plan associated
+                        </p>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-bold text-slate-800">
+                          {ep.title || "Untitled Plan"}
+                        </p>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                          {ep.totalDays} {ep.totalDays === 1 ? "day" : "days"}
+                        </span>
+                      </div>
+                      {ep.dailyPlans && ep.dailyPlans.length > 0 && (
+                        <div className="space-y-2">
+                          {ep.dailyPlans.map((dp) => (
+                            <div
+                              key={dp.id}
+                              className="bg-white rounded-lg p-2.5 border border-slate-100"
+                            >
+                              <p className="text-xs font-semibold text-slate-600 mb-1">
+                                {dp.label || `Day ${dp.dayNumber}`}
+                              </p>
+                              {dp.items.length > 0 ? (
+                                <ul className="space-y-0.5">
+                                  {dp.items.map((item) => (
+                                    <li
+                                      key={item.id}
+                                      className="text-xs text-slate-500 flex items-center gap-1.5"
+                                    >
+                                      <span className="w-1 h-1 rounded-full bg-blue-400 flex-shrink-0" />
+                                      {item.exercise?.name || "Exercise"} — {item.sets} sets
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-xs text-slate-400 italic">
+                                  No exercises assigned
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Close button */}
+              <div className="flex justify-end pt-2 border-t border-slate-100">
+                <button
+                  onClick={() => setViewConsultation(null)}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-md shadow-blue-200/50 hover:shadow-lg transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════
+           Consultation Modal (Add / Edit)
            ═══════════════════════════════════════════════════════════ */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -735,7 +1048,7 @@ export default function ConsultationsPage() {
             }}
           />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10 rounded-t-2xl">
               <h2
                 className="text-lg font-semibold text-slate-900"
                 style={{
@@ -828,6 +1141,125 @@ export default function ConsultationsPage() {
                   className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
                 />
               </div>
+
+              {/* ─── Treatment Plan Items Editor ─── */}
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-2">
+                  Treatment Plan Items
+                </label>
+                {treatmentPlanItems.length === 0 ? (
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center">
+                    <p className="text-xs text-slate-400 italic mb-3">
+                      No treatment plan items yet
+                    </p>
+                    <button
+                      type="button"
+                      onClick={addTreatmentPlanItem}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs font-semibold hover:bg-blue-100 transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Item
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {treatmentPlanItems.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-slate-50 rounded-xl p-3 border border-slate-200 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">
+                            Item {idx + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeTreatmentPlanItem(idx)}
+                            className="p-1 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                            title="Remove item"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Title (e.g., Apply icepack)"
+                          value={item.title}
+                          onChange={(e) =>
+                            updateTreatmentPlanItem(idx, "title", e.target.value)
+                          }
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+                        />
+                        <textarea
+                          placeholder="Description (optional)"
+                          value={item.description}
+                          onChange={(e) =>
+                            updateTreatmentPlanItem(idx, "description", e.target.value)
+                          }
+                          rows={2}
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
+                        />
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase mb-0.5 block">
+                              Duration
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g., 10 min"
+                              value={item.duration}
+                              onChange={(e) =>
+                                updateTreatmentPlanItem(idx, "duration", e.target.value)
+                              }
+                              className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase mb-0.5 block">
+                              Frequency
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g., 2x daily"
+                              value={item.frequency}
+                              onChange={(e) =>
+                                updateTreatmentPlanItem(idx, "frequency", e.target.value)
+                              }
+                              className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase mb-0.5 block">
+                              Days
+                            </label>
+                            <input
+                              type="number"
+                              min={1}
+                              value={item.days}
+                              onChange={(e) =>
+                                updateTreatmentPlanItem(
+                                  idx,
+                                  "days",
+                                  parseInt(e.target.value) || 1
+                                )
+                              }
+                              className="w-full px-2 py-1.5 rounded-lg border border-slate-200 text-xs text-center focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={addTreatmentPlanItem}
+                      className="w-full py-2 rounded-xl border-2 border-dashed border-blue-200 text-blue-500 text-xs font-semibold hover:border-blue-400 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add Item
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-1">
                   Notes

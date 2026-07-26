@@ -76,7 +76,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { diagnosis, treatment, notes, followUpDate } = body;
+    const { diagnosis, treatment, notes, followUpDate, treatmentPlan } = body;
 
     const consultation = await prisma.consultation.update({
       where: { id: params.id },
@@ -87,6 +87,7 @@ export async function PUT(
         ...(followUpDate !== undefined && {
           followUpDate: followUpDate ? new Date(followUpDate) : null,
         }),
+        ...(treatmentPlan !== undefined && { treatmentPlan: treatmentPlan || null }),
       },
       include: {
         patient: {
