@@ -364,8 +364,8 @@ export default function PatientDashboard() {
           {exercises.length > 0 ? (
             <div className="space-y-3">
               {exercises.slice(0, 4).map((ae, idx) => (
+                <Link key={ae.id} href="/patient/exercises">
                 <motion.div
-                  key={ae.id}
                   variants={item}
                   whileHover={{ scale: 1.01, y: -2 }}
                   className="
@@ -374,7 +374,7 @@ export default function PatientDashboard() {
                     border border-white/60 shadow-md shadow-gray-200/40
                     hover:shadow-xl hover:shadow-blue-100/40
                     transition-all duration-300
-                    cursor-default
+                    cursor-pointer
                   "
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -428,6 +428,7 @@ export default function PatientDashboard() {
                     </div>
                   )}
                 </motion.div>
+                </Link>
               ))}
 
               {exercises.length > 4 && (
@@ -565,12 +566,15 @@ export default function PatientDashboard() {
           </div>
 
           {recentConsultation ? (
+            <Link href="/patient/consultations">
             <motion.div
               variants={item}
               className="
                 bg-white/80 backdrop-blur-sm
                 rounded-3xl p-6
                 border border-white/60 shadow-md shadow-gray-200/40
+                hover:shadow-lg hover:shadow-indigo-100/40
+                cursor-pointer transition-all duration-300
               "
             >
               {/* timeline dot */}
@@ -622,6 +626,7 @@ export default function PatientDashboard() {
                 </div>
               </div>
             </motion.div>
+            </Link>
           ) : (
             <div className="
               bg-white/60 backdrop-blur-sm

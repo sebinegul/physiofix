@@ -797,7 +797,7 @@ export default function BookVisitModal() {
                 {/* PhysioFix Logo */}
                 <div className="mb-5 flex items-center justify-center">
                   <Image
-                    src="/logoShort.jpg"
+                    src="/physiofix.png"
                     alt="PhysioFix"
                     width={220}
                     height={50}
@@ -824,7 +824,7 @@ export default function BookVisitModal() {
               <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph-reverse rounded-full bg-accent/20 blur-2xl" />
               <div className="relative z-10">
                 <Image
-                  src="/logoShort.jpg"
+                  src="/physiofix.png"
                   alt="PhysioFix"
                   width={180}
                   height={42}

@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
               </p>
               <div className="mb-5 flex items-center justify-center">
                 <Image
-                  src="/logoShort.jpg"
+                  src="/physiofix.png"
                   alt="PhysioFix"
                   width={220}
                   height={50}
@@ -153,7 +153,7 @@ export default function ForgotPasswordPage() {
             <div className="absolute -bottom-8 -right-8 h-32 w-32 animate-morph rounded-full bg-indigo-500/20 blur-2xl" />
             <div className="relative z-10">
               <Image
-                src="/logoShort.jpg"
+                src="/physiofix.png"
                 alt="PhysioFix"
                 width={180}
                 height={42}

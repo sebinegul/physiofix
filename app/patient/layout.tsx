@@ -112,7 +112,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
           <div className="relative w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-500">
             <Image
-              src="/logoShort.jpg"
+              src="/physiofix.png"
               alt="PhysioFix"
               fill
               className="object-cover"

@@ -101,7 +101,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {/* Logo */}
         <div className="h-16 flex items-center gap-3 px-5 border-b border-slate-100">
           <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-blue-100/50 flex-shrink-0">
-            <Image src="/logoShort.jpg" alt="PhysioFix" width={36} height={36} className="object-cover" />
+            <Image src="/physiofix.png" alt="PhysioFix" width={36} height={36} className="object-cover" />
           </div>
           <div className="flex-1 min-w-0">
             <span className="font-bold text-slate-900 text-sm" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
