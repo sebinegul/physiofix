@@ -4,15 +4,15 @@ import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
 
 const treatments = [
-  "Physiotherapy Assessment & Therapy",
-  "Electrotherapy",
-  "Manual Therapy",
-  "Cupping Therapy",
-  "Chiropractic Treatment",
-  "Bone Alignment Therapy",
-  "Soft Tissue Manipulation",
-  "Ortho Sports & Neuro Rehabilitation",
-  "Posture Correction",
+  { name: "Physiotherapy Assessment & Therapy", href: "/specialization/physiotherapyAssessment" },
+  { name: "Electrotherapy", href: "/specialization/electrotherapy" },
+  { name: "Manual Therapy", href: "/specialization/manualTherapy" },
+  { name: "Cupping Therapy", href: "/specialization/cuppingTherapy" },
+  { name: "Chiropractic Treatment", href: "/specialization/chiropracticCare" },
+  { name: "Bone Alignment Therapy", href: "/specialization/boneAlignment" },
+  { name: "Soft Tissue Manipulation", href: "/specialization/softTissueManipulation" },
+  { name: "Ortho Sports & Neuro Rehabilitation", href: "/specialization/neuroRehabilitation" },
+  { name: "Posture Correction", href: "/specialization/postureCorrection" },
 ];
 
 export default function MeetSpecialists() {
@@ -71,10 +71,10 @@ export default function MeetSpecialists() {
               <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Specialized treatments</p>
               <div className="mb-8 grid gap-2 sm:grid-cols-2">
                 {treatments.map((item) => (
-                  <div key={item} className="flex items-start gap-2 rounded-xl border border-slate-100 bg-slate-50/80 px-3 py-2.5 text-sm text-slate-700">
+                  <Link key={item.name} href={item.href} className="flex items-start gap-2 rounded-xl border border-slate-100 bg-slate-50/80 px-3 py-2.5 text-sm text-slate-700 transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
                     <BadgeCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" />
-                    {item}
-                  </div>
+                    {item.name}
+                  </Link>
                 ))}
               </div>
 

@@ -75,6 +75,42 @@ const services = [
     href: "/services",
     keywords: ["posture", "alignment", "slouch", "ergonomic", "desk", "spine", "cervical", "lumbar"],
   },
+  {
+    title: "Geriatric Physiotherapy",
+    description: "Comprehensive care for elderly patients focusing on mobility, balance and fall prevention.",
+    href: "/specialization/geriatricPhysio",
+    keywords: ["geriatric", "elderly", "senior", "old age", "fall prevention", "balance", "mobility"],
+  },
+  {
+    title: "Physiotherapy At Home",
+    description: "Convenient sessions at home for recovery, mobility and comfort.",
+    href: "/specialization/homePhysio",
+    keywords: ["home", "home visit", "home physio", "house call", "mobile physio", "bedside"],
+  },
+  {
+    title: "Sports Injury Physiotherapy",
+    description: "Recovery plans for sprains, strains, ACL rehab, tendon issues and return-to-sport readiness.",
+    href: "/specialization/sportsPhysio",
+    keywords: ["sports", "sprain", "strain", "ACL", "tendon", "athletic", "return to sport", "fitness"],
+  },
+  {
+    title: "Neuro Rehabilitation",
+    description: "Guided support for coordination, balance, gait, and movement-based recovery after neurological challenges.",
+    href: "/specialization/neuroRehabilitation",
+    keywords: ["neuro", "neurological", "stroke", "paralysis", "coordination", "gait", "balance", "brain injury"],
+  },
+  {
+    title: "Post-Surgery Rehabilitation",
+    description: "Structured care after surgery with pain relief, strength rebuilding and confidence in movement.",
+    href: "/specialization/postSurgeryRehabilitation",
+    keywords: ["post surgery", "postoperative", "surgery recovery", "knee replacement", "hip replacement", "ACL reconstruction"],
+  },
+  {
+    title: "Posture Correction",
+    description: "Movement-based support to improve alignment, reduce strain and build sustainable habits.",
+    href: "/specialization/postureCorrection",
+    keywords: ["posture", "alignment", "slouch", "ergonomic", "desk", "cervical", "lumbar", "forward head"],
+  },
 ];
 
 interface SearchResult {

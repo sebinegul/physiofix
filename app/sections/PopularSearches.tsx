@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import {
   ArrowRight, HeartPulse, Activity, Bone, Brain, Home, Wind, Syringe, Dumbbell,
-  Hand, Zap, Stethoscope, AlignCenter, Layers,
+  Hand, Zap, Stethoscope, AlignCenter, Layers, ShieldCheck,
 } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import TiltCard from "../components/ui/TiltCard";
@@ -24,15 +24,18 @@ const specialties: { name: string; icon: LucideIcon; bg: string; border: string;
 ];
 
 const treatmentList = [
-  { title: "Physiotherapy Assessment & Therapy", description: "A personalised evaluation to identify pain, mobility and strength concerns early.", href: "/specialization/physiotherapyAssessment", icon: Stethoscope, color: "from-blue-500 to-blue-600", lightBg: "bg-blue-50", iconColor: "text-blue-600" },
+  { title: "Physiotherapy Assessment", description: "Personalised evaluation to identify pain, mobility and strength concerns early.", href: "/specialization/physiotherapyAssessment", icon: Stethoscope, color: "from-blue-500 to-blue-600", lightBg: "bg-blue-50", iconColor: "text-blue-600" },
   { title: "Electrotherapy", description: "Gentle electrical stimulation to reduce pain, relax muscles and support healing.", href: "/specialization/electrotherapy", icon: Zap, color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50", iconColor: "text-amber-600" },
   { title: "Manual Therapy", description: "Hands-on techniques to improve movement, ease tension and reduce discomfort.", href: "/specialization/manualTherapy", icon: Hand, color: "from-emerald-500 to-green-500", lightBg: "bg-emerald-50", iconColor: "text-emerald-600" },
   { title: "Cupping Therapy", description: "Relieves stiffness, supports circulation and eases muscle tightness.", href: "/specialization/cuppingTherapy", icon: Layers, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50", iconColor: "text-violet-600" },
-  { title: "Chiropractic Treatment", description: "Spinal and joint care to restore alignment, mobility and comfort.", href: "/specialization/chiropracticCare", icon: AlignCenter, color: "from-rose-500 to-pink-500", lightBg: "bg-rose-50", iconColor: "text-rose-600" },
-  { title: "Bone Alignment Therapy", description: "Targeted care for posture, alignment and joint balance in everyday movement.", href: "/specialization/boneAlignment", icon: Bone, color: "from-sky-500 to-cyan-500", lightBg: "bg-sky-50", iconColor: "text-sky-600" },
-  { title: "Soft Tissue Manipulation", description: "Focused release techniques for tight muscles, trigger points and restricted mobility.", href: "/specialization/softTissueManipulation", icon: Dumbbell, color: "from-indigo-500 to-blue-500", lightBg: "bg-indigo-50", iconColor: "text-indigo-600" },
-  { title: "Ortho Sports & Neuro Rehab", description: "Structured recovery for sports injuries, neurological concerns and long-term rehabilitation.", href: "/services", icon: Activity, color: "from-teal-500 to-emerald-500", lightBg: "bg-teal-50", iconColor: "text-teal-600" },
-  { title: "Posture Correction", description: "Movement-based support to improve alignment, reduce strain and build sustainable habits.", href: "/services", icon: Wind, color: "from-blue-400 to-indigo-500", lightBg: "bg-blue-50", iconColor: "text-blue-500" },
+  { title: "Chiropractic Care", description: "Spinal and joint care to restore alignment, mobility and comfort.", href: "/specialization/chiropracticCare", icon: AlignCenter, color: "from-rose-500 to-pink-500", lightBg: "bg-rose-50", iconColor: "text-rose-600" },
+  { title: "Myofascial Release", description: "Focused release techniques for tight muscles, trigger points and restricted mobility.", href: "/specialization/softTissueManipulation", icon: Dumbbell, color: "from-indigo-500 to-blue-500", lightBg: "bg-indigo-50", iconColor: "text-indigo-500" },
+  { title: "Sports Rehabilitation", description: "Recovery plans for sprains, strains, ACL rehab, tendon issues and return-to-sport readiness.", href: "/specialization/sportsPhysio", icon: Activity, color: "from-teal-500 to-emerald-500", lightBg: "bg-teal-50", iconColor: "text-teal-600" },
+  { title: "Neuro Rehabilitation", description: "Guided support for coordination, balance, gait, and movement-based recovery after neurological challenges.", href: "/specialization/neuroRehabilitation", icon: Brain, color: "from-violet-500 to-purple-600", lightBg: "bg-purple-50", iconColor: "text-purple-600" },
+  { title: "Geriatric Physiotherapy", description: "Comprehensive care for elderly patients focusing on mobility, balance and fall prevention.", href: "/specialization/geriatricPhysio", icon: HeartPulse, color: "from-rose-400 to-red-500", lightBg: "bg-rose-50", iconColor: "text-rose-500" },
+  { title: "Physiotherapy At Home", description: "Convenient sessions at home for recovery, mobility and comfort.", href: "/specialization/homePhysio", icon: Home, color: "from-emerald-400 to-green-500", lightBg: "bg-emerald-50", iconColor: "text-emerald-500" },
+  { title: "Post-Surgery Rehab", description: "Structured care after surgery with pain relief, strength rebuilding and confidence in movement.", href: "/specialization/postSurgeryRehabilitation", icon: ShieldCheck, color: "from-sky-500 to-cyan-500", lightBg: "bg-sky-50", iconColor: "text-sky-600" },
+  { title: "Posture Correction", description: "Movement-based support to improve alignment, reduce strain and build sustainable habits.", href: "/specialization/postureCorrection", icon: Wind, color: "from-blue-400 to-indigo-500", lightBg: "bg-blue-50", iconColor: "text-blue-500" },
 ];
 
 export default function PopularSearches() {
