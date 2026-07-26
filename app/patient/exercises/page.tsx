@@ -44,7 +44,7 @@ export default function ExercisesPage() {
       return;
     }
 
-    fetch('/api/exercises', {
+    fetch('/api/patients', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => {
@@ -58,7 +58,8 @@ export default function ExercisesPage() {
       })
       .then((data) => {
         if (data) {
-          setExercises(Array.isArray(data) ? data : data.data || data.exercises || []);
+          const patient = Array.isArray(data?.data) ? data.data[0] : data;
+          setExercises(patient?.assignedExercises || []);
         }
         setLoading(false);
       })

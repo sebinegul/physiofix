@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       password: generatedPassword,
     });
     await sendEmail({
-      to: email.trim().toLowerCase(),
+      to: [email.trim().toLowerCase()],
       subject: welcomeEmail.subject,
       html: welcomeEmail.html,
     });
@@ -113,10 +113,9 @@ export async function POST(request: NextRequest) {
       notes: notes?.trim(),
     });
     await sendEmail({
-      to: ADMIN_EMAIL,
+      to: [ADMIN_EMAIL],
       subject: adminEmail.subject,
       html: adminEmail.html,
-      replyTo: email.trim().toLowerCase(),
     });
 
     return NextResponse.json({
