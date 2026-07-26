@@ -4,7 +4,7 @@ import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Loader2,
   AlertCircle,
@@ -22,6 +22,9 @@ import {
   Check,
   Copy,
   ChevronLeft,
+  HeartPulse,
+  Activity,
+  Stethoscope,
 } from "lucide-react";
 import { useToast } from "@/app/contexts/ToastContext";
 
@@ -98,6 +101,7 @@ const slideVariants = {
 export default function LoginPage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const prefersReducedMotion = useReducedMotion();
 
   // ---- view state ----
   const [view, setView] = useState<View>("login");
@@ -957,10 +961,54 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-blue-50 p-4 md:p-8">
-      {/* ─── Subtle background decorative elements ─── */}
-      <div className="absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-blue-100/40 blur-[100px]" />
-      <div className="absolute -bottom-40 -right-40 h-[450px] w-[450px] rounded-full bg-indigo-100/30 blur-[100px]" />
-      <div className="absolute left-1/4 top-1/3 h-64 w-64 rounded-full bg-blue-200/20 blur-[60px]" />
+      {/* ─── Animated background blobs ─── */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
+      <motion.div
+        className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-200/30 blur-3xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }
+        }
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-0 right-[-3rem] h-80 w-80 rounded-full bg-blue-300/25 blur-3xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { scale: [1, 1.2, 1], opacity: [0.35, 0.65, 0.35] }
+        }
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute left-[20%] top-[35%] h-48 w-48 rounded-full bg-indigo-200/20 blur-2xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { scale: [1, 1.1, 1], y: [0, -15, 0] }
+        }
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+      />
+      <motion.div
+        className="absolute right-[10%] top-[15%] h-56 w-56 rounded-full bg-sky-200/20 blur-2xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { scale: [1, 1.12, 1], y: [0, 12, 0] }
+        }
+        transition={{
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+      />
 
       {/* ─── Back to home ─── */}
       <motion.div
@@ -994,6 +1042,16 @@ export default function LoginPage() {
             <div className="absolute -bottom-16 -right-16 h-64 w-64 animate-morph rounded-full bg-indigo-500/20 blur-3xl" />
             <div className="absolute left-1/2 top-1/3 h-48 w-48 animate-float rounded-full bg-sky-300/10 blur-2xl" />
 
+            {/* Dot pattern overlay */}
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                backgroundSize: "24px 24px",
+              }}
+            />
+
             {/* Rotating rings */}
             <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 animate-rotate-slow rounded-full border border-white/5" />
             <div
@@ -1004,12 +1062,84 @@ export default function LoginPage() {
               }}
             />
 
+            {/* Floating decorative icons */}
+            {!prefersReducedMotion && (
+              <>
+                <motion.div
+                  className="absolute left-[12%] top-[18%]"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <HeartPulse className="h-5 w-5 text-white/15" />
+                </motion.div>
+                <motion.div
+                  className="absolute bottom-[22%] right-[15%]"
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{
+                    duration: 7,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1,
+                  }}
+                >
+                  <Activity className="h-5 w-5 text-white/15" />
+                </motion.div>
+                <motion.div
+                  className="absolute right-[10%] top-[25%]"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 2,
+                  }}
+                >
+                  <Stethoscope className="h-5 w-5 text-white/12" />
+                </motion.div>
+              </>
+            )}
+
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center px-8 text-center">
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
+            <motion.div
+              className="relative z-10 flex flex-col items-center px-8 text-center"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.12, delayChildren: 0.3 },
+                },
+              }}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.p
+                variants={{
+                  hidden: { opacity: 0, y: 16 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, ease: "easeOut" },
+                  },
+                }}
+                className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50"
+              >
                 Welcome to
-              </p>
-              <div className="mb-5 flex items-center justify-center">
+              </motion.p>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, scale: 0.9 },
+                  show: {
+                    opacity: 1,
+                    scale: 1,
+                    transition: { duration: 0.6, ease: "easeOut" },
+                  },
+                }}
+                className="mb-5 flex items-center justify-center"
+              >
                 <Image
                   src="/logoShort.jpg"
                   alt="PhysioFix"
@@ -1018,8 +1148,18 @@ export default function LoginPage() {
                   className="h-auto w-48 rounded-xl object-contain"
                   priority
                 />
-              </div>
-              <div className="mb-5 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+              </motion.div>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, scaleX: 0 },
+                  show: {
+                    opacity: 1,
+                    scaleX: 1,
+                    transition: { duration: 0.5, ease: "easeOut" },
+                  },
+                }}
+                className="mb-5 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              />
               <AnimatePresence mode="wait">
                 <motion.p
                   key={view}
@@ -1032,13 +1172,52 @@ export default function LoginPage() {
                   {leftPanelTagline()}
                 </motion.p>
               </AnimatePresence>
-              <div className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, ease: "easeOut" },
+                  },
+                }}
+                className="mt-4 flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm"
+              >
                 <Sparkles className="h-3.5 w-3.5 text-blue-300" />
                 <span className="text-xs text-white/70">
                   Your recovery is our priority
                 </span>
-              </div>
-            </div>
+              </motion.div>
+
+              {/* Trusted by */}
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, ease: "easeOut" },
+                  },
+                }}
+                className="mt-8 flex flex-col items-center gap-2"
+              >
+                <div className="flex items-center gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="h-3 w-3 text-yellow-400/80"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-[10px] text-white/30">
+                  Trusted by 500+ patients
+                </p>
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* ─── Mobile header ─── */}
@@ -1058,11 +1237,16 @@ export default function LoginPage() {
           </div>
 
           {/* ─── Right Panel (form) ─── */}
-          <div className="flex w-full flex-col justify-center bg-white px-8 py-10 md:w-[55%] md:px-12">
+          <motion.div
+            className="flex w-full flex-col justify-center bg-white px-8 py-10 md:w-[55%] md:px-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             <AnimatePresence mode="wait" custom={direction}>
               {renderFormContent()}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
 

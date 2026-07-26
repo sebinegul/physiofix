@@ -43,17 +43,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.trim().toLowerCase() },
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: email.trim().toLowerCase() },
+          ...(phone.trim()
+            ? [{ phone: phone.trim() }]
+            : []),
+        ],
+      },
     });
     if (existingUser) {
-      return NextResponse.json(
-        {
-          error:
-            "An account with this email already exists. Please log in instead.",
-        },
-        { status: 409 }
-      );
+      if (existingUser.email === email.trim().toLowerCase()) {
+        return NextResponse.json(
+          {
+            error:
+              "An account with this email already exists. Please log in instead.",
+          },
+          { status: 409 }
+        );
+      }
+      if (existingUser.phone === phone.trim()) {
+        return NextResponse.json(
+          {
+            error:
+              "An account with this phone number already exists. Please log in instead.",
+          },
+          { status: 409 }
+        );
+      }
     }
 
     // Generate auto-password: first name (lowercase) + last 4 digits of phone
