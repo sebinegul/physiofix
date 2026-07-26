@@ -1,4 +1,5 @@
 ﻿import Link from "next/link";
+import Image from "next/image";
 import { Clock, CheckCircle, CalendarCheck, Shield, Star, ArrowRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer";
@@ -18,11 +19,12 @@ export default function WhyChooseUs() {
         <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
           <ScrollReveal direction="left" className="hidden lg:block">
             <div className="section-shell p-4">
-              <div className="relative overflow-hidden rounded-[1.5rem]">
-                <img
+              <div className="relative h-[300px] sm:h-[400px] lg:h-[470px] overflow-hidden rounded-[1.5rem]">
+                <Image
                   src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?w=800&q=80"
                   alt="Physiotherapy session"
-                  className="h-[300px] sm:h-[400px] lg:h-[470px] w-full object-cover object-top transition duration-700 hover:scale-105"
+                  fill
+                  className="object-cover object-top transition duration-700 hover:scale-105"
                 />
                 <div className="absolute left-4 right-4 top-4 flex items-center justify-between rounded-2xl border border-white/20 bg-white/85 px-4 py-3 backdrop-blur">
                   <div>

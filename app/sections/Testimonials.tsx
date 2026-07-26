@@ -1,5 +1,6 @@
 ﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
 import { Star, Quote, MapPin, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
@@ -89,7 +90,7 @@ function TestimonialCard({ t }: { t: (typeof testimonials)[number] }) {
 
       {/* Author */}
       <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
-        <img src={t.img} alt={t.name} className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm" />
+        <Image src={t.img} alt={t.name} width={40} height={40} className="rounded-full border-2 border-white object-cover shadow-sm" />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900">{t.name}</p>
           <div className="flex items-center gap-1 text-xs text-slate-400">

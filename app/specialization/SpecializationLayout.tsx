@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { ArrowLeft, CheckCircle2, Phone, Sparkles, ArrowRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
@@ -125,14 +126,14 @@ export default function SpecializationLayout({
                 initial={prefersReducedMotion ? false : { opacity: 0, x: 40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="relative"
+                className="relative h-[460px]"
               >
                 <div className="absolute inset-y-6 left-6 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
-                <img
+                <Image
                   src={heroImage}
                   alt={title}
+                  fill
                   className="relative z-10 w-full rounded-[2rem] border border-white/70 object-cover shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl"
-                  style={{ height: 460 }}
                 />
               </motion.div>
             </div>

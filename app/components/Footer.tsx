@@ -1,4 +1,5 @@
 ﻿import Link from "next/link";
+import Image from "next/image";
 import { Activity, Facebook, Twitter, Instagram, Linkedin, Youtube, MapPin, Phone, Mail } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
@@ -45,9 +46,11 @@ export default function Footer() {
         <div className="mb-12 grid gap-10 md:grid-cols-6">
           <ScrollReveal className="md:col-span-2">
             <Link href="/" className="mb-4 flex items-center">
-              <img
+              <Image
                 src="/physiofix.png"
                 alt="PhysioFix Logo"
+                width={160}
+                height={48}
                 className="h-12 w-auto max-w-[160px] object-contain"
               />
             </Link>

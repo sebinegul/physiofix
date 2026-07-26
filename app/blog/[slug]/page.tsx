@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Calendar, User, Tag, Clock, Share2 } from "lucide-react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import ScrollReveal from "../../components/ui/ScrollReveal";
 
 interface Props {
@@ -123,11 +124,12 @@ export default async function BlogPostPage({ params }: Props) {
       {post.coverImage && (
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 mb-10">
           <ScrollReveal>
-            <div className="relative overflow-hidden rounded-[1.5rem] border border-slate-100 shadow-[0_8px_30px_rgba(15,23,42,0.08)]">
-              <img
+            <div className="relative max-h-[480px] overflow-hidden rounded-[1.5rem] border border-slate-100 shadow-[0_8px_30px_rgba(15,23,42,0.08)]">
+              <Image
                 src={post.coverImage}
                 alt={post.title}
-                className="w-full max-h-[480px] object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           </ScrollReveal>

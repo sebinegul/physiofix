@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { Search, Users, Sparkles, ShieldCheck, PlayCircle, ArrowRight, Phone, Stethoscope, FileText, X } from "lucide-react";
 import GradientText from "../components/ui/GradientText";
@@ -203,10 +204,10 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
               id="find"
               ref={searchRef}
-              className="relative z-10 gradient-border w-full max-w-[480px] rounded-2xl bg-white/70 p-2.5 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3"
+              className="relative z-10 w-full max-w-[560px] overflow-visible rounded-2xl bg-white/70 p-3 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3.5 gradient-border"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
-                <div className="flex flex-1 min-w-0 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 sm:rounded-2xl sm:px-4">
+                <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 sm:rounded-2xl sm:px-4">
                   <Search className="h-5 w-5 flex-shrink-0 text-slate-400" />
                   <input
                     ref={inputRef}
@@ -227,7 +228,7 @@ export default function Hero() {
                     </button>
                   )}
                 </div>
-                <button onClick={handleSearch} className="btn-primary flex-shrink-0 !rounded-2xl !px-3 !py-2 sm:!px-4">
+                <button onClick={handleSearch} className="btn-primary w-full flex-shrink-0 !rounded-2xl !px-3 !py-2 sm:w-auto sm:!px-4">
                   <Search className="h-5 w-5" />
                   <span className="hidden sm:inline">Search</span>
                 </button>
@@ -311,9 +312,9 @@ export default function Hero() {
               )}
 
               {/* Popular Searches */}
-              <div className="mt-4 px-1">
+              <div className="mt-3 px-1 sm:mt-4">
                 <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 sm:text-xs sm:tracking-[0.25em]">Popular searches</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {quickLinks.map((tag, i) => (
                     <motion.button
                       key={tag}
@@ -353,11 +354,12 @@ export default function Hero() {
           <ScrollReveal direction="right" className="relative hidden lg:block">
             <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
             <div className="animate-float relative z-10 w-full rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
-              <div className="relative overflow-hidden rounded-[1.5rem]">
-                <img
+              <div className="relative h-[500px] overflow-hidden rounded-[1.5rem]">
+                <Image
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&q=80"
                   alt="Dr.Nishmitha.R - Physiotherapist"
-                  className="h-[500px] w-full object-cover object-top"
+                  fill
+                  className="object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
                 <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur">

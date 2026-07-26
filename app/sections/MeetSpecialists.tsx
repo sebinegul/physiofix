@@ -1,4 +1,5 @@
 ﻿import Link from "next/link";
+import Image from "next/image";
 import { Star, MapPin, ArrowRight, BadgeCheck, GraduationCap } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
@@ -30,11 +31,12 @@ export default function MeetSpecialists() {
           <ScrollReveal direction="left">
             <div className="group relative overflow-hidden rounded-[2rem] border border-blue-100/60 bg-white/70 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl">
               <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-400/20 blur-3xl transition group-hover:bg-blue-400/30" />
-              <div className="relative overflow-hidden rounded-[1.5rem]">
-                <img
+              <div className="relative h-[280px] sm:h-[350px] lg:h-[420px] overflow-hidden rounded-[1.5rem]">
+                <Image
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=640&q=80"
                   alt="Dr.Nishmitha.R"
-                  className="h-[280px] sm:h-[350px] lg:h-[420px] w-full object-cover object-top transition duration-700 group-hover:scale-105"
+                  fill
+                  className="object-cover object-top transition duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
                 <span className="absolute left-4 top-4 rounded-full bg-slate-950/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">

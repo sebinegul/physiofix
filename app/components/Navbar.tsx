@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { Menu, X, Activity, Sparkles, HeartPulse, MoveRight, Phone } from "lucide-react";
 
 const navLinks = [
@@ -38,9 +39,11 @@ export default function Navbar() {
         }`}
       >
         <Link href="/" className="relative z-10 flex items-center">
-          <img
+          <Image
             src="/physiofix.png"
             alt="PhysioFix Logo"
+            width={160}
+            height={48}
             className="h-12 w-auto max-w-[160px] object-contain"
           />
         </Link>

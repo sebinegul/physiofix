@@ -4,6 +4,7 @@ import { Calendar, Tag, ArrowRight, BookOpen, Clock } from "lucide-react";
 import type { Metadata } from "next";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer";
+import Image from "next/image";
 import GradientText from "../components/ui/GradientText";
 
 export const metadata: Metadata = {
@@ -111,10 +112,11 @@ export default async function BlogPage() {
 
                         {post.coverImage && (
                           <div className="relative h-52 overflow-hidden">
-                            <img
+                            <Image
                               src={post.coverImage}
                               alt={post.title}
-                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
                           </div>
@@ -173,10 +175,11 @@ export default async function BlogPage() {
                     >
                       {post.coverImage && (
                         <div className="relative h-44 overflow-hidden">
-                          <img
+                          <Image
                             src={post.coverImage}
                             alt={post.title}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />
                         </div>
