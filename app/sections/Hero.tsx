@@ -105,11 +105,11 @@ export default function Hero() {
   const blogCount = results.filter((r) => r.type === "blog").length;
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-20 md:pt-36 md:pb-28">
+    <section className="relative pt-24 pb-12 sm:pt-28 sm:pb-20 md:pt-36 md:pb-28">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
 
       {!prefersReducedMotion && (
-        <>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute left-[-6rem] top-24 h-72 w-72 rounded-full bg-blue-300/20 blur-3xl"
             animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
@@ -120,7 +120,7 @@ export default function Hero() {
             animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
-        </>
+        </div>
       )}
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -203,10 +203,10 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
               id="find"
               ref={searchRef}
-              className="relative z-10 gradient-border w-[400px] max-w-full sm:w-[480px] md:w-full rounded-2xl bg-white/70 p-2.5 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3"
+              className="relative z-10 gradient-border w-full max-w-[480px] rounded-2xl bg-white/70 p-2.5 shadow-[0_25px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-3"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
-                <div className="flex flex-1 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 sm:rounded-2xl sm:px-4">
+                <div className="flex flex-1 min-w-0 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 sm:rounded-2xl sm:px-4">
                   <Search className="h-5 w-5 flex-shrink-0 text-slate-400" />
                   <input
                     ref={inputRef}
@@ -216,7 +216,7 @@ export default function Hero() {
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.trim() && results.length > 0 && setShowResults(true)}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                    className="flex-1 min-w-0 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
                   />
                   {query && (
                     <button
@@ -227,7 +227,7 @@ export default function Hero() {
                     </button>
                   )}
                 </div>
-                <button onClick={handleSearch} className="btn-primary !rounded-2xl !px-3 !py-2 sm:!px-4">
+                <button onClick={handleSearch} className="btn-primary flex-shrink-0 !rounded-2xl !px-3 !py-2 sm:!px-4">
                   <Search className="h-5 w-5" />
                   <span className="hidden sm:inline">Search</span>
                 </button>
