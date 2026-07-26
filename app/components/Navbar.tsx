@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { Menu, X, Activity, Sparkles, HeartPulse, MoveRight, Phone } from "lucide-react";
+import { useBookConsultation } from "./BookConsultationContext";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -17,6 +18,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const { openModal } = useBookConsultation();
 
   const marqueeText = "Rehabilitation | Ortho Rehabilitation | Neuro Rehabilitation | Home Care Physiotherapy Services";
 
@@ -25,6 +27,11 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleBookVisit = () => {
+    setOpen(false);
+    openModal();
+  };
 
   return (
     <motion.header
@@ -78,16 +85,19 @@ export default function Navbar() {
 
         <div className="relative z-10 hidden items-center gap-3 md:flex">
           <a
-            href="tel:+918151912525"
+            href="tel:+918****2525"
             className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
           >
             <Phone className="h-3.5 w-3.5" />
             Call now
           </a>
-          <a href="/contact" className="btn-primary !px-4 !py-2 !text-sm">
+          <button
+            onClick={handleBookVisit}
+            className="btn-primary !px-4 !py-2 !text-sm"
+          >
             <Sparkles className="h-4 w-4" />
             Book visit
-          </a>
+          </button>
         </div>
 
         <button
@@ -132,9 +142,12 @@ export default function Navbar() {
               <a href="tel:+918****2525" className="flex-1 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200">
                 Call now
               </a>
-              <Link href="/contact" onClick={() => setOpen(false)} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-3 text-center text-sm font-semibold text-white">
+              <button
+                onClick={handleBookVisit}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 px-3 py-3 text-center text-sm font-semibold text-white"
+              >
                 Book visit <MoveRight className="h-4 w-4" />
-              </Link>
+              </button>
             </div>
           </motion.div>
         )}

@@ -1,8 +1,10 @@
-﻿import Link from "next/link";
+﻿"use client";
+import Link from "next/link";
 import { ArrowRight, Activity, Sparkles, Home, ShieldCheck, Stethoscope, MapPin } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import TiltCard from "../components/ui/TiltCard";
 import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer";
+import { useBookConsultation } from "../components/BookConsultationContext";
 
 const services = [
   { icon: Activity, title: "Sports Rehabilitation", text: "Recovery plans for sprains, strains, ACL rehab, tendon issues and return-to-sport readiness." },
@@ -12,6 +14,8 @@ const services = [
 ];
 
 export default function FindPhysio() {
+  const { openModal } = useBookConsultation();
+
   return (
     <section id="specialties" className="py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -82,9 +86,12 @@ export default function FindPhysio() {
                     <p className="text-sm font-semibold text-slate-900">Need guidance on the right next step?</p>
                     <p className="text-sm text-slate-500">Book a consultation with Dr.Nishmitha.R.</p>
                   </div>
-                  <Link href="/contact" className="btn-primary !px-4 !py-2.5 !text-sm shrink-0">
+                  <button
+                    onClick={openModal}
+                    className="btn-primary !px-4 !py-2.5 !text-sm shrink-0"
+                  >
                     Book now <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {["Back pain", "Sports injury", "Neck pain", "Post-surgery", "Geriatric care"].map((tag) => (

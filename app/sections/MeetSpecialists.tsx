@@ -36,6 +36,7 @@ export default function MeetSpecialists() {
                   src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=640&q=80"
                   alt="Dr.Nishmitha.R"
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover object-top transition duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />

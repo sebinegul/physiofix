@@ -385,6 +385,7 @@ export default function Hero() {
                       src={heroImages[heroSlide].src}
                       alt={heroImages[heroSlide].alt}
                       fill
+                      sizes="(max-width: 1024px) 0px, 50vw"
                       className="object-cover object-top"
                       priority={heroSlide === 0}
                     />

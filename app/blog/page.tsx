@@ -36,7 +36,6 @@ async function getPublishedPosts(): Promise<BlogPost[]> {
     });
     return posts;
   } catch (error) {
-    console.error("Failed to fetch blog posts:", error);
     return [];
   }
 }
@@ -116,6 +115,7 @@ export default async function BlogPage() {
                               src={post.coverImage}
                               alt={post.title}
                               fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
@@ -179,6 +179,7 @@ export default async function BlogPage() {
                             src={post.coverImage}
                             alt={post.title}
                             fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />

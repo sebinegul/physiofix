@@ -7,6 +7,7 @@ import { ArrowLeft, CheckCircle2, Phone, Sparkles, ArrowRight } from "lucide-rea
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
 import PageTransition from "../components/PageTransition";
+import { useBookConsultation } from "../components/BookConsultationContext";
 
 interface Benefit {
   title: string;
@@ -37,6 +38,7 @@ export default function SpecializationLayout({
   children,
 }: SpecializationLayoutProps) {
   const prefersReducedMotion = useReducedMotion();
+  const { openModal } = useBookConsultation();
 
   return (
     <PageTransition>
@@ -111,10 +113,10 @@ export default function SpecializationLayout({
                   transition={{ duration: 0.6, delay: 0.45 }}
                   className="flex flex-wrap gap-3"
                 >
-                  <a href="tel:+918151912525" className="btn-primary">
+                  <button onClick={openModal} className="btn-primary">
                     <Phone className="h-4 w-4" />
                     Book Consultation
-                  </a>
+                  </button>
                   <Link href="/contact" className="btn-ghost">
                     Contact Us
                     <ArrowRight className="h-4 w-4" />
@@ -133,6 +135,7 @@ export default function SpecializationLayout({
                   src={heroImage}
                   alt={title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="relative z-10 w-full rounded-[2rem] border border-white/70 object-cover shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl"
                 />
               </motion.div>

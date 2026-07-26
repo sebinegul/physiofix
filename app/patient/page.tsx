@@ -9,10 +9,15 @@ import {
   Clock,
   ArrowRight,
   Activity,
-  TrendingUp,
   AlertCircle,
   CheckCircle2,
   Stethoscope,
+  User,
+  Mail,
+  Phone,
+  Repeat,
+  Target,
+  Info,
 } from 'lucide-react';
 
 interface UserInfo {
@@ -20,6 +25,7 @@ interface UserInfo {
   email: string;
   name: string;
   role: string;
+  phone?: string;
 }
 
 interface PatientData {
@@ -75,6 +81,7 @@ export default function PatientDashboard() {
   const [exercises, setExercises] = useState<AssignedExercise[]>([]);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -97,14 +104,16 @@ export default function PatientDashboard() {
       authFetch('/api/auth/me'),
       authFetch('/api/patients'),
       authFetch('/api/appointments'),
-      authFetch('/api/exercises'),
       authFetch('/api/consultations'),
     ])
-      .then(([userData, patientData, appointmentsData, exercisesData, consultationsData]) => {
-        setUser(userData);
-        setPatient(Array.isArray(patientData?.data) ? patientData.data[0] : patientData);
+      .then(([userData, patientData, appointmentsData, consultationsData]) => {
+        // /api/auth/me returns { user: { ... } }
+        setUser(userData?.user || userData);
+        const patientRecord = Array.isArray(patientData?.data) ? patientData.data[0] : patientData;
+        setPatient(patientRecord);
         setAppointments(Array.isArray(appointmentsData) ? appointmentsData : appointmentsData.data || appointmentsData.appointments || []);
-        setExercises(Array.isArray(exercisesData) ? exercisesData : exercisesData.data || exercisesData.exercises || []);
+        // Assigned exercises come from the patient record (includes exercise relation)
+        setExercises(patientRecord?.assignedExercises || []);
         setConsultations(Array.isArray(consultationsData) ? consultationsData : consultationsData.data || consultationsData.consultations || []);
         setLoading(false);
       })
@@ -146,10 +155,22 @@ export default function PatientDashboard() {
     }
   };
 
+  const difficultyColor = (difficulty: string) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'easy':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'medium':
+        return 'bg-amber-100 text-amber-700';
+      case 'hard':
+        return 'bg-red-100 text-red-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-        {/* Loading skeleton */}
         <div className="animate-pulse space-y-6">
           <div className="h-8 bg-gray-200 rounded-lg w-64" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -174,6 +195,49 @@ export default function PatientDashboard() {
           Here&apos;s an overview of your physiotherapy journey.
         </p>
       </div>
+
+      {/* Patient Info Card */}
+      {user && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+            <User className="w-5 h-5 text-blue-500" />
+            <h2 className="font-semibold text-gray-900">My Information</h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Full Name</p>
+                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Email</p>
+                  <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                </div>
+              </div>
+              {user.phone && (
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Phone</p>
+                    <p className="text-sm font-medium text-gray-900">{user.phone}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -283,6 +347,118 @@ export default function PatientDashboard() {
         </div>
       )}
 
+      {/* Assigned Exercises Section */}
+      {exercises.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Dumbbell className="w-5 h-5 text-green-500" />
+              <h2 className="font-semibold text-gray-900">Assigned Exercises</h2>
+            </div>
+            <Link
+              href="/patient/exercises"
+              className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1"
+            >
+              View All <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {exercises.slice(0, 3).map((ae) => (
+              <div key={ae.id} className="p-5 hover:bg-gray-50/50 transition-colors">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-gray-900">{ae.exercise.name}</h3>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${difficultyColor(ae.exercise.difficulty)}`}>
+                        {ae.exercise.difficulty}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-3">{ae.exercise.description}</p>
+                    <div className="flex flex-wrap gap-3">
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                        <Target className="w-3.5 h-3.5 text-blue-500" />
+                        <span>{ae.sets} sets × {ae.reps} reps</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                        <Repeat className="w-3.5 h-3.5 text-purple-500" />
+                        <span>{ae.frequency}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                        <Clock className="w-3.5 h-3.5 text-amber-500" />
+                        <span>{ae.exercise.duration}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {ae.notes && (
+                  <div className="mt-3 flex items-start gap-2 text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
+                    <Info className="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0" />
+                    <span>{ae.notes}</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Consultations Section */}
+      {consultations.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-primary-500" />
+              <h2 className="font-semibold text-gray-900">Consultation History</h2>
+            </div>
+            <Link
+              href="/patient/consultations"
+              className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1"
+            >
+              View All <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {consultations.slice(0, 3).map((c) => (
+              <div key={c.id} className="p-5 hover:bg-gray-50/50 transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div>
+                      <p className="text-xs text-gray-500">{formatDate(c.date)}</p>
+                      <p className="font-medium text-gray-900">{c.diagnosis}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-xl p-3">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+                        Treatment Plan
+                      </p>
+                      <p className="text-sm text-gray-700">{c.treatment}</p>
+                    </div>
+                    {c.notes && (
+                      <div className="bg-blue-50 rounded-xl p-3">
+                        <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">
+                          Patient Notes
+                        </p>
+                        <p className="text-sm text-blue-800">{c.notes}</p>
+                      </div>
+                    )}
+                    {c.followUpDate && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <AlertCircle className="w-4 h-4 text-amber-500" />
+                        <span className="text-gray-600">
+                          Follow-up: {formatDate(c.followUpDate)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
@@ -313,53 +489,6 @@ export default function PatientDashboard() {
           <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-green-500 transition-colors" />
         </Link>
       </div>
-
-      {/* Recent Consultation Summary */}
-      {recentConsultation && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary-500" />
-              <h2 className="font-semibold text-gray-900">Latest Consultation</h2>
-            </div>
-            <Link
-              href="/patient/consultations"
-              className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1"
-            >
-              View All <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm text-gray-500">
-                  {formatDate(recentConsultation.date)}
-                </p>
-                <p className="font-medium text-gray-900">
-                  {recentConsultation.diagnosis}
-                </p>
-              </div>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                Treatment Plan
-              </p>
-              <p className="text-sm text-gray-700">{recentConsultation.treatment}</p>
-            </div>
-            {recentConsultation.followUpDate && (
-              <div className="flex items-center gap-2 text-sm">
-                <AlertCircle className="w-4 h-4 text-amber-500" />
-                <span className="text-gray-600">
-                  Follow-up: {formatDate(recentConsultation.followUpDate)}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Medical Info Reminder */}
       {patient && !patient.medicalHistory && !patient.allergies && (

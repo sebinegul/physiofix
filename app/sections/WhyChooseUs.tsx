@@ -24,6 +24,7 @@ export default function WhyChooseUs() {
                   src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?w=800&q=80"
                   alt="Physiotherapy session"
                   fill
+                  sizes="(max-width: 1024px) 0px, 50vw"
                   className="object-cover object-top transition duration-700 hover:scale-105"
                 />
                 <div className="absolute left-4 right-4 top-4 flex items-center justify-between rounded-2xl border border-white/20 bg-white/85 px-4 py-3 backdrop-blur">
