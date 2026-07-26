@@ -457,12 +457,12 @@ export default function LoginPage() {
                     />
                     Remember me
                   </label>
-                  <button
-                    type="button"
+                  <Link
+                    href="/forgot-password"
                     className="text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
                   >
                     Forgot Password?
-                  </button>
+                  </Link>
                 </motion.div>
 
                 {/* Sign In button */}
@@ -470,7 +470,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-gray-900 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-2xl bg-gray-900 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
@@ -623,7 +623,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
@@ -803,7 +803,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
@@ -934,7 +934,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => router.push("/patient")}
-                className="flex-1 rounded-2xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg"
+                className="flex-1 rounded-2xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
               >
                 Go to Dashboard
               </button>
