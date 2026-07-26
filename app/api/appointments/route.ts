@@ -76,56 +76,54 @@ export async function POST(request: NextRequest) {
         status: "pending",
         notes: notes || null,
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            phone: true,
-          },
-        },
-      },
+    });
+
+    // Fetch user info separately (Neon HTTP doesn't support include on create)
+    const user = await prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: { id: true, email: true, name: true, phone: true },
     });
 
     // Send emails asynchronously (fire-and-forget)
     const adminEmail = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
     const dateStr = appointment.date.toISOString();
 
-    // Patient confirmation email
-    sendEmail({
-      to: [appointment.user.email],
-      ...getAppointmentConfirmationTemplate({
-        patientName: appointment.user.name,
-        date: dateStr,
-        time: appointment.time,
-        type: appointment.type,
-        notes: appointment.notes || undefined,
-      }),
-      category: "Appointment",
-    }).catch((err) => console.error("Failed to send appointment confirmation email:", err));
+    if (user) {
+      // Patient confirmation email
+      sendEmail({
+        to: [user.email],
+        ...getAppointmentConfirmationTemplate({
+          patientName: user.name,
+          date: dateStr,
+          time: appointment.time,
+          type: appointment.type,
+          notes: appointment.notes || undefined,
+        }),
+        category: "Appointment",
+      }).catch((err) => console.error("Failed to send appointment confirmation email:", err));
 
-    // Admin notification email
-    sendEmail({
-      to: [adminEmail],
-      ...getAppointmentAdminTemplate({
-        patientName: appointment.user.name,
-        patientEmail: appointment.user.email,
-        date: dateStr,
-        time: appointment.time,
-        type: appointment.type,
-      }),
-      category: "Appointment",
-    }).catch((err) => console.error("Failed to send appointment admin email:", err));
+      // Admin notification email
+      sendEmail({
+        to: [adminEmail],
+        ...getAppointmentAdminTemplate({
+          patientName: user.name,
+          patientEmail: user.email,
+          date: dateStr,
+          time: appointment.time,
+          type: appointment.type,
+        }),
+        category: "Appointment",
+      }).catch((err) => console.error("Failed to send appointment admin email:", err));
+    }
 
-    return NextResponse.json(appointment, { status: 201 });
+    return NextResponse.json({ ...appointment, user }, { status: 201 });
   } catch (error: any) {
     if (error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    console.error("Create appointment error:", error);
+    console.error("Create appointment error:", error.message, error.stack);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", detail: error.message },
       { status: 500 }
     );
   }
