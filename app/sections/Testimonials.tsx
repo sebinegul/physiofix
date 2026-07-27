@@ -4,8 +4,21 @@ import Image from "next/image";
 import { Star, Quote, MapPin, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
-const testimonials = [
+interface Testimonial {
+  id: string;
+  name: string;
+  location: string;
+  rating: number;
+  text: string;
+  condition: string;
+  duration: string;
+  img: string | null;
+}
+
+// Fallback static data in case API is unavailable
+const fallbackTestimonials: Testimonial[] = [
   {
+    id: "fb-1",
     name: "Rahul Sharma",
     location: "JP Nagar",
     rating: 5,
@@ -15,6 +28,7 @@ const testimonials = [
     img: "https://randomuser.me/api/portraits/men/32.jpg",
   },
   {
+    id: "fb-2",
     name: "Anitha Devi",
     location: "BTM Layout",
     rating: 5,
@@ -24,6 +38,7 @@ const testimonials = [
     img: "https://randomuser.me/api/portraits/women/44.jpg",
   },
   {
+    id: "fb-3",
     name: "Suresh Kumar",
     location: "HSR Layout",
     rating: 5,
@@ -32,36 +47,9 @@ const testimonials = [
     duration: "5 months",
     img: "https://randomuser.me/api/portraits/men/56.jpg",
   },
-  {
-    name: "Priya Nair",
-    location: "Koramangala",
-    rating: 5,
-    text: "My mother had a stroke two years ago and we had almost given up on improving her movement. The neurological rehab sessions have brought back movement in her left hand that we did not think was possible.",
-    condition: "Post-Stroke Recovery",
-    duration: "Ongoing",
-    img: "https://randomuser.me/api/portraits/women/65.jpg",
-  },
-  {
-    name: "Arjun Reddy",
-    location: "Electronic City",
-    rating: 5,
-    text: "Woke up one morning and could not turn my neck. Tried everything for two weeks before coming here. Two sessions of manual therapy and I could move normally again. Wish I had come sooner.",
-    condition: "Acute Neck Stiffness",
-    duration: "2 weeks",
-    img: "https://randomuser.me/api/portraits/men/41.jpg",
-  },
-  {
-    name: "Meera Joshi",
-    location: "JP Nagar",
-    rating: 5,
-    text: "The home visit service has been a lifeline for my father. He has trouble travelling but the therapist comes to our house with all the equipment. Consistent, patient, and genuinely caring.",
-    condition: "Geriatric Home Care",
-    duration: "4 months",
-    img: "https://randomuser.me/api/portraits/women/28.jpg",
-  },
 ];
 
-function TestimonialCard({ t }: { t: (typeof testimonials)[number] }) {
+function TestimonialCard({ t }: { t: Testimonial }) {
   return (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-5 shadow-[0_4px_20px_rgba(15,23,42,0.04)] transition-all duration-500 hover:-translate-y-1 hover:border-blue-200/60 hover:shadow-[0_20px_60px_rgba(59,130,246,0.1)] sm:p-6">
       {/* Top accent line */}
@@ -90,7 +78,13 @@ function TestimonialCard({ t }: { t: (typeof testimonials)[number] }) {
 
       {/* Author */}
       <div className="flex items-center gap-3 border-t border-slate-100 pt-4">
-        <Image src={t.img} alt={t.name} width={40} height={40} className="rounded-full border-2 border-white object-cover shadow-sm" />
+        {t.img ? (
+          <Image src={t.img} alt={t.name} width={40} height={40} className="rounded-full border-2 border-white object-cover shadow-sm" />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-sm font-semibold border-2 border-white shadow-sm">
+            {t.name.charAt(0)}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900">{t.name}</p>
           <div className="flex items-center gap-1 text-xs text-slate-400">
@@ -109,10 +103,26 @@ function TestimonialCard({ t }: { t: (typeof testimonials)[number] }) {
 }
 
 export default function Testimonials() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [page, setPage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(3);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  // Fetch testimonials from DB
+  useEffect(() => {
+    fetch("/api/testimonials")
+      .then((res) => res.json())
+      .then((json) => {
+        const data = json?.data;
+        if (Array.isArray(data) && data.length > 0) {
+          setTestimonials(data);
+        }
+      })
+      .catch(() => {
+        // Keep fallback data on error
+      });
+  }, []);
 
   // Responsive items per page
   useEffect(() => {
@@ -148,7 +158,7 @@ export default function Testimonials() {
   const startIdx = page * itemsPerPage;
   const visible = testimonials.slice(startIdx, startIdx + itemsPerPage);
   // If last page has fewer items, also show from the beginning to fill
-  if (visible.length < itemsPerPage) {
+  if (visible.length < itemsPerPage && testimonials.length > 0) {
     visible.push(...testimonials.slice(0, itemsPerPage - visible.length));
   }
 
@@ -180,7 +190,7 @@ export default function Testimonials() {
           {/* Cards grid */}
           <div ref={trackRef} className="grid gap-5" style={{ gridTemplateColumns: `repeat(${itemsPerPage}, 1fr)` }}>
             {visible.map((t) => (
-              <TestimonialCard key={t.name} t={t} />
+              <TestimonialCard key={t.id} t={t} />
             ))}
           </div>
 

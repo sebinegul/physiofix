@@ -14,7 +14,6 @@ import {
   Menu,
   X,
   ChevronRight,
-  Activity,
 } from 'lucide-react';
 
 interface UserInfo {
@@ -165,9 +164,6 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
         {/* User section */}
         <div className="px-3 py-4 border-t border-gray-100">
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-              {user?.name?.charAt(0).toUpperCase() || 'P'}
-            </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
               <p className="text-xs text-gray-500 truncate">{user?.email}</p>
@@ -193,10 +189,13 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary-500" />
-            <span className="text-sm font-semibold text-gray-900">PhysioFix</span>
-          </div>
+          <Image
+            src="/physiofix.png"
+            alt="PhysioFix"
+            width={120}
+            height={36}
+            className="h-8 w-auto"
+          />
         </header>
 
         {/* Page content */}

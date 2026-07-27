@@ -1098,7 +1098,7 @@ export default function LoginPage() {
                     delay: 2,
                   }}
                 >
-                  <Stethoscope className="h-5 w-5 text-white/12" />
+                  <Stethoscope className="h-5 w-5 text-white/15" />
                 </motion.div>
               </>
             )}

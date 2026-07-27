@@ -33,6 +33,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/consultations", label: "Consultations", icon: Stethoscope },
   { href: "/dashboard/content", label: "Site Content", icon: FileText },
   { href: "/dashboard/blogs", label: "Blog Posts", icon: FileText },
+  { href: "/dashboard/testimonials", label: "Testimonials", icon: FileText },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {

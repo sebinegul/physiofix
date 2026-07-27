@@ -5,17 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --primary: #0891b2;
-  --primary-dark: #0e7490;
-  --primary-light: #22d3ee;
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
   --accent: #059669;
   --accent-light: #10b981;
-  --surface: #ecfeff;
+  --surface: #eff6ff;
   --surface-card: rgba(255, 255, 255, 0.72);
   --text-main: #0f172a;
   --text-muted: #64748b;
-  --gradient-brand: linear-gradient(135deg, #0891b2 0%, #059669 50%, #22d3ee 100%);
-  --gradient-mesh: linear-gradient(135deg, #083344 0%, #164e63 25%, #0e7490 50%, #0891b2 75%, #059669 100%);
+  --gradient-brand: linear-gradient(135deg, #3b82f6 0%, #059669 50%, #60a5fa 100%);
+  --gradient-mesh: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #2563eb 50%, #3b82f6 75%, #059669 100%);
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.15);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -54,10 +54,10 @@ h1, h2, h3, h4 {
 
   .bg-mesh-gradient {
     background:
-      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(8, 145, 178, 0.18), transparent 50%),
-      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(34, 211, 238, 0.14), transparent 50%),
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(59, 130, 246, 0.18), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(96, 165, 250, 0.14), transparent 50%),
       radial-gradient(ellipse 60% 40% at 50% 90%, rgba(5, 150, 105, 0.12), transparent 50%),
-      linear-gradient(160deg, #ecfeff 0%, #f0fdfa 35%, #f8fafc 70%, #ffffff 100%);
+      linear-gradient(160deg, #eff6ff 0%, #eff6ff 35%, #f8fafc 70%, #ffffff 100%);
   }
 
   .glass-panel {
@@ -279,7 +279,7 @@ h1, h2, h3, h4 {
 select.premium-select {
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230891b2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 18px;
@@ -327,7 +327,7 @@ select.premium-select {
 
 /* Animated gradient background for login */
 .animated-gradient-bg {
-  background: linear-gradient(-45deg, #083344, #0e7490, #059669, #164e63, #0891b2);
+  background: linear-gradient(-45deg, #1e3a8a, #2563eb, #059669, #1e40af, #3b82f6);
   background-size: 400% 400%;
   animation: gradient-shift 15s ease infinite;
 }

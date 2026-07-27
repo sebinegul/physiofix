@@ -201,3 +201,18 @@ model ExerciseProgress {
 
   @@unique([patientId, exercisePlanItemId])
 }
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  location  String
+  rating    Int      @default(5)
+  text      String
+  condition String
+  duration  String
+  img       String?  // URL to patient photo
+  active    Boolean  @default(true) // toggle visibility on homepage
+  sortOrder Int      @default(0)    // manual ordering
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
