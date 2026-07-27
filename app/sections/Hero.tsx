@@ -199,19 +199,6 @@ export default function Hero() {
                   ))}
                 </div>
               </div>
-              <style jsx>{`
-                @keyframes hero-marquee {
-                  from {
-                    transform: translateX(0);
-                  }
-                  to {
-                    transform: translateX(-50%);
-                  }
-                }
-                .animate-hero-marquee {
-                  animation: hero-marquee 16s linear infinite;
-                }
-              `}</style>
             </div>
 
             <motion.h1
@@ -427,10 +414,10 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          <ScrollReveal direction="right" className="relative hidden lg:block">
+          <ScrollReveal direction="right" className="relative mt-8 lg:mt-0">
             <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
             <div className="animate-float relative z-10 w-full rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
-              <div className="relative h-[500px] overflow-hidden rounded-[1.5rem]">
+              <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] overflow-hidden rounded-[1.5rem]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={heroSlide}
@@ -444,7 +431,7 @@ export default function Hero() {
                       src={heroImages[heroSlide].src}
                       alt={heroImages[heroSlide].alt}
                       fill
-                      sizes="(max-width: 1024px) 0px, 50vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 60vw, 50vw"
                       className="object-cover object-top"
                       priority={heroSlide === 0}
                     />
