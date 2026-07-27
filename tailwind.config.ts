@@ -10,16 +10,16 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          50: "#ecfeff",
-          100: "#cffafe",
-          200: "#a5f3fc",
-          300: "#67e8f9",
-          400: "#22d3ee",
-          500: "#0891b2",
-          600: "#0e7490",
-          700: "#155e75",
-          800: "#164e63",
-          900: "#083344",
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
         },
         accent: {
           DEFAULT: "#059669",
@@ -65,8 +65,8 @@ const config: Config = {
           "50%": { opacity: "1", transform: "scale(1.06)" },
         },
         "glow-cyan": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(8, 145, 178, 0.3)" },
-          "50%": { boxShadow: "0 0 40px rgba(8, 145, 178, 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)" },
+          "50%": { boxShadow: "0 0 40px rgba(59, 130, 246, 0.6)" },
         },
         "fade-up": {
           from: { opacity: "0", transform: "translateY(28px)" },
@@ -77,8 +77,8 @@ const config: Config = {
           "50%": { borderRadius: "30% 60% 70% 40% / 50% 60% 30% 60%" },
         },
         "pulse-soft": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(8, 145, 178, 0.4)" },
-          "50%": { boxShadow: "0 0 0 12px rgba(8, 145, 178, 0)" },
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(59, 130, 246, 0.4)" },
+          "50%": { boxShadow: "0 0 0 12px rgba(59, 130, 246, 0)" },
         },
         "slide-up": {
           from: { opacity: "0", transform: "translateY(16px)" },
