@@ -89,6 +89,7 @@ export default function BlogDashboardPage() {
   const [coverImage, setCoverImage] = useState("");
   const [category, setCategory] = useState("general");
   const [tags, setTags] = useState("");
+  const [tagInput, setTagInput] = useState("");
   const [published, setPublished] = useState(false);
   const [featured, setFeatured] = useState(false);
 
@@ -101,6 +102,19 @@ export default function BlogDashboardPage() {
   useEffect(() => {
     loadPosts();
   }, []);
+
+  const parsedTags = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+  const addTag = (value: string) => {
+    const newTags = value.split(',').map(t => t.trim()).filter(Boolean);
+    const unique = Array.from(new Set([...parsedTags, ...newTags]));
+    setTags(unique.join(', '));
+    setTagInput("");
+  };
+
+  const removeTag = (tag: string) => {
+    setTags(parsedTags.filter(t => t !== tag).join(', '));
+  };
 
   const filtered = posts.filter((p) => {
     const q = search.toLowerCase();
@@ -118,6 +132,7 @@ export default function BlogDashboardPage() {
     setCoverImage("");
     setCategory("general");
     setTags("");
+    setTagInput("");
     setPublished(false);
     setFeatured(false);
     setEditingPost(null);
@@ -137,6 +152,7 @@ export default function BlogDashboardPage() {
     setCoverImage(post.coverImage || "");
     setCategory(post.category);
     setTags(post.tags || "");
+    setTagInput("");
     setPublished(post.published);
     setFeatured(post.featured);
     setShowModal(true);
@@ -428,30 +444,53 @@ export default function BlogDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Category</label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white capitalize focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c.replace("-", " ")}
-                      </option>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Category</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white capitalize focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+                >
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c.replace("-", " ")}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Tags</label>
+                {parsedTags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {parsedTags.map((tag, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
+                        {tag}
+                        <button type="button" onClick={() => removeTag(tag)} className="ml-0.5 hover:text-blue-900">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
                     ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Tags</label>
+                  </div>
+                )}
+                <div className="flex gap-2">
                   <input
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    placeholder="e.g. back pain, exercise, tips"
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        addTag(tagInput);
+                      }
+                    }}
+                    placeholder="Type a tag and press Enter"
+                    className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none"
                   />
+                  <button type="button" onClick={() => addTag(tagInput)} className="px-3 py-2 rounded-lg bg-slate-100 text-slate-600 text-sm font-medium hover:bg-slate-200 transition-colors">
+                    Add
+                  </button>
                 </div>
+                <p className="text-xs text-slate-400 mt-1">Press Enter or comma to add a tag</p>
               </div>
 
               <div className="flex items-center gap-6 pt-2">
