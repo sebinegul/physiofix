@@ -122,7 +122,7 @@ export default function DashboardPage() {
     { label: "Total Patients", value: stats.patients, icon: Users, color: "from-blue-500 to-blue-600", bg: "bg-blue-50", iconColor: "text-blue-600" },
     { label: "Appointments", value: stats.appointments, icon: Calendar, color: "from-indigo-500 to-indigo-600", bg: "bg-indigo-50", iconColor: "text-indigo-600" },
     { label: "Exercises", value: stats.exercises, icon: Dumbbell, color: "from-purple-500 to-purple-600", bg: "bg-purple-50", iconColor: "text-purple-600" },
-    { label: "Consultations", value: stats.consultations, icon: Stethoscope, color: "from-cyan-500 to-cyan-600", bg: "bg-cyan-50", iconColor: "text-cyan-600" },
+    { label: "Consultations", value: stats.consultations, icon: Stethoscope, color: "from-sky-500 to-sky-600", bg: "bg-sky-50", iconColor: "text-sky-600" },
   ];
 
   const statusBadge = (status: string) => {

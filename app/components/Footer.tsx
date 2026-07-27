@@ -82,7 +82,7 @@ export default function Footer() {
                 <span
                   key={label}
                   title={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400"
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400"
                 >
                   <Icon className="h-4 w-4 text-slate-300" />
                 </span>

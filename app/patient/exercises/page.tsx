@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
@@ -25,6 +25,7 @@ import {
 /* ------------------------------------------------------------------ */
 
 interface ExerciseItem {
+  id: string;
   sets: number;
   durationSeconds: number;
   sortOrder: number;
@@ -43,6 +44,7 @@ interface ExerciseItem {
 }
 
 interface DailyPlan {
+  id: string;
   dayNumber: number;
   label: string;
   items: ExerciseItem[];
@@ -55,6 +57,13 @@ interface Plan {
   createdAt: string;
   consultation: { date: string; diagnosis: string };
   dailyPlans: DailyPlan[];
+}
+
+interface ProgressRecord {
+  exercisePlanItemId: string;
+  dayNumber: number;
+  sortOrder: number;
+  completedAt: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -645,51 +654,63 @@ export default function ExercisesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
-  const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set());
+  // Set of completed ExercisePlanItem IDs (persisted to DB)
+  const [completedExerciseIds, setCompletedExerciseIds] = useState<Set<string>>(new Set());
   const [dayFullyComplete, setDayFullyComplete] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [speakEnabled, setSpeakEnabled] = useState(true);
+  const tokenRef = useRef<string | null>(null);
 
-  // Fetch exercise plans
+  // Fetch exercise plans + progress
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       window.location.href = '/login';
       return;
     }
+    tokenRef.current = token;
+    const headers = { Authorization: `Bearer ${token}` };
 
-    fetch('/api/exercise-plans', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => {
+    Promise.all([
+      fetch('/api/exercise-plans', { headers }).then((r) => {
         if (r.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           window.location.href = '/login';
-          return;
+          return null;
         }
         return r.json();
-      })
-      .then((data) => {
-        if (data?.data) {
-          setPlans(data.data);
+      }),
+      fetch('/api/exercise-progress', { headers }).then((r) => {
+        if (r.status === 401) return null;
+        return r.json();
+      }),
+    ])
+      .then(([plansData, progressData]) => {
+        if (plansData?.data) {
+          setPlans(plansData.data);
+        }
+        // Build set of completed exercise plan item IDs from DB
+        if (progressData?.data) {
+          const ids = new Set<string>(
+            progressData.data.map((p: ProgressRecord) => p.exercisePlanItemId)
+          );
+          setCompletedExerciseIds(ids);
         }
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  // Reset day selections when plan changes
+  // Reset day selection when plan changes (but keep completedExerciseIds)
   useEffect(() => {
     setSelectedDayIndex(0);
-    setCompletedExercises(new Set());
     setDayFullyComplete(false);
     setShowConfetti(false);
   }, [selectedPlanIndex]);
 
-  // Reset completion when day changes
+  // Reset confetti/dayFullyComplete when day changes (completedExerciseIds persists)
   useEffect(() => {
-    setCompletedExercises(new Set());
     setDayFullyComplete(false);
     setShowConfetti(false);
   }, [selectedDayIndex]);
@@ -697,23 +718,58 @@ export default function ExercisesPage() {
   const currentPlan = plans[selectedPlanIndex];
   const currentDay = currentPlan?.dailyPlans[selectedDayIndex];
   const totalExercises = currentDay?.items.length || 0;
-  const completedCount = currentDay?.items.filter((item) =>
-    completedExercises.has(`${currentDay.dayNumber}-${item.sortOrder}`),
-  ).length || 0;
 
+  // Derive completedExercises Set (keyed by "dayNumber-sortOrder") from persisted IDs
+  const completedExercises = useMemo(() => {
+    const result = new Set<string>();
+    if (!currentDay) return result;
+    for (const item of currentDay.items) {
+      if (completedExerciseIds.has(item.id)) {
+        result.add(`${currentDay.dayNumber}-${item.sortOrder}`);
+      }
+    }
+    return result;
+  }, [completedExerciseIds, currentDay]);
+
+  const completedCount = completedExercises.size;
   const progress = totalExercises > 0 ? completedCount / totalExercises : 0;
 
   const handleExerciseComplete = useCallback(
     (exerciseKey: string) => {
-      setCompletedExercises((prev) => {
+      // Find the actual item to get its DB id (key = "dayNumber-sortOrder")
+      const item = currentDay?.items.find(
+        (i) => `${currentDay.dayNumber}-${i.sortOrder}` === exerciseKey
+      );
+
+      // Add to local state
+      setCompletedExerciseIds((prev) => {
         const next = new Set(prev);
-        next.add(exerciseKey);
+        if (item) next.add(item.id);
         return next;
       });
+
+      // Save to DB
+      if (item && currentPlan && currentDay && tokenRef.current) {
+        fetch('/api/exercise-progress', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${tokenRef.current}`,
+          },
+          body: JSON.stringify({
+            exercisePlanId: currentPlan.id,
+            dailyPlanId: currentDay.id || currentDay.label,
+            exercisePlanItemId: item.id,
+            dayNumber: currentDay.dayNumber,
+            sortOrder: item.sortOrder,
+          }),
+        }).catch((err) => console.error('Failed to save progress:', err));
+      }
+
       // Announce next exercise
       if (speakEnabled && currentDay) {
         const completedItem = currentDay.items.find(
-          (item) => `${currentDay.dayNumber}-${item.sortOrder}` === exerciseKey,
+          (i) => `${currentDay.dayNumber}-${i.sortOrder}` === exerciseKey,
         );
         const completedIdx = currentDay.items.indexOf(completedItem!);
         const nextItem = currentDay.items[completedIdx + 1];
@@ -722,14 +778,14 @@ export default function ExercisesPage() {
         }
       }
     },
-    [speakEnabled, currentDay],
+    [speakEnabled, currentDay, currentPlan],
   );
 
   // Check if day is fully complete
   useEffect(() => {
     if (!currentDay) return;
     const allDone = currentDay.items.every((item) =>
-      completedExercises.has(`${currentDay.dayNumber}-${item.sortOrder}`),
+      completedExerciseIds.has(item.id),
     );
     if (allDone && currentDay.items.length > 0 && !dayFullyComplete) {
       setDayFullyComplete(true);
@@ -739,7 +795,7 @@ export default function ExercisesPage() {
       const timer = setTimeout(() => setShowConfetti(false), 5000);
       return () => clearTimeout(timer);
     }
-  }, [completedExercises, currentDay, dayFullyComplete, speakEnabled]);
+  }, [completedExerciseIds, currentDay, dayFullyComplete, speakEnabled]);
 
   /* -------------------------------------------------------------- */
   /*  Loading skeleton                                                */
@@ -904,7 +960,7 @@ export default function ExercisesPage() {
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {currentPlan.dailyPlans.map((day, i) => {
                 const dayCompletedCount = day.items.filter((item) =>
-                  completedExercises.has(`${day.dayNumber}-${item.sortOrder}`),
+                  completedExerciseIds.has(item.id),
                 ).length;
                 const dayTotal = day.items.length;
                 const dayFullyDone = dayTotal > 0 && dayCompletedCount === dayTotal;

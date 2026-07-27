@@ -44,6 +44,7 @@ model Patient {
   consultations    Consultation[]
   assignedExercises AssignedExercise[]
   exercisePlans    ExercisePlan[]
+  exerciseProgress  ExerciseProgress[]
 }
 
 model Exercise {
@@ -118,6 +119,7 @@ model ExercisePlan {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   dailyPlans      DailyPlan[]
+  exerciseProgress ExerciseProgress[]
 }
 
 // NEW: One per day in the plan
@@ -130,6 +132,7 @@ model DailyPlan {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   items           ExercisePlanItem[]
+  exerciseProgress ExerciseProgress[]
 }
 
 // NEW: Individual exercise item for a specific day
@@ -145,6 +148,7 @@ model ExercisePlanItem {
   notes           String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  exerciseProgress ExerciseProgress[]
 }
 
 model SiteContent {
@@ -177,4 +181,23 @@ model ContactSubmission {
   email     String
   message   String
   createdAt DateTime @default(now())
+}
+
+// Track which exercises a patient has completed per day
+model ExerciseProgress {
+  id                   String   @id @default(uuid())
+  patientId            String
+  patient              Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  exercisePlanId       String
+  exercisePlan         ExercisePlan @relation(fields: [exercisePlanId], references: [id], onDelete: Cascade)
+  dailyPlanId          String
+  dailyPlan            DailyPlan @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  exercisePlanItemId   String
+  exercisePlanItem     ExercisePlanItem @relation(fields: [exercisePlanItemId], references: [id], onDelete: Cascade)
+  dayNumber            Int
+  sortOrder            Int
+  completedAt          DateTime @default(now())
+  createdAt            DateTime @default(now())
+
+  @@unique([patientId, exercisePlanItemId])
 }

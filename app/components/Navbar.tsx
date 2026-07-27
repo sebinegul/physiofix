@@ -245,7 +245,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="relative z-10 rounded-full border border-white/15 p-2 text-slate-200 md:hidden"
+          className="relative z-10 rounded-full border border-white/15 p-3 text-slate-200 md:hidden"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >

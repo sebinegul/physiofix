@@ -281,7 +281,7 @@ export default function Hero() {
                           setShowResults(false);
                         }}
                         aria-label="Clear search"
-                        className="flex-shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition"
+                        className="flex-shrink-0 rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition"
                       >
                         <X className="h-4 w-4" />
                       </button>
