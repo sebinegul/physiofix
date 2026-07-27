@@ -33,6 +33,20 @@ async function getPublishedPosts(): Promise<BlogPost[]> {
     const posts = await prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        content: true,
+        coverImage: true,
+        author: true,
+        category: true,
+        tags: true,
+        published: true,
+        featured: true,
+        createdAt: true,
+      },
     });
     return posts;
   } catch (error) {
@@ -45,6 +59,8 @@ function estimateReadTime(content: string): string {
   const mins = Math.max(1, Math.ceil(words / 200));
   return `${mins} min read`;
 }
+
+export const revalidate = 3600; // Cache for 1 hour
 
 export default async function BlogPage() {
   const posts = await getPublishedPosts();

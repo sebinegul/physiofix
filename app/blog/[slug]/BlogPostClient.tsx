@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Share2, ChevronDown, ChevronRight, BookOpen } from "lucide-react";
+import { slugify, parseToc } from "./utils";
+export { slugify, parseToc };
 
 /* ── Toast ────────────────────────────────────────────────────────────── */
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
@@ -54,44 +56,39 @@ export function ShareButton({ title }: { title: string }) {
 }
 
 /* ── Table of Contents ────────────────────────────────────────────────── */
-export interface TocItem {
-  id: string;
-  text: string;
-  level: number; // 2 or 3
-}
+/* ── Table of Contents ────────────────────────────────────────────────── */
+import type { TocItem } from "./utils";
+export type { TocItem };
 
-export function TableOfContents({ items }: { items: TocItem[] }) {
-  const [open, setOpen] = useState(false);
+/* Shared heading-highlight hook */
+function useTocHighlight(items: TocItem[]) {
   const [activeId, setActiveId] = useState<string>("");
-
-  // Observe headings for active-state highlight
   useEffect(() => {
     if (items.length === 0) return;
-
     const ids = items.map((i) => i.id);
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
+          if (entry.isIntersecting) setActiveId(entry.target.id);
         }
       },
       { rootMargin: "-80px 0px -60% 0px", threshold: 0.1 }
     );
-
     ids.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
-
     return () => observer.disconnect();
   }, [items]);
+  return activeId;
+}
 
+/* ── Mobile (collapsible) ─────────────────────────────────────────────── */
+export function TocMobile({ items }: { items: TocItem[] }) {
+  const [open, setOpen] = useState(false);
+  const activeId = useTocHighlight(items);
   if (items.length === 0) return null;
-
-  /* ── Mobile (collapsible) ── */
-  const mobileList = (
+  return (
     <div className="lg:hidden mb-8">
       <button
         onClick={() => setOpen(!open)}
@@ -114,9 +111,13 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
       )}
     </div>
   );
+}
 
-  /* ── Desktop (sticky sidebar) ── */
-  const desktopSidebar = (
+/* ── Desktop (sticky sidebar) ─────────────────────────────────────────── */
+export function TocDesktop({ items }: { items: TocItem[] }) {
+  const activeId = useTocHighlight(items);
+  if (items.length === 0) return null;
+  return (
     <div className="hidden lg:block">
       <div className="sticky top-28">
         <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -129,8 +130,6 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
       </div>
     </div>
   );
-
-  return { mobileList, desktopSidebar };
 }
 
 function TocList({ items, activeId }: { items: TocItem[]; activeId: string }) {
@@ -157,23 +156,4 @@ function TocList({ items, activeId }: { items: TocItem[]; activeId: string }) {
 }
 
 /* ── Heading ID helper ────────────────────────────────────────────────── */
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
-
-export function parseToc(html: string): TocItem[] {
-  const regex = /<h([23])[^>]*>(.*?)<\/h\1>/gi;
-  const items: TocItem[] = [];
-  let match;
-  while ((match = regex.exec(html)) !== null) {
-    const level = parseInt(match[1], 10);
-    const text = match[2].replace(/<[^>]*>/g, "").trim();
-    items.push({ id: slugify(text), text, level });
-  }
-  return items;
-}
+// slugify and parseToc are imported from ./utils and re-exported above

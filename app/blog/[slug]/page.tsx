@@ -6,10 +6,10 @@ import Image from "next/image";
 import ScrollReveal from "../../components/ui/ScrollReveal";
 import {
   ShareButton,
-  TableOfContents,
-  parseToc,
-  slugify,
+  TocMobile,
+  TocDesktop,
 } from "./BlogPostClient";
+import { slugify, parseToc } from "./utils";
 
 /* ────────────────────────────────────────────────────────────────────────
    SEO – generateMetadata
@@ -94,10 +94,27 @@ function addHeadingIds(html: string): string {
 /* ────────────────────────────────────────────────────────────────────────
    Page
    ──────────────────────────────────────────────────────────────────────── */
+export const revalidate = 3600; // Cache for 1 hour
+
 export default async function BlogPostPage({ params }: Props) {
-  const post = await prisma.blogPost.findUnique({
-    where: { slug: params.slug },
-  });
+  // Parallel: fetch post + related posts in same category at the same time
+  const [post, sameCategoryPosts] = await Promise.all([
+    prisma.blogPost.findUnique({ where: { slug: params.slug } }),
+    prisma.blogPost.findMany({
+      where: { published: true, category: { not: "" } },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        coverImage: true,
+        category: true,
+        createdAt: true,
+      },
+    }),
+  ]);
 
   if (!post || !post.published) {
     return (
@@ -122,36 +139,31 @@ export default async function BlogPostPage({ params }: Props) {
     );
   }
 
+  // Compute related posts client-side from the single fetch
+  const sameCat = sameCategoryPosts
+    .filter((p) => p.id !== post.id && p.category === post.category)
+    .slice(0, 3);
+  const needMore = 3 - sameCat.length;
+  const relatedPosts =
+    needMore > 0
+      ? [
+          ...sameCat,
+          ...sameCategoryPosts
+            .filter(
+              (p) =>
+                p.id !== post.id &&
+                p.category !== post.category &&
+                !sameCat.some((s) => s.id === p.id)
+            )
+            .slice(0, needMore),
+        ]
+      : sameCat;
+
   // Process content: add heading IDs
   const processedContent = addHeadingIds(post.content);
 
   // Parse TOC from processed content
   const toc = parseToc(processedContent);
-
-  // Fetch 3 related posts (same category, excluding current, most recent first)
-  let relatedPosts = await prisma.blogPost.findMany({
-    where: {
-      published: true,
-      id: { not: post.id },
-      category: post.category,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 3,
-  });
-
-  // If not enough in same category, fill with other published posts
-  if (relatedPosts.length < 3) {
-    const slugs = [post.slug, ...relatedPosts.map((p) => p.slug)];
-    const more = await prisma.blogPost.findMany({
-      where: {
-        published: true,
-        slug: { notIn: slugs },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 3 - relatedPosts.length,
-    });
-    relatedPosts = [...relatedPosts, ...more];
-  }
 
   const readTime = estimateReadTime(post.content);
   const dateStr = new Date(post.createdAt).toLocaleDateString("en-IN", {
@@ -159,7 +171,7 @@ export default async function BlogPostPage({ params }: Props) {
     month: "long",
     year: "numeric",
   });
-  const tocParts = toc.length > 0 ? TableOfContents({ items: toc }) : null;
+  const hasToc = toc.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
@@ -303,7 +315,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Main content column */}
           <div className="min-w-0 flex-1">
             {/* Mobile TOC */}
-            {tocParts?.mobileList}
+            {hasToc && <TocMobile items={toc} />}
 
             {/* Article */}
             <ScrollReveal>
@@ -446,9 +458,9 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
           {/* ── Desktop sidebar (TOC) ── */}
-          {tocParts && (
+          {hasToc && (
             <aside className="hidden lg:block w-64 flex-shrink-0">
-              {tocParts.desktopSidebar}
+              <TocDesktop items={toc} />
             </aside>
           )}
         </div>
