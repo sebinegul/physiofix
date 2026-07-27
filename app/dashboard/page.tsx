@@ -152,19 +152,19 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {statCards.map((card) => {
           const Icon = card.icon;
           return (
             <div key={card.label} className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500 font-medium">{card.label}</p>
+              <div className="flex items-center justify-between min-h-[56px]">
+                <div className="min-w-0">
+                  <p className="text-sm text-slate-500 font-medium truncate">{card.label}</p>
                   <p className="text-3xl font-bold text-slate-900 mt-1" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
                     {card.value}
                   </p>
                 </div>
-                <div className={`w-12 h-12 rounded-xl ${card.bg} flex items-center justify-center`}>
+                <div className={`w-12 h-12 rounded-xl ${card.bg} flex items-center justify-center shrink-0 ml-4`}>
                   <Icon className={`w-6 h-6 ${card.iconColor}`} />
                 </div>
               </div>
