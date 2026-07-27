@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import Image from "next/image";
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
@@ -549,9 +550,11 @@ function ExerciseCard({
       {ex.gifUrl && !isCompleted && (
         <div className="px-5 pb-3">
           <div className="rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
-            <img
+            <Image
               src={ex.gifUrl}
               alt={`${ex.name} demonstration`}
+              width={400}
+              height={192}
               className="w-full h-48 object-contain bg-slate-50"
               loading="lazy"
             />
