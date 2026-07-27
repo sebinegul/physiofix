@@ -23,6 +23,7 @@ import {
   Sun,
   Moon,
   CloudSun,
+  Activity,
 } from 'lucide-react';
 
 interface UserInfo {
@@ -79,6 +80,18 @@ interface Consultation {
   followUpDate?: string;
 }
 
+interface ExerciseProgress {
+  id: string;
+  patientId: string;
+  exercisePlanId: string;
+  dailyPlanId: string;
+  exercisePlanItemId: string;
+  dayNumber: number;
+  sortOrder: number;
+  completedAt: string;
+  createdAt: string;
+}
+
 /* ---------- helpers ---------- */
 
 function getGreeting(): { greeting: string; icon: typeof Sun } {
@@ -119,6 +132,7 @@ export default function PatientDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [exercises, setExercises] = useState<AssignedExercise[]>([]);
   const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -145,8 +159,9 @@ export default function PatientDashboard() {
       authFetch('/api/appointments'),
       authFetch('/api/consultations'),
       authFetch('/api/exercise-plans'),
+      authFetch('/api/exercise-progress').catch(() => []),
     ])
-      .then(([userData, patientData, appointmentsData, consultationsData, plansData]) => {
+      .then(([userData, patientData, appointmentsData, consultationsData, plansData, progressData]) => {
         setUser(userData?.user || userData);
         const patientRecord = Array.isArray(patientData?.data) ? patientData.data[0] : patientData;
         setPatient(patientRecord);
@@ -185,6 +200,11 @@ export default function PatientDashboard() {
           Array.isArray(consultationsData)
             ? consultationsData
             : consultationsData.data || consultationsData.consultations || [],
+        );
+        setExerciseProgress(
+          Array.isArray(progressData)
+            ? progressData
+            : progressData?.data || progressData?.progress || [],
         );
         setLoading(false);
       })
@@ -240,6 +260,63 @@ export default function PatientDashboard() {
 
   const firstName = user?.name?.split(' ')[0] || 'Patient';
   const { greeting, icon: GreetingIcon } = getGreeting();
+
+  /* ---------- exercise progress derived data ---------- */
+
+  // Group progress records by dayNumber
+  const dayProgressMap = new Map<number, { completed: number; total: number }>();
+  exerciseProgress.forEach((p) => {
+    const existing = dayProgressMap.get(p.dayNumber) || { completed: 0, total: 0 };
+    existing.total++;
+    if (p.completedAt) existing.completed++;
+    dayProgressMap.set(p.dayNumber, existing);
+  });
+
+  // Find the max day number from progress data or exercises
+  const maxDayFromExercises = exercises.reduce((max, ex) => {
+    const match = ex.frequency?.match(/Day (\d+)/);
+    return match ? Math.max(max, parseInt(match[1], 10)) : max;
+  }, 0);
+  const totalDays = Math.max(
+    dayProgressMap.size > 0 ? Math.max(...Array.from(dayProgressMap.keys())) : 0,
+    maxDayFromExercises,
+    1,
+  );
+
+  // Calculate day statuses
+  const dayStatuses: { day: number; status: 'complete' | 'partial' | 'none' }[] = [];
+  for (let d = 1; d <= totalDays; d++) {
+    const dp = dayProgressMap.get(d);
+    if (!dp || dp.total === 0) {
+      dayStatuses.push({ day: d, status: 'none' });
+    } else if (dp.completed === dp.total) {
+      dayStatuses.push({ day: d, status: 'complete' });
+    } else {
+      dayStatuses.push({ day: d, status: 'partial' });
+    }
+  }
+
+  const completedDays = dayStatuses.filter((d) => d.status === 'complete').length;
+  const overallPercent = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+
+  // Weekly streak: last 7 days
+  const weeklyStreak: boolean[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().slice(0, 10);
+    const hasActivity = exerciseProgress.some((p) => {
+      if (!p.completedAt) return false;
+      return p.completedAt.slice(0, 10) === dateStr;
+    });
+    weeklyStreak.push(hasActivity);
+  }
+  const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const today = new Date().getDay();
+  const streakLabels = Array.from({ length: 7 }, (_, i) => {
+    const idx = (today - 6 + i + 7) % 7;
+    return dayLabels[idx];
+  });
 
   /* ---------- loading skeleton ---------- */
   if (loading) {
@@ -657,6 +734,116 @@ export default function PatientDashboard() {
               </Link>
             </div>
           )}
+        </motion.section>
+
+        {/* ─── Exercise Progress ─── */}
+        <motion.section variants={item}>
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-5 h-5 text-blue-500" />
+              <h3 className="text-sm font-semibold text-slate-900">Exercise Progress</h3>
+            </div>
+
+            {exerciseProgress.length === 0 ? (
+              /* Empty state */
+              <div className="text-center py-8">
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mb-4">
+                  <Activity className="w-7 h-7 text-blue-300" />
+                </div>
+                <p className="font-semibold text-gray-700 mb-1">No progress recorded yet</p>
+                <p className="text-sm text-gray-400 max-w-xs mx-auto">
+                  Start your exercise plan to see progress here
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                {/* Overall progress bar */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-slate-500">Overall completion</span>
+                    <span className="text-xs font-bold text-slate-700">{overallPercent}%</span>
+                  </div>
+                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-700"
+                      style={{ width: `${overallPercent}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Day grid */}
+                <div>
+                  <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(totalDays, 7)}, minmax(0, 1fr))` }}>
+                    {dayStatuses.map((ds) => (
+                      <div
+                        key={ds.day}
+                        className={`
+                          aspect-square rounded-lg flex items-center justify-center
+                          text-xs font-bold relative
+                          ${ds.status === 'complete' ? 'bg-green-500 text-white shadow-sm shadow-green-500/20' : ''}
+                          ${ds.status === 'partial' ? 'bg-amber-400 text-white shadow-sm shadow-amber-400/20' : ''}
+                          ${ds.status === 'none' ? 'bg-slate-100 text-slate-400' : ''}
+                        `}
+                      >
+                        {ds.day}
+                        {ds.status === 'complete' && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full flex items-center justify-center shadow">
+                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Legend */}
+                  <div className="flex items-center gap-4 mt-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-green-500" />
+                      <span className="text-[11px] text-slate-500">Complete</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-amber-400" />
+                      <span className="text-[11px] text-slate-500">Partial</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-3 h-3 rounded bg-slate-100 border border-slate-200" />
+                      <span className="text-[11px] text-slate-500">Not started</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                  <span className="text-sm text-slate-600">
+                    <span className="font-bold text-slate-900">{completedDays}</span> of{' '}
+                    <span className="font-bold text-slate-900">{totalDays}</span> days completed
+                  </span>
+                  <span className="text-sm font-semibold text-blue-600">{overallPercent}%</span>
+                </div>
+
+                {/* Weekly streak */}
+                <div>
+                  <p className="text-xs font-medium text-slate-500 mb-2">Last 7 days</p>
+                  <div className="flex items-center gap-2">
+                    {weeklyStreak.map((active, i) => (
+                      <div key={i} className="flex flex-col items-center gap-1">
+                        <div
+                          className={`
+                            w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold
+                            ${active
+                              ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/20'
+                              : 'bg-slate-100 text-slate-400 border border-slate-200'}
+                          `}
+                        >
+                          {active ? '✓' : '·'}
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-medium">{streakLabels[i]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </motion.section>
 
         {/* ─── Patient Info (compact, bottom) ─── */}

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { Inter, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 import SiteShell from "./components/SiteShell";
+import WhatsAppButton from "./components/WhatsAppButton";
+import JsonLd from "./components/JsonLd";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -128,9 +130,12 @@ export default async function RootLayout({
         <meta name="geo.placename" content="Bangalore" />
         <meta name="geo.position" content="12.8924;77.5928" />
         <meta name="ICBM" content="12.8924, 77.5928" />
+        <JsonLd />
       </head>
       <body>
         <SiteShell>{children}</SiteShell>
+
+        <WhatsAppButton />
 
         {/* LocalBusiness + MedicalBusiness structured data */}
         <Script

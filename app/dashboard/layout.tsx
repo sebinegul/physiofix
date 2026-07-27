@@ -11,6 +11,9 @@ import {
   Dumbbell,
   Stethoscope,
   FileText,
+  MessageSquare,
+  Mail,
+  Image as ImageIcon,
   LogOut,
   Menu,
   X,
@@ -34,6 +37,9 @@ const NAV_ITEMS = [
   { href: "/dashboard/content", label: "Site Content", icon: FileText },
   { href: "/dashboard/blogs", label: "Blog Posts", icon: FileText },
   { href: "/dashboard/testimonials", label: "Testimonials", icon: FileText },
+  { href: "/dashboard/contacts", label: "Contacts", icon: MessageSquare },
+  { href: "/dashboard/newsletter", label: "Newsletter", icon: Mail },
+  { href: "/dashboard/gallery", label: "Gallery", icon: ImageIcon },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -42,6 +48,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -59,6 +66,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         return;
       }
       setUser(parsed);
+      // Fetch notification counts
+      const token = localStorage.getItem("token");
+      if (token) {
+        fetch("/api/stats", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((json) => {
+            if (json?.data) {
+              setPendingCount(json.data.pendingAppointments || 0);
+            }
+          })
+          .catch(() => {});
+      }
     } catch {
       router.push("/login");
       return;
@@ -131,7 +152,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               >
                 <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? "text-blue-500" : "text-slate-400 group-hover:text-slate-600"}`} />
                 {item.label}
-                {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto text-blue-400" />}
+                {item.href === "/dashboard/appointments" && pendingCount > 0 && (
+                  <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+                    {pendingCount}
+                  </span>
+                )}
+                {isActive && item.href !== "/dashboard/appointments" && <ChevronRight className="w-3.5 h-3.5 ml-auto text-blue-400" />}
               </Link>
             );
           })}

@@ -5,6 +5,7 @@ import PopularSearches from "./sections/PopularSearches";
 import FindPhysio from "./sections/FindPhysio";
 import WhyChooseUs from "./sections/WhyChooseUs";
 import Testimonials from "./sections/Testimonials";
+import Gallery from "./sections/Gallery";
 import Newsletter from "./sections/Newsletter";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
         <FindPhysio />
         <WhyChooseUs />
         <Testimonials />
+        <Gallery />
         <Newsletter />
       </main>
     </PageTransition>

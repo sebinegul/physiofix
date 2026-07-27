@@ -11,12 +11,15 @@ import {
   Activity,
   Loader2,
 } from "lucide-react";
+import { MessageSquare, Mail } from "lucide-react";
 
 interface Stats {
   patients: number;
   appointments: number;
   exercises: number;
   consultations: number;
+  contacts: number;
+  pendingAppointments: number;
 }
 
 interface RecentAppointment {
@@ -58,7 +61,7 @@ async function fetchAPI<T>(url: string): Promise<T | null> {
 }
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<Stats>({ patients: 0, appointments: 0, exercises: 0, consultations: 0 });
+  const [stats, setStats] = useState<Stats>({ patients: 0, appointments: 0, exercises: 0, consultations: 0, contacts: 0, pendingAppointments: 0 });
   const [recentAppointments, setRecentAppointments] = useState<RecentAppointment[]>([]);
   const [recentConsultations, setRecentConsultations] = useState<RecentConsultation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,31 +77,32 @@ export default function DashboardPage() {
     }
 
     async function loadData() {
-      const [patientsRes, appointmentsRes, exercisesRes, consultationsRes] = await Promise.all([
-        fetchAPI<unknown[]>("/api/patients"),
-        fetchAPI<unknown[]>("/api/appointments"),
-        fetchAPI<unknown[]>("/api/exercises"),
-        fetchAPI<unknown[]>("/api/consultations"),
+      const [statsRes, appointmentsRes, consultationsRes] = await Promise.all([
+        fetchAPI<{ patients: number; appointments: number; exercises: number; consultations: number; contacts: number; pendingAppointments: number }>("/api/stats"),
+        fetchAPI<RecentAppointment[]>("/api/appointments"),
+        fetchAPI<RecentConsultation[]>("/api/consultations"),
       ]);
 
-      setStats({
-        patients: Array.isArray(patientsRes) ? patientsRes.length : 0,
-        appointments: Array.isArray(appointmentsRes) ? appointmentsRes.length : 0,
-        exercises: Array.isArray(exercisesRes) ? exercisesRes.length : 0,
-        consultations: Array.isArray(consultationsRes) ? consultationsRes.length : 0,
-      });
+      if (statsRes) {
+        setStats({
+          patients: statsRes.patients,
+          appointments: statsRes.appointments,
+          exercises: statsRes.exercises,
+          consultations: statsRes.consultations,
+          contacts: statsRes.contacts,
+          pendingAppointments: statsRes.pendingAppointments,
+        });
+      }
 
       if (Array.isArray(appointmentsRes)) {
-        const typed = appointmentsRes as RecentAppointment[];
-        const sorted = [...typed]
+        const sorted = [...appointmentsRes]
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .slice(0, 5);
         setRecentAppointments(sorted);
       }
 
       if (Array.isArray(consultationsRes)) {
-        const typed = consultationsRes as RecentConsultation[];
-        const sorted = [...typed]
+        const sorted = [...consultationsRes]
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .slice(0, 5);
         setRecentConsultations(sorted);
@@ -123,6 +127,8 @@ export default function DashboardPage() {
     { label: "Appointments", value: stats.appointments, icon: Calendar, color: "from-indigo-500 to-indigo-600", bg: "bg-indigo-50", iconColor: "text-indigo-600" },
     { label: "Exercises", value: stats.exercises, icon: Dumbbell, color: "from-purple-500 to-purple-600", bg: "bg-purple-50", iconColor: "text-purple-600" },
     { label: "Consultations", value: stats.consultations, icon: Stethoscope, color: "from-sky-500 to-sky-600", bg: "bg-sky-50", iconColor: "text-sky-600" },
+    { label: "Contact Enquiries", value: stats.contacts, icon: MessageSquare, color: "from-orange-500 to-orange-600", bg: "bg-orange-50", iconColor: "text-orange-600" },
+    { label: "Pending Appointments", value: stats.pendingAppointments, icon: Mail, color: "from-red-500 to-red-600", bg: "bg-red-50", iconColor: "text-red-600" },
   ];
 
   const statusBadge = (status: string) => {
@@ -146,7 +152,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {statCards.map((card) => {
           const Icon = card.icon;
           return (

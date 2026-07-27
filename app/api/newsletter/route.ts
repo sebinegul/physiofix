@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { authenticateRequest } from "@/lib/auth";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,16 +18,51 @@ export async function POST(request: NextRequest) {
 
     const sanitizedEmail = email.trim().toLowerCase();
 
-    // TODO: Integrate with your mailing list service
-    console.log("Newsletter subscription:", sanitizedEmail);
+    // Check if already subscribed
+    const existing = await prisma.newsletterSubscriber.findUnique({
+      where: { email: sanitizedEmail },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "This email is already subscribed." },
+        { status: 409 }
+      );
+    }
+
+    await prisma.newsletterSubscriber.create({
+      data: { email: sanitizedEmail },
+    });
 
     return NextResponse.json(
-      { message: "You are subscribed. We will be in touch soon." },
+      { message: "You are subscribed." },
       { status: 200 }
     );
-  } catch {
+  } catch (error) {
+    console.error("Newsletter subscribe error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const user = await authenticateRequest(request);
+    if (!user || user.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const subscribers = await prisma.newsletterSubscriber.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ data: subscribers });
+  } catch (error) {
+    console.error("Get newsletter subscribers error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

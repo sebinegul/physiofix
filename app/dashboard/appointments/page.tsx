@@ -3,12 +3,16 @@
 import { useState, useEffect, FormEvent } from "react";
 import {
   Calendar,
+  CalendarDays,
   Plus,
   Search,
   Pencil,
   X,
   Loader2,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  List,
 } from "lucide-react";
 
 interface Appointment {
@@ -54,8 +58,210 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: "bg-red-100 text-red-700 border-red-200",
 };
 
+const STATUS_DOT_COLORS: Record<string, string> = {
+  pending: "bg-yellow-400",
+  confirmed: "bg-green-400",
+  completed: "bg-blue-400",
+  cancelled: "bg-red-400",
+};
+
 const TYPES = ["consultation", "follow-up", "assessment", "treatment", "rehabilitation"];
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
+
+/* ──────────────── CalendarView (inline) ──────────────── */
+
+function CalendarView({ appointments, onEdit }: { appointments: Appointment[]; onEdit: (a: Appointment) => void }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  // Group appointments by date key (YYYY-MM-DD)
+  const appointmentsByDate = appointments.reduce<Record<string, Appointment[]>>((acc, a) => {
+    const key = a.date.split("T")[0]; // "2026-07-28"
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(a);
+    return acc;
+  }, {});
+
+  // Build calendar grid
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDayOfWeek = firstDay.getDay(); // 0 = Sunday
+  const daysInMonth = lastDay.getDate();
+
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
+
+  const monthLabel = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  // Build cells array (includes padding for leading/trailing days)
+  const cells: { date: string; day: number; inMonth: boolean }[] = [];
+
+  // Leading empty cells for days before the 1st
+  for (let i = 0; i < startDayOfWeek; i++) {
+    const d = new Date(year, month, -(startDayOfWeek - i - 1));
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    cells.push({ date: key, day: d.getDate(), inMonth: false });
+  }
+
+  // Actual days of the month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ date: key, day: d, inMonth: true });
+  }
+
+  // Trailing empty cells to fill the grid to a complete row
+  while (cells.length % 7 !== 0) {
+    const nextDate = new Date(year, month + 1, cells.length - startDayOfWeek - daysInMonth + 1);
+    const key = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, "0")}-${String(nextDate.getDate()).padStart(2, "0")}`;
+    cells.push({ date: key, day: nextDate.getDate(), inMonth: false });
+  }
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+      {/* Month navigation header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <button
+          onClick={prevMonth}
+          className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+          aria-label="Previous month"
+        >
+          <ChevronLeft className="w-5 h-5 text-slate-600" />
+        </button>
+        <h2
+          className="text-lg font-semibold text-slate-900"
+          style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}
+        >
+          {monthLabel}
+        </h2>
+        <button
+          onClick={nextMonth}
+          className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+          aria-label="Next month"
+        >
+          <ChevronRight className="w-5 h-5 text-slate-600" />
+        </button>
+      </div>
+
+      {/* Day-of-week headers */}
+      <div className="grid grid-cols-7 border-b border-slate-100">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+          <div key={d} className="text-center text-xs font-semibold text-slate-400 py-2">
+            {d}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7">
+        {cells.map((cell) => {
+          const dayAppts = appointmentsByDate[cell.date] || [];
+          const isToday = cell.date === todayStr;
+          const isSelected = cell.date === selectedDate && dayAppts.length > 0;
+          const hasAppts = dayAppts.length > 0;
+
+          return (
+            <div
+              key={cell.date}
+              className={`
+                border-b border-r border-slate-50 min-h-[72px] p-1.5 relative
+                transition-colors
+                ${!cell.inMonth ? "bg-slate-50/50" : ""}
+                ${isSelected ? "bg-blue-50" : ""}
+                ${hasAppts && cell.inMonth ? "cursor-pointer hover:bg-blue-50/50" : ""}
+              `}
+              onClick={() => {
+                if (hasAppts && cell.inMonth) {
+                  setSelectedDate(selectedDate === cell.date ? null : cell.date);
+                }
+              }}
+            >
+              {/* Day number */}
+              <div className="flex items-start justify-between">
+                <span
+                  className={`
+                    inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-medium
+                    ${isToday ? "bg-blue-600 text-white" : ""}
+                    ${!isToday && cell.inMonth ? "text-slate-700" : ""}
+                    ${!cell.inMonth ? "text-slate-300" : ""}
+                  `}
+                >
+                  {cell.day}
+                </span>
+                {hasAppts && dayAppts.length > 0 && cell.inMonth && (
+                  <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">
+                    {dayAppts.length}
+                  </span>
+                )}
+              </div>
+
+              {/* Status dots */}
+              {hasAppts && cell.inMonth && (
+                <div className="flex flex-wrap gap-0.5 mt-1">
+                  {dayAppts.slice(0, 4).map((a, i) => (
+                    <span
+                      key={i}
+                      className={`block w-2 h-2 rounded-full ${STATUS_DOT_COLORS[a.status] || "bg-slate-300"}`}
+                      title={`${a.user?.name || "Unknown"} – ${a.status}`}
+                    />
+                  ))}
+                  {dayAppts.length > 4 && (
+                    <span className="text-[9px] text-slate-400 leading-none">+{dayAppts.length - 4}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Expanded appointment details for selected date */}
+      {selectedDate && appointmentsByDate[selectedDate] && (
+        <div className="border-t border-blue-200 bg-blue-50/50 px-6 py-4 space-y-2">
+          <p className="text-xs font-semibold text-blue-700 mb-2">
+            {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </p>
+          {appointmentsByDate[selectedDate].map((a) => (
+            <div
+              key={a.id}
+              className="flex items-center justify-between bg-white rounded-xl border border-slate-200/60 px-4 py-2.5 shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <span className={`block w-2.5 h-2.5 rounded-full flex-shrink-0 ${STATUS_DOT_COLORS[a.status] || "bg-slate-300"}`} />
+                <div>
+                  <p className="text-sm font-medium text-slate-900">{a.user?.name || "Unknown"}</p>
+                  <p className="text-xs text-slate-500">
+                    {a.time} · <span className="capitalize">{a.type}</span> · <span className="capitalize">{a.status}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(a);
+                }}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+              >
+                <Pencil className="w-3 h-3" /> Edit
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ──────────────── Main Page ──────────────── */
 
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -66,6 +272,7 @@ export default function AppointmentsPage() {
   const [editingAppt, setEditingAppt] = useState<Appointment | null>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
   const [patientId, setPatientId] = useState("");
   const [date, setDate] = useState("");
@@ -122,25 +329,66 @@ export default function AppointmentsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>Appointments</h1>
           <p className="text-sm text-slate-500 mt-1">{appointments.length} total appointments</p>
         </div>
-        <button onClick={openAdd} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-md shadow-blue-200/50 hover:shadow-lg hover:scale-[1.02] transition-all">
-          <Plus className="w-4 h-4" /> New Appointment
-        </button>
+
+        <div className="flex items-center gap-2">
+          {/* View toggle */}
+          <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${
+                viewMode === "list"
+                  ? "bg-blue-50 text-blue-700"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+              }`}
+              aria-label="List view"
+            >
+              <List className="w-4 h-4" />
+              <span className="hidden sm:inline">List</span>
+            </button>
+            <div className="w-px h-5 bg-slate-200" />
+            <button
+              onClick={() => setViewMode("calendar")}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${
+                viewMode === "calendar"
+                  ? "bg-blue-50 text-blue-700"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+              }`}
+              aria-label="Calendar view"
+            >
+              <CalendarDays className="w-4 h-4" />
+              <span className="hidden sm:inline">Calendar</span>
+            </button>
+          </div>
+
+          <button onClick={openAdd} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-md shadow-blue-200/50 hover:shadow-lg hover:scale-[1.02] transition-all">
+            <Plus className="w-4 h-4" /> New Appointment
+          </button>
+        </div>
       </div>
 
+      {/* Search bar */}
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input type="text" placeholder="Search appointments..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400" />
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
-        {loading ? (
-          <div className="flex items-center justify-center h-48"><Loader2 className="w-6 h-6 text-blue-500 animate-spin" /></div>
-        ) : (
+      {/* Content area */}
+      {loading ? (
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm flex items-center justify-center h-48">
+          <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+        </div>
+      ) : viewMode === "calendar" ? (
+        /* Calendar View */
+        <CalendarView appointments={filtered} onEdit={openEdit} />
+      ) : (
+        /* List View */
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -177,8 +425,8 @@ export default function AppointmentsPage() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Modal */}
       {showModal && (
