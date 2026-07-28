@@ -356,10 +356,10 @@ export default function LoginPage() {
   );
 
   const inputClass =
-    "w-full rounded-2xl border border-gray-200 bg-white px-4 py-3.5 text-[15px] text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10";
+    "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-[15px] text-slate-900 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10";
 
   const labelClass =
-    "mb-1.5 block text-[13px] font-medium text-gray-600";
+    "mb-1.5 block text-[13px] font-medium text-slate-600";
 
   /* ─── right panel content based on view ─── */
 
@@ -377,18 +377,18 @@ export default function LoginPage() {
             exit="exit"
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">
+            <h1 className="text-[28px] font-bold leading-tight tracking-tight text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
               Welcome Back
             </h1>
-            <p className="mt-2 text-[14px] text-gray-500">
+            <p className="mt-2 text-[14px] text-slate-500">
               Sign in to access your PhysioFix account
             </p>
 
             {/* Step indicator */}
             <div className="mt-6 flex items-center gap-2">
               <div className="h-1.5 w-8 rounded-full bg-blue-600" />
-              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
-              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+              <div className="h-1.5 w-8 rounded-full bg-slate-200" />
+              <div className="h-1.5 w-8 rounded-full bg-slate-200" />
             </div>
 
             <form onSubmit={handleLogin} className="mt-6">
@@ -434,7 +434,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-blue-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-blue-600"
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
@@ -453,10 +453,10 @@ export default function LoginPage() {
                   variants={staggerItem}
                   className="flex items-center justify-between pt-1"
                 >
-                  <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-500">
+                  <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-500">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600/30"
+                      className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600/30"
                     />
                     Remember me
                   </label>
@@ -473,7 +473,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-gray-900 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                    className="w-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:from-blue-600 hover:to-blue-700 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
@@ -495,9 +495,9 @@ export default function LoginPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.5 }}
-              className="mt-6 border-t border-gray-100 pt-5"
+              className="mt-6 border-t border-slate-100 pt-5"
             >
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center text-sm text-slate-500">
                 Don&apos;t have an account?{" "}
                 <button
                   type="button"
@@ -523,18 +523,18 @@ export default function LoginPage() {
             exit="exit"
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">
+            <h1 className="text-[28px] font-bold leading-tight tracking-tight text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
               Let&apos;s get you started
             </h1>
-            <p className="mt-2 text-[14px] text-gray-500">
+            <p className="mt-2 text-[14px] text-slate-500">
               Tell us about yourself and your condition
             </p>
 
             {/* Step indicator */}
             <div className="mt-6 flex items-center gap-2">
               <div className="h-1.5 w-8 rounded-full bg-blue-600" />
-              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
-              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+              <div className="h-1.5 w-8 rounded-full bg-slate-200" />
+              <div className="h-1.5 w-8 rounded-full bg-slate-200" />
             </div>
 
             <form onSubmit={handleRegister} className="mt-6">
@@ -552,7 +552,7 @@ export default function LoginPage() {
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <input
                       id="reg-name"
                       type="text"
@@ -571,7 +571,7 @@ export default function LoginPage() {
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Phone className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <Phone className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <input
                       id="reg-phone"
                       type="tel"
@@ -590,7 +590,7 @@ export default function LoginPage() {
                     Email <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <input
                       id="reg-email"
                       type="email"
@@ -609,7 +609,7 @@ export default function LoginPage() {
                     Pain / Injury Description
                   </label>
                   <div className="relative">
-                    <FileText className="absolute left-3.5 top-3.5 h-4 w-4 text-gray-400" />
+                    <FileText className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
                     <textarea
                       id="reg-notes"
                       rows={3}
@@ -626,7 +626,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                    className="w-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:from-blue-600 hover:to-blue-700 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
@@ -648,9 +648,9 @@ export default function LoginPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.5 }}
-              className="mt-6 border-t border-gray-100 pt-5"
+              className="mt-6 border-t border-slate-100 pt-5"
             >
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center text-sm text-slate-500">
                 Already have an account?{" "}
                 <button
                   type="button"
@@ -680,16 +680,16 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="rounded-xl border border-gray-200 p-2 transition-colors hover:bg-gray-50"
+                className="rounded-xl border border-slate-200 p-2 transition-colors hover:bg-slate-50"
                 aria-label="Back to registration"
               >
-                <ChevronLeft className="h-4 w-4 text-gray-600" />
+                <ChevronLeft className="h-4 w-4 text-slate-600" />
               </button>
               <div>
-                <h1 className="font-serif text-[28px] font-bold leading-tight tracking-tight text-gray-900">
+                <h1 className="text-[28px] font-bold leading-tight tracking-tight text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
                   Schedule Your Visit
                 </h1>
-                <p className="mt-1 text-[14px] text-gray-500">
+                <p className="mt-1 text-[14px] text-slate-500">
                   Choose your preferred appointment time
                 </p>
               </div>
@@ -699,7 +699,7 @@ export default function LoginPage() {
             <div className="mt-6 flex items-center gap-2">
               <div className="h-1.5 w-8 rounded-full bg-green-500" />
               <div className="h-1.5 w-8 rounded-full bg-blue-600" />
-              <div className="h-1.5 w-8 rounded-full bg-gray-200" />
+              <div className="h-1.5 w-8 rounded-full bg-slate-200" />
             </div>
 
             <form onSubmit={handleSchedule} className="mt-6">
@@ -717,7 +717,7 @@ export default function LoginPage() {
                     Appointment Type <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <CalendarDays className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <CalendarDays className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <select
                       id="sched-type"
                       required
@@ -759,7 +759,7 @@ export default function LoginPage() {
                     Preferred Time <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Clock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <Clock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <select
                       id="sched-time"
                       required
@@ -806,7 +806,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full rounded-2xl bg-blue-600 py-3.5 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                    className="w-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:from-blue-600 hover:to-blue-700 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                   >
                     <span className="relative flex items-center justify-center gap-2">
                       {loading ? (
@@ -851,10 +851,10 @@ export default function LoginPage() {
               <CheckCircle2 className="mb-4 h-16 w-16 text-green-500" />
             </motion.div>
 
-            <h1 className="font-serif text-[26px] font-bold leading-tight tracking-tight text-gray-900">
+            <h1 className="text-[26px] font-bold leading-tight tracking-tight text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
               You&apos;re All Set!
             </h1>
-            <p className="mt-2 text-[14px] text-gray-500">
+            <p className="mt-2 text-[14px] text-slate-500">
               Your appointment has been booked successfully
             </p>
 
@@ -865,15 +865,15 @@ export default function LoginPage() {
                 transition={{ delay: 0.3 }}
                 className="mt-6 w-full rounded-2xl border border-blue-100 bg-blue-50/50 p-4"
               >
-                <p className="mb-2 text-sm font-medium text-gray-700">
+                <p className="mb-2 text-sm font-medium text-slate-700">
                   Your login credentials:
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600">
                   <span className="font-medium">Email:</span>{" "}
                   {successData?.email}
                 </p>
                 <div className="mt-1 flex items-center gap-2">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     <span className="font-medium">Password:</span>{" "}
                     {successData?.generatedPassword}
                   </p>
@@ -886,7 +886,7 @@ export default function LoginPage() {
                       setCopied(true);
                       setTimeout(() => setCopied(false), 2000);
                     }}
-                    className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-blue-100 hover:text-blue-600"
+                    className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-blue-100 hover:text-blue-600"
                     title="Copy password"
                   >
                     {copied ? (
@@ -896,7 +896,7 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-slate-500">
                   You&apos;ve been auto-logged in. A welcome email with your
                   credentials has also been sent.
                 </p>
@@ -910,18 +910,18 @@ export default function LoginPage() {
                 transition={{ delay: 0.4 }}
                 className="mt-4 w-full rounded-2xl border border-green-100 bg-green-50/50 p-4"
               >
-                <p className="mb-1 text-sm font-medium text-gray-700">
+                <p className="mb-1 text-sm font-medium text-slate-700">
                   Appointment Details:
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600">
                   <span className="font-medium">Type:</span>{" "}
                   {successData?.type}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600">
                   <span className="font-medium">Date:</span>{" "}
                   {successData?.date}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600">
                   <span className="font-medium">Time:</span>{" "}
                   {successData?.time}
                 </p>
@@ -937,7 +937,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => router.push("/patient")}
-                className="flex-1 rounded-2xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                className="flex-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 py-3 text-[15px] font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-300 hover:from-blue-600 hover:to-blue-700 hover:shadow-blue-500/40 hover:scale-[1.02] active:scale-[0.98]"
               >
                 Go to Dashboard
               </button>
@@ -1021,7 +1021,7 @@ export default function LoginPage() {
       >
         <Link
           href="/"
-          className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 px-4 py-2 text-sm text-gray-600 backdrop-blur-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:text-blue-700 hover:shadow-sm"
+          className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm text-slate-600 backdrop-blur-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:text-blue-700 hover:shadow-sm"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
@@ -1035,7 +1035,7 @@ export default function LoginPage() {
         }
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-[900px] overflow-hidden rounded-3xl border border-gray-200/60 bg-white shadow-2xl shadow-slate-200/50 md:h-[580px] md:flex-row"
+        className="relative z-10 w-full max-w-[900px] overflow-hidden rounded-3xl border border-slate-200/60 bg-white shadow-2xl shadow-slate-200/50 md:h-[580px] md:flex-row"
       >
         <div className="flex w-full flex-col md:flex-row">
           {/* ─── Left Panel (blue gradient branding) ─── */}

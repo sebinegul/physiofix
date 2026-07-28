@@ -6,6 +6,7 @@ import Image from "next/image";
 import ScrollProgress from "../../components/ui/ScrollProgress";
 import BlogPostBody, { TocDesktop } from "./BlogPostBody";
 import { slugify, parseToc } from "./utils";
+import PageTransition from "../../components/PageTransition";
 
 /* ── SEO ── */
 interface Props {
@@ -171,6 +172,7 @@ export default async function BlogPostPage({ params }: Props) {
         }}
       />
 
+      <PageTransition>
       <div className="relative min-h-screen bg-[#0b0d12]">
         {/* JSON-LD */}
         <script
@@ -329,6 +331,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         </div>
       </div>
+      </PageTransition>
     </>
   );
 }

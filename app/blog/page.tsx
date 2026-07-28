@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import ScrollProgress from "../components/ui/ScrollProgress";
 import BlogGrid from "./BlogGrid";
+import PageTransition from "../components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Blog | PhysioFix",
@@ -94,6 +95,7 @@ export default async function BlogPage() {
         }}
       />
 
+      <PageTransition>
       <div className="relative min-h-screen bg-[#0b0d12]">
         {/* ── HERO ── */}
         <section className="relative overflow-hidden border-b border-white/[0.04]">
@@ -163,8 +165,30 @@ export default async function BlogPage() {
               regular={serializedRegular}
             />
           )}
+
+          {/* ── CTA ── */}
+          <section className="relative mt-20 overflow-hidden rounded-[2rem] border border-white/[0.06] bg-gradient-to-br from-blue-600/10 via-indigo-600/5 to-blue-800/10 p-10 sm:p-14 text-center">
+            {/* Glow */}
+            <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 h-64 w-[500px] rounded-full bg-blue-500/15 blur-[100px]" />
+            <div className="relative">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Ready to start your recovery journey?
+              </h2>
+              <p className="mt-3 max-w-lg mx-auto text-sm sm:text-base text-white/50">
+                Book a consultation with Dr.Nishmitha.R and get a personalized treatment plan tailored to your needs.
+              </p>
+              <Link
+                href="/login"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-blue-500/40 hover:scale-[1.03] active:scale-[0.97]"
+              >
+                Book a Consultation
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </section>
         </div>
       </div>
+      </PageTransition>
     </>
   );
 }
