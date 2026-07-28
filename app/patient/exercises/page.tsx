@@ -170,7 +170,7 @@ function ConfettiOverlay() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
       {particles.map((p) => (
         <div
           key={p.id}

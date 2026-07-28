@@ -151,7 +151,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
-                <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? "text-blue-500" : "text-slate-400 group-hover:text-slate-600"}`} />
+                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? "text-blue-500" : "text-slate-400 group-hover:text-slate-600"}`} />
                 {item.label}
                 {item.href === "/dashboard/appointments" && pendingCount > 0 && (
                   <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">

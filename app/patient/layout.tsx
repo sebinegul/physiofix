@@ -69,6 +69,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     document.cookie = 'auth-token=; path=/; max-age=0';
     router.push('/login');
   };
@@ -94,7 +95,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/40 z-[45] lg:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -102,7 +103,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200
+          fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200
           transform transition-transform duration-300 ease-in-out
           lg:relative lg:translate-x-0 lg:z-auto
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}

@@ -44,7 +44,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="pb-20">
+    <section className="py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="relative overflow-hidden rounded-[2rem] border border-blue-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-6 py-12 text-center shadow-[0_25px_80px_rgba(2,6,23,0.3)] sm:px-12 md:py-16">

@@ -79,13 +79,14 @@ export default function Footer() {
                 { Icon: Linkedin, label: "LinkedIn" },
                 { Icon: Youtube, label: "YouTube" },
               ].map(({ Icon, label }) => (
-                <span
+                <a
                   key={label}
-                  title={label}
-                  className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400"
+                  href="#"
+                  aria-label={label}
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 transition-colors"
                 >
                   <Icon className="h-4 w-4 text-slate-300" />
-                </span>
+                </a>
               ))}
             </div>
           </ScrollReveal>
@@ -107,8 +108,8 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-6 sm:flex-row">
           <p className="text-xs text-slate-500">© {new Date().getFullYear()} PhysioFix. All rights reserved.</p>
           <div className="flex gap-6 text-xs text-slate-500">
-            <span className="cursor-default">Privacy</span>
-            <span className="cursor-default">Terms</span>
+            <Link href="/privacy" className="transition hover:text-blue-300">Privacy</Link>
+            <Link href="/terms" className="transition hover:text-blue-300">Terms</Link>
             <Link href="/contact" className="transition hover:text-blue-300">Contact</Link>
           </div>
         </div>

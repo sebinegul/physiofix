@@ -149,7 +149,7 @@ export default function Gallery() {
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
             Transformations
           </p>
-          <h2 className="mb-4 text-3xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-4xl">
+          <h2 className="mb-4 text-3xl font-black leading-[1.15] tracking-tight text-slate-950 sm:text-4xl md:text-4xl">
             See the progress{" "}
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               our patients have made

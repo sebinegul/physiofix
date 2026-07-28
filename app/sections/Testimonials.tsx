@@ -172,7 +172,7 @@ export default function Testimonials() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal className="mb-12 text-center">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Patient Stories</p>
-          <h2 className="mb-4 text-3xl font-black leading-[1.15] tracking-tight text-slate-950 md:text-4xl">
+          <h2 className="mb-4 text-3xl font-black leading-[1.15] tracking-tight text-slate-950 sm:text-4xl md:text-4xl">
             Recovery is personal. <br className="hidden sm:block" />
             <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Here is what it looks like.</span>
           </h2>

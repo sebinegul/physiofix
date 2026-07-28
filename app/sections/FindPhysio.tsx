@@ -22,7 +22,7 @@ export default function FindPhysio() {
         <div className="grid items-start gap-12 lg:grid-cols-[0.92fr_1.08fr]">
           <ScrollReveal>
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Expert treatment</p>
-            <h2 className="mb-4 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 md:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900 sm:text-4xl md:text-4xl">
               Support for pain relief, movement recovery and everyday strength.
             </h2>
             <p className="mb-8 text-lg leading-8 text-slate-600">
