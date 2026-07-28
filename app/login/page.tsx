@@ -178,7 +178,6 @@ export default function LoginPage() {
         return;
       }
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
       document.cookie = `auth-token=${encodeURIComponent(data.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back!", "success");
@@ -248,7 +247,6 @@ export default function LoginPage() {
       const loginData = await loginRes.json();
       if (loginRes.ok) {
         localStorage.setItem("token", loginData.token);
-        localStorage.setItem("user", JSON.stringify(loginData.user));
         document.cookie = `auth-token=${encodeURIComponent(loginData.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
         window.dispatchEvent(new Event("auth-changed"));
       }

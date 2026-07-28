@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
+import { getUserFromToken, clearAuth } from "@/lib/auth-client";
 
 interface UserInfo {
   id: string;
@@ -52,46 +53,37 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (!token || !storedUser) {
+    if (!token) {
       router.push("/login");
       return;
     }
 
-    try {
-      const parsed: UserInfo = JSON.parse(storedUser);
-      if (parsed.role !== "admin") {
-        router.push("/patient");
-        return;
-      }
-      setUser(parsed);
-      // Fetch notification counts
-      const token = localStorage.getItem("token");
-      if (token) {
-        fetch("/api/stats", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => (res.ok ? res.json() : null))
-          .then((json) => {
-            if (json?.data) {
-              setPendingCount(json.data.pendingAppointments || 0);
-            }
-          })
-          .catch(() => {});
-      }
-    } catch {
+    const payload = getUserFromToken();
+    if (!payload) {
       router.push("/login");
       return;
-    } finally {
-      setLoading(false);
     }
+    if (payload.role !== "admin") {
+      router.push("/patient");
+      return;
+    }
+    setUser({ id: payload.userId, name: payload.name, email: payload.email, role: payload.role });
+    // Fetch notification counts
+    fetch("/api/stats", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.data) {
+          setPendingCount(json.data.pendingAppointments || 0);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    document.cookie = "auth-token=; path=/; max-age=0";
+    clearAuth();
     router.push("/login");
   };
 

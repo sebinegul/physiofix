@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { MessageSquare, Mail } from "lucide-react";
+import { getUserFromToken } from "@/lib/auth-client";
 
 interface Stats {
   patients: number;
@@ -68,13 +69,8 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState("Admin");
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        setUserName(u.name || "Admin");
-      } catch { /* ignore */ }
-    }
+    const payload = getUserFromToken();
+    if (payload?.name) setUserName(payload.name);
 
     async function loadData() {
       const [statsRes, appointmentsRes, consultationsRes] = await Promise.all([

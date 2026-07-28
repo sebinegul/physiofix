@@ -24,6 +24,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
 import { useToast } from "@/app/contexts/ToastContext";
+import { getUserFromToken, clearAuth } from "@/lib/auth-client";
 
 /* ─── constants ─── */
 
@@ -382,7 +383,6 @@ export default function BookVisitModal() {
       }
 
       localStorage.setItem("token", loginData.token);
-      localStorage.setItem("user", JSON.stringify(loginData.user));
       document.cookie = `auth-token=${encodeURIComponent(loginData.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));
@@ -459,11 +459,10 @@ export default function BookVisitModal() {
               }
         );
       } else {
-        const storedUser = localStorage.getItem("user");
-        const user = storedUser ? JSON.parse(storedUser) : {};
+        const payload = getUserFromToken();
         setConfirmData({
-          name: user.name || "Patient",
-          email: user.email || loginEmail,
+          name: payload?.name || "Patient",
+          email: payload?.email || loginEmail,
           generatedPassword: "",
           type,
           date,
@@ -516,7 +515,6 @@ export default function BookVisitModal() {
         return;
       }
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
       document.cookie = `auth-token=${encodeURIComponent(data.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));

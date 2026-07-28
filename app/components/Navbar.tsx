@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone, User, LogOut, ChevronDown, LayoutDashboard, Calendar, Dumbbell, Stethoscope, CircleUser, Loader2 } from "lucide-react";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
+import { getUserFromToken, clearAuth } from "@/lib/auth-client";
 import { useToast } from "@/app/contexts/ToastContext";
 
 const navLinks = [
@@ -35,21 +36,12 @@ export default function Navbar() {
     router.push(href);
   };
 
-  /* ─── read auth state from localStorage ─── */
+  /* ─── read auth state from JWT token ─── */
   const readAuth = () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!token);
-    if (user) {
-      try {
-        const parsed = JSON.parse(user);
-        setUserName(parsed.name || "");
-        setUserRole(parsed.role || "");
-      } catch {}
-    } else {
-      setUserName("");
-      setUserRole("");
-    }
+    const payload = getUserFromToken();
+    setIsLoggedIn(!!payload);
+    setUserName(payload?.name || "");
+    setUserRole(payload?.role || "");
   };
 
   // Read on mount
@@ -67,9 +59,7 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    document.cookie = "auth-token=; path=/; max-age=0";
+    clearAuth();
     setIsLoggedIn(false);
     setUserName("");
     setUserRole("");

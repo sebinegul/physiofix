@@ -15,6 +15,7 @@ import {
   X,
   ChevronRight,
 } from 'lucide-react';
+import { getUserFromToken, clearAuth } from '@/lib/auth-client';
 
 interface UserInfo {
   id: string;
@@ -45,6 +46,22 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
       return;
     }
 
+    const payload = getUserFromToken();
+    if (!payload) {
+      clearAuth();
+      router.push('/login');
+      return;
+    }
+
+    if (payload.role === 'admin') {
+      router.push('/dashboard');
+      return;
+    }
+
+    setUser({ id: payload.userId, email: payload.email, name: payload.name, role: payload.role });
+    setLoading(false);
+
+    // Background verification — if /api/auth/me fails, log out
     fetch('/api/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -53,24 +70,17 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
         return res.json();
       })
       .then((data) => {
-        if (data.role === 'admin') {
-          router.push('/dashboard');
-          return;
-        }
-        setUser(data);
-        setLoading(false);
+        // Keep localStorage user up-to-date but not required
+        localStorage.removeItem('user'); // clean up any stale entry
       })
       .catch(() => {
-        localStorage.removeItem('token');
-        document.cookie = 'auth-token=; path=/; max-age=0';
+        clearAuth();
         router.push('/login');
       });
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    document.cookie = 'auth-token=; path=/; max-age=0';
+    clearAuth();
     router.push('/login');
   };
 
