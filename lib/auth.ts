@@ -2,7 +2,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "./prisma";
 
-const JWT_SECRET = process.env.JWT_SECRET || "physiofix-secret-key-change-in-production";
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET env var is missing. Set it in .env or Vercel environment variables.");
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export interface JWTPayload {
   userId: string;

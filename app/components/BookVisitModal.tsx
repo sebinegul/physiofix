@@ -383,6 +383,7 @@ export default function BookVisitModal() {
 
       localStorage.setItem("token", loginData.token);
       localStorage.setItem("user", JSON.stringify(loginData.user));
+      document.cookie = `auth-token=${encodeURIComponent(loginData.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Account created! Check your email for credentials.", "success");
@@ -516,6 +517,7 @@ export default function BookVisitModal() {
       }
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      document.cookie = `auth-token=${encodeURIComponent(data.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back! You are now signed in.", "success");

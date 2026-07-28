@@ -174,17 +174,19 @@ export default function LoginPage() {
       if (!res.ok) {
         setError(data.error || "Invalid email or password");
         showToast("Invalid email or password.", "error");
+        setLoading(false);
         return;
       }
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      document.cookie = `auth-token=${encodeURIComponent(data.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back!", "success");
       if (data.user.role === "admin") router.push("/dashboard");
       else router.push("/patient");
+      // keep loading=true so the button stays as a spinner during redirect
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -247,6 +249,7 @@ export default function LoginPage() {
       if (loginRes.ok) {
         localStorage.setItem("token", loginData.token);
         localStorage.setItem("user", JSON.stringify(loginData.user));
+        document.cookie = `auth-token=${encodeURIComponent(loginData.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
         window.dispatchEvent(new Event("auth-changed"));
       }
 

@@ -91,6 +91,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    document.cookie = "auth-token=; path=/; max-age=0";
     router.push("/login");
   };
 

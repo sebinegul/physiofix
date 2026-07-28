@@ -1,9 +1,10 @@
 ﻿"use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone, User, LogOut, ChevronDown, LayoutDashboard, Calendar, Dumbbell, Stethoscope, CircleUser } from "lucide-react";
+import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone, User, LogOut, ChevronDown, LayoutDashboard, Calendar, Dumbbell, Stethoscope, CircleUser, Loader2 } from "lucide-react";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
 import { useToast } from "@/app/contexts/ToastContext";
 
@@ -16,16 +17,23 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [userRole, setUserRole] = useState("");
   const [userDropdown, setUserDropdown] = useState(false);
+  const [navigating, setNavigating] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { openBookVisit } = useBookVisit();
   const { showToast } = useToast();
+
+  const navigateTo = (href: string) => {
+    setNavigating(href);
+    router.push(href);
+  };
 
   /* ─── read auth state from localStorage ─── */
   const readAuth = () => {
@@ -61,6 +69,7 @@ export default function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    document.cookie = "auth-token=; path=/; max-age=0";
     setIsLoggedIn(false);
     setUserName("");
     setUserRole("");
@@ -179,46 +188,61 @@ export default function Navbar() {
                       <p className="text-xs text-slate-400 capitalize">{userRole}</p>
                     </div>
                     <div className="p-1.5">
-                      <Link
-                        href={userRole === "admin" ? "/dashboard" : "/patient"}
-                        onClick={() => setUserDropdown(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      <button
+                        onClick={() => { setUserDropdown(false); navigateTo(userRole === "admin" ? "/dashboard" : "/patient"); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
                       >
-                        <LayoutDashboard className="h-4 w-4 text-blue-400" />
+                        {navigating === (userRole === "admin" ? "/dashboard" : "/patient") ? (
+                          <Loader2 className="h-4 w-4 text-blue-400 animate-spin" />
+                        ) : (
+                          <LayoutDashboard className="h-4 w-4 text-blue-400" />
+                        )}
                         My Dashboard
-                      </Link>
-                      <Link
-                        href="/patient/appointments"
-                        onClick={() => setUserDropdown(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      </button>
+                      <button
+                        onClick={() => { setUserDropdown(false); navigateTo("/patient/appointments"); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
                       >
-                        <Calendar className="h-4 w-4 text-emerald-400" />
+                        {navigating === "/patient/appointments" ? (
+                          <Loader2 className="h-4 w-4 text-emerald-400 animate-spin" />
+                        ) : (
+                          <Calendar className="h-4 w-4 text-emerald-400" />
+                        )}
                         My Appointments
-                      </Link>
-                      <Link
-                        href="/patient/exercises"
-                        onClick={() => setUserDropdown(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      </button>
+                      <button
+                        onClick={() => { setUserDropdown(false); navigateTo("/patient/exercises"); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
                       >
-                        <Dumbbell className="h-4 w-4 text-orange-400" />
+                        {navigating === "/patient/exercises" ? (
+                          <Loader2 className="h-4 w-4 text-orange-400 animate-spin" />
+                        ) : (
+                          <Dumbbell className="h-4 w-4 text-orange-400" />
+                        )}
                         My Exercises
-                      </Link>
-                      <Link
-                        href="/patient/consultations"
-                        onClick={() => setUserDropdown(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      </button>
+                      <button
+                        onClick={() => { setUserDropdown(false); navigateTo("/patient/consultations"); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
                       >
-                        <Stethoscope className="h-4 w-4 text-purple-400" />
+                        {navigating === "/patient/consultations" ? (
+                          <Loader2 className="h-4 w-4 text-purple-400 animate-spin" />
+                        ) : (
+                          <Stethoscope className="h-4 w-4 text-purple-400" />
+                        )}
                         My Consultations
-                      </Link>
-                      <Link
-                        href="/patient/profile"
-                        onClick={() => setUserDropdown(false)}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                      </button>
+                      <button
+                        onClick={() => { setUserDropdown(false); navigateTo("/patient/profile"); }}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
                       >
-                        <CircleUser className="h-4 w-4 text-pink-400" />
+                        {navigating === "/patient/profile" ? (
+                          <Loader2 className="h-4 w-4 text-pink-400 animate-spin" />
+                        ) : (
+                          <CircleUser className="h-4 w-4 text-pink-400" />
+                        )}
                         My Profile
-                      </Link>
+                      </button>
                     </div>
                     <div className="border-t border-white/10 p-1.5">
                       <button
@@ -288,14 +312,17 @@ export default function Navbar() {
               </a>
               {isLoggedIn ? (
                 <>
-                  <Link
-                    href={userRole === "admin" ? "/dashboard" : "/patient"}
-                    onClick={() => setOpen(false)}
+                  <button
+                    onClick={() => { setOpen(false); navigateTo(userRole === "admin" ? "/dashboard" : "/patient"); }}
                     className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200"
                   >
-                    <LayoutDashboard className="h-4 w-4" />
+                    {navigating ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <LayoutDashboard className="h-4 w-4" />
+                    )}
                     Dashboard
-                  </Link>
+                  </button>
                   <button
                     onClick={() => { handleLogout(); setOpen(false); }}
                     className="flex items-center justify-center rounded-xl border border-white/15 px-3 py-3 text-slate-400 transition hover:text-white"
