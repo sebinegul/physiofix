@@ -17,6 +17,7 @@ import {
   Stethoscope,
   Heart,
   FileText,
+  CheckCircle2,
 } from "lucide-react";
 
 /* ─────────────────────────── Types ─────────────────────────── */
@@ -35,6 +36,10 @@ interface Consultation {
   date: string;
   diagnosis: string;
   treatment: string;
+  investigation: string | null;
+  impressions: string | null;
+  medicalHistory: string | null;
+  pshx: string | null;
   notes: string | null;
   followUpDate: string | null;
   treatmentPlan?: TreatmentPlanItem[] | string | null;
@@ -166,6 +171,10 @@ export default function ConsultationsPage() {
   const [date, setDate] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [treatment, setTreatment] = useState("");
+  const [investigation, setInvestigation] = useState("");
+  const [impressions, setImpressions] = useState("");
+  const [medicalHistory, setMedicalHistory] = useState("");
+  const [pshx, setPshx] = useState("");
   const [notes, setNotes] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");
 
@@ -203,6 +212,14 @@ export default function ConsultationsPage() {
   const [planSaving, setPlanSaving] = useState(false);
   const [planError, setPlanError] = useState("");
   const [planSuccess, setPlanSuccess] = useState(false);
+
+  /* ── Edit exercise plan state ── */
+  const [editingPlanId, setEditingPlanId] = useState<string | null>(null);
+
+  /* ── Progress view state ── */
+  const [viewPlanProgress, setViewPlanProgress] = useState<ExercisePlanSummary | null>(null);
+  const [planProgress, setPlanProgress] = useState<{ exercisePlanItemId: string; dayNumber: number; completedAt: string }[]>([]);
+  const [progressLoading, setProgressLoading] = useState(false);
 
   /* ── Load data ── */
   const loadData = async () => {
@@ -265,6 +282,10 @@ export default function ConsultationsPage() {
     setDate("");
     setDiagnosis("");
     setTreatment("");
+    setInvestigation("");
+    setImpressions("");
+    setMedicalHistory("");
+    setPshx("");
     setNotes("");
     setFollowUpDate("");
     setTreatmentPlanItems([]);
@@ -283,6 +304,10 @@ export default function ConsultationsPage() {
     setDate(c.date.split("T")[0]);
     setDiagnosis(c.diagnosis);
     setTreatment(c.treatment);
+    setInvestigation(c.investigation || "");
+    setImpressions(c.impressions || "");
+    setMedicalHistory(c.medicalHistory || "");
+    setPshx(c.pshx || "");
     setNotes(c.notes || "");
     setFollowUpDate(c.followUpDate ? c.followUpDate.split("T")[0] : "");
     // Parse existing treatment plan items
@@ -299,6 +324,10 @@ export default function ConsultationsPage() {
       date: new Date(date).toISOString(),
       diagnosis,
       treatment,
+      investigation,
+      impressions,
+      medicalHistory,
+      pshx,
       notes,
     };
     if (followUpDate) body.followUpDate = new Date(followUpDate).toISOString();
@@ -376,6 +405,7 @@ export default function ConsultationsPage() {
 
   const closePlanner = () => {
     setShowPlanner(false);
+    setEditingPlanId(null);
     loadExercisePlans(); // refresh plans list
   };
 
@@ -542,8 +572,12 @@ export default function ConsultationsPage() {
       })),
     };
 
-    const res = await apiFetch("/api/exercise-plans", {
-      method: "POST",
+    const isEditing = editingPlanId !== null;
+    const url = isEditing ? `/api/exercise-plans/${editingPlanId}` : "/api/exercise-plans";
+    const method = isEditing ? "PUT" : "POST";
+
+    const res = await apiFetch(url, {
+      method,
       body: JSON.stringify(body),
     });
 
@@ -562,6 +596,59 @@ export default function ConsultationsPage() {
     if (!confirm("Delete this exercise plan?")) return;
     await apiFetch(`/api/exercise-plans?id=${id}`, { method: "DELETE" });
     loadExercisePlans();
+  };
+
+  /* ── Open plan editor pre-populated with existing data ── */
+  const openEditPlan = (plan: ExercisePlanSummary) => {
+    setEditingPlanId(plan.id);
+    setPlanPatientId(plan.patientId);
+    setPlanConsultationId(plan.consultationId || "");
+    setPlanTitle(plan.title || "");
+    setPlanDays(plan.totalDays);
+
+    const dps: DayPlanData[] = (plan.dailyPlans || []).map((dp) => ({
+      dayNumber: dp.dayNumber,
+      label: dp.label || `Day ${dp.dayNumber}`,
+      items: dp.items.map((it) => ({
+        exerciseId: it.exerciseId,
+        sets: it.sets,
+        durationSeconds: it.durationSeconds,
+        sortOrder: it.sortOrder,
+        notes: it.notes || "",
+      })),
+    }));
+    setDayPlans(dps.length > 0 ? dps : [{ dayNumber: 1, label: "Day 1", items: [] }]);
+    setActiveDayTab(0);
+    setSameForAll(false);
+    setEditingDays([]);
+    setPlanError("");
+    setPlanSuccess(false);
+    setPlannerStep(3); // Jump to step 3 (day exercises)
+    setShowPlanner(true);
+
+    if (exercises.length === 0) {
+      setExercisesLoading(true);
+      apiFetch<Exercise[]>("/api/exercises").then((ex) => {
+        if (ex) setExercises(ex);
+        setExercisesLoading(false);
+      });
+    }
+  };
+
+  /* ── View patient's exercise progress ── */
+  const openViewProgress = async (plan: ExercisePlanSummary) => {
+    setViewPlanProgress(plan);
+    setProgressLoading(true);
+    setPlanProgress([]);
+
+    const progress = await apiFetch<{ exercisePlanItemId: string; dayNumber: number; completedAt: string }[]>(
+      `/api/exercise-progress?patientId=${plan.patientId}&planId=${plan.id}`
+    );
+
+    if (progress) {
+      setPlanProgress(Array.isArray(progress) ? progress : []);
+    }
+    setProgressLoading(false);
   };
 
   /* ── Derived helpers ── */
@@ -644,7 +731,10 @@ export default function ConsultationsPage() {
                     Diagnosis
                   </th>
                   <th className="text-left px-5 py-3 font-semibold text-slate-600">
-                    Treatment
+                    Investigation
+                  </th>
+                  <th className="text-left px-5 py-3 font-semibold text-slate-600">
+                    Plan
                   </th>
                   <th className="text-left px-5 py-3 font-semibold text-slate-600">
                     Follow-up
@@ -658,7 +748,7 @@ export default function ConsultationsPage() {
                 {filtered.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={7}
                       className="px-5 py-12 text-center text-slate-400"
                     >
                       No consultations found
@@ -675,6 +765,9 @@ export default function ConsultationsPage() {
                       </td>
                       <td className="px-5 py-3 text-slate-600 max-w-[200px] truncate">
                         {c.diagnosis}
+                      </td>
+                      <td className="px-5 py-3 text-slate-600 max-w-[200px] truncate">
+                        {c.investigation || "—"}
                       </td>
                       <td className="px-5 py-3 text-slate-600 max-w-[200px] truncate">
                         {c.treatment}
@@ -790,12 +883,29 @@ export default function ConsultationsPage() {
                         {formatDate(plan.createdAt)}
                       </td>
                       <td className="px-5 py-3 text-right">
-                        <button
-                          onClick={() => deleteExercisePlan(plan.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => openViewProgress(plan)}
+                            className="p-1.5 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors"
+                            title="View Progress"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => openEditPlan(plan)}
+                            className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                            title="Edit Plan"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => deleteExercisePlan(plan.id)}
+                            className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -887,11 +997,71 @@ export default function ConsultationsPage() {
                 </div>
               </div>
 
+              {/* Investigation */}
+              {viewConsultation.investigation && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    Investigation
+                  </h3>
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                      {viewConsultation.investigation}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Impressions */}
+              {viewConsultation.impressions && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    Impressions
+                  </h3>
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                      {viewConsultation.impressions}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Medical History */}
+              {viewConsultation.medicalHistory && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    Medical History
+                  </h3>
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                      {viewConsultation.medicalHistory}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* PSHx */}
+              {viewConsultation.pshx && (
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    PSHx (Past Surgical History)
+                  </h3>
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                    <p className="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">
+                      {viewConsultation.pshx}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Treatment Plan Items */}
               <div>
                 <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <FileText className="w-3.5 h-3.5" />
-                  Treatment Plan Items
+                  Management Plan
                 </h3>
                 {(() => {
                   const items = parseTreatmentPlan(viewConsultation.treatmentPlan);
@@ -938,6 +1108,11 @@ export default function ConsultationsPage() {
                           </div>
                         </div>
                       ))}
+                      <div className="flex items-center justify-center text-xs text-slate-400 py-2">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100">
+                          {items.length} plan item{items.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
                     </div>
                   );
                 })()}
@@ -1141,16 +1316,64 @@ export default function ConsultationsPage() {
                   className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
                 />
               </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">
+                  Investigation
+                </label>
+                <textarea
+                  value={investigation}
+                  onChange={(e) => setInvestigation(e.target.value)}
+                  rows={2}
+                  placeholder="Tests, scans, X-rays ordered..."
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">
+                  Impressions
+                </label>
+                <textarea
+                  value={impressions}
+                  onChange={(e) => setImpressions(e.target.value)}
+                  rows={2}
+                  placeholder="Clinical impression / assessment..."
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">
+                  Medical History
+                </label>
+                <textarea
+                  value={medicalHistory}
+                  onChange={(e) => setMedicalHistory(e.target.value)}
+                  rows={2}
+                  placeholder="Patient's past medical history..."
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">
+                  PSHx (Past Surgical History)
+                </label>
+                <textarea
+                  value={pshx}
+                  onChange={(e) => setPshx(e.target.value)}
+                  rows={2}
+                  placeholder="Past surgical history..."
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 outline-none resize-none"
+                />
+              </div>
 
-              {/* ─── Treatment Plan Items Editor ─── */}
+              {/* ─── Management Plan ─── */}
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-2">
-                  Treatment Plan Items
+                  Management Plan
                 </label>
                 {treatmentPlanItems.length === 0 ? (
                   <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-center">
                     <p className="text-xs text-slate-400 italic mb-3">
-                      No treatment plan items yet
+                      No plan items yet
                     </p>
                     <button
                       type="button"
@@ -1327,7 +1550,7 @@ export default function ConsultationsPage() {
                     Exercise Planner
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Create a multi-day exercise plan for your patient
+                    {editingPlanId ? "Edit the exercise plan for your patient" : "Create a multi-day exercise plan for your patient"}
                   </p>
                 </div>
               </div>
@@ -1796,11 +2019,148 @@ export default function ConsultationsPage() {
                     ) : (
                       <Check className="w-4 h-4" />
                     )}
-                    Save Exercise Plan
+                    {editingPlanId ? "Update Exercise Plan" : "Save Exercise Plan"}
                   </button>
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {/* ═══════════════════════════════════════════════════════════
+           Exercise Progress View Modal
+           ═══════════════════════════════════════════════════════════ */}
+      {viewPlanProgress && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setViewPlanProgress(null)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 py-4 border-b border-slate-100 rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 rounded-xl">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
+                    Exercise Progress
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {getPatientName(viewPlanProgress.patientId)} — {viewPlanProgress.title || "Untitled Plan"}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewPlanProgress(null)}
+                className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {progressLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 text-emerald-500 animate-spin" />
+                  <span className="ml-2 text-sm text-slate-500">Loading progress...</span>
+                </div>
+              ) : (
+                <>
+                  {/* Summary bar */}
+                  {(() => {
+                    const totalItems = viewPlanProgress.dailyPlans?.reduce((acc, dp) => acc + dp.items.length, 0) || 0;
+                    const completedItems = planProgress.length;
+                    const pct = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+                    return (
+                      <div className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-semibold text-emerald-800">Overall Completion</span>
+                          <span className="text-2xl font-bold text-emerald-600">{pct}%</span>
+                        </div>
+                        <div className="w-full bg-emerald-200/50 rounded-full h-2.5">
+                          <div
+                            className="bg-emerald-500 h-2.5 rounded-full transition-all duration-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-emerald-600 mt-2">
+                          {completedItems} of {totalItems} exercises completed
+                        </p>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Day-by-day breakdown */}
+                  {viewPlanProgress.dailyPlans?.map((dp) => {
+                    const dayCompleted = dp.items.filter((it) =>
+                      planProgress.some((p) => p.exercisePlanItemId === it.id)
+                    ).length;
+                    const dayTotal = dp.items.length;
+                    const dayPct = dayTotal > 0 ? Math.round((dayCompleted / dayTotal) * 100) : 0;
+                    return (
+                      <div key={dp.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-100">
+                          <span className="text-sm font-semibold text-slate-700">
+                            {dp.label || `Day ${dp.dayNumber}`}
+                          </span>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                            dayPct === 100
+                              ? "bg-emerald-100 text-emerald-700"
+                              : dayPct > 0
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-slate-100 text-slate-500"
+                          }`}>
+                            {dayCompleted}/{dayTotal}
+                          </span>
+                        </div>
+                        <div className="px-4 py-3">
+                          <div className="w-full bg-slate-100 rounded-full h-2 mb-3">
+                            <div
+                              className={`h-2 rounded-full transition-all duration-500 ${
+                                dayPct === 100 ? "bg-emerald-500" : dayPct > 0 ? "bg-amber-500" : "bg-slate-200"
+                              }`}
+                              style={{ width: `${dayPct}%` }}
+                            />
+                          </div>
+                          {dp.items.length === 0 ? (
+                            <p className="text-xs text-slate-400 italic">No exercises in this day</p>
+                          ) : (
+                            <ul className="space-y-1">
+                              {dp.items.map((it) => {
+                                const done = planProgress.some((p) => p.exercisePlanItemId === it.id);
+                                return (
+                                  <li key={it.id} className="flex items-center gap-2 text-xs">
+                                    {done ? (
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                                    ) : (
+                                      <div className="w-3.5 h-3.5 rounded-full border-2 border-slate-300 flex-shrink-0" />
+                                    )}
+                                    <span className={done ? "text-slate-600" : "text-slate-400"}>
+                                      {it.exercise?.name || "Unknown exercise"}
+                                    </span>
+                                    <span className="text-slate-400 ml-auto">
+                                      {it.sets} × {it.durationSeconds}s
+                                    </span>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {(!viewPlanProgress.dailyPlans || viewPlanProgress.dailyPlans.length === 0) && (
+                    <div className="text-center py-12 text-slate-400">
+                      <Dumbbell className="w-10 h-10 mx-auto mb-2 opacity-40" />
+                      <p className="text-sm">No daily plans in this exercise plan</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

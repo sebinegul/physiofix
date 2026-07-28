@@ -78,18 +78,22 @@ model Appointment {
 }
 
 model Consultation {
-  id            String    @id @default(uuid())
-  patientId     String
-  patient       Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  date          DateTime  @default(now())
-  diagnosis     String
-  treatment     String
-  notes         String?
-  followUpDate  DateTime?
-  treatmentPlan Json?    // Structured treatment plan items: [{title, description, duration, frequency, days}]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  exercisePlans ExercisePlan[]
+  id             String    @id @default(uuid())
+  patientId      String
+  patient        Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  date           DateTime  @default(now())
+  diagnosis      String
+  treatment      String
+  investigation  String?   // Tests, scans, X-rays ordered
+  impressions    String?   // Clinical impression / assessment
+  medicalHistory String?   // Patient's past medical history (per-visit)
+  pshx           String?   // Past Surgical History
+  notes          String?
+  followUpDate   DateTime?
+  treatmentPlan  Json?     // Structured plan items: [{title, description, duration, frequency, days}]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  exercisePlans  ExercisePlan[]
 }
 
 model AssignedExercise {

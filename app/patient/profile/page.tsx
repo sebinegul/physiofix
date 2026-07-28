@@ -86,17 +86,19 @@ export default function ProfilePage() {
       authFetch('/api/patients'),
     ])
       .then(([userData, patientData]) => {
-        setUser(userData);
-        setPatient(Array.isArray(patientData?.data) ? patientData.data[0] : patientData);
+        const user = userData?.user || userData;
+        const profile = Array.isArray(patientData?.data) ? patientData.data[0] : patientData;
+        setUser(user);
+        setPatient(profile);
         setFormData({
-          name: userData.name || '',
-          phone: userData.phone || '',
-          dateOfBirth: patientData.dateOfBirth || '',
-          gender: patientData.gender || '',
-          address: patientData.address || '',
-          emergencyContact: patientData.emergencyContact || '',
-          medicalHistory: patientData.medicalHistory || '',
-          allergies: patientData.allergies || '',
+          name: user.name || '',
+          phone: user.phone || '',
+          dateOfBirth: profile?.dateOfBirth || '',
+          gender: profile?.gender || '',
+          address: profile?.address || '',
+          emergencyContact: profile?.emergencyContact || '',
+          medicalHistory: profile?.medicalHistory || '',
+          allergies: profile?.allergies || '',
         });
         setLoading(false);
       })

@@ -33,6 +33,10 @@ interface Consultation {
   date: string;
   diagnosis: string;
   treatment: string;
+  investigation: string | null;
+  impressions: string | null;
+  medicalHistory: string | null;
+  pshx: string | null;
   notes?: string;
   followUpDate?: string;
   treatmentPlan?: TreatmentPlanItem[] | string | null;
@@ -341,12 +345,60 @@ export default function ConsultationsPage() {
                           </p>
                         </div>
 
-                        {/* ---- Treatment Plan Items ---- */}
+                        {/* ---- Investigation ---- */}
+                        {consultation.investigation && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-700 mb-1">
+                              Investigation
+                            </h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              {consultation.investigation}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* ---- Impressions ---- */}
+                        {consultation.impressions && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-700 mb-1">
+                              Impressions
+                            </h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              {consultation.impressions}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* ---- Medical History ---- */}
+                        {consultation.medicalHistory && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-700 mb-1">
+                              Medical History
+                            </h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              {consultation.medicalHistory}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* ---- PSHx ---- */}
+                        {consultation.pshx && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-700 mb-1">
+                              PSHx (Past Surgical History)
+                            </h4>
+                            <p className="text-sm text-gray-600 leading-relaxed">
+                              {consultation.pshx}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* ---- Management Plan ---- */}
                         <div>
                           <div className="flex items-center gap-2 mb-3">
                             <Heart className="w-4 h-4 text-rose-400" />
                             <h4 className="text-sm font-semibold text-gray-700">
-                              Treatment Plan Items
+                              Management Plan
                             </h4>
                           </div>
 
@@ -387,7 +439,7 @@ export default function ConsultationsPage() {
                             </div>
                           ) : (
                             <p className="text-sm text-gray-400 italic">
-                              No treatment plan items
+                              No plan items
                             </p>
                           )}
                         </div>

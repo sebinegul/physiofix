@@ -2,26 +2,48 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
 
-// GET: Fetch exercise progress for the current patient
-// Query params: planId (optional) to filter by plan
+// GET: Fetch exercise progress — patient sees own, admin sees any by patientId query
 export async function GET(request: NextRequest) {
   try {
     const auth = await requireAuth(request);
-
-    const patient = await prisma.patient.findUnique({
-      where: { userId: auth.userId },
-    });
-    if (!patient) {
-      return NextResponse.json(
-        { error: "Patient profile not found" },
-        { status: 404 }
-      );
-    }
-
     const { searchParams } = new URL(request.url);
     const planId = searchParams.get("planId");
 
-    const where: any = { patientId: patient.id };
+    let patientId: string;
+
+    if (auth.role === "admin") {
+      // Admin must specify a patientId to see a specific patient's progress.
+      // If no patientId, return empty (graceful for admin browsing patient pages).
+      const targetPatientId = searchParams.get("patientId");
+      if (!targetPatientId) {
+        return NextResponse.json({ data: [] });
+      }
+      // Verify the target patient exists
+      const targetPatient = await prisma.patient.findUnique({
+        where: { id: targetPatientId },
+      });
+      if (!targetPatient) {
+        return NextResponse.json(
+          { error: "Patient not found" },
+          { status: 404 }
+        );
+      }
+      patientId = targetPatientId;
+    } else {
+      // Patient sees own progress
+      const patient = await prisma.patient.findUnique({
+        where: { userId: auth.userId },
+      });
+      if (!patient) {
+        return NextResponse.json(
+          { error: "Patient profile not found" },
+          { status: 404 }
+        );
+      }
+      patientId = patient.id;
+    }
+
+    const where: any = { patientId };
     if (planId) {
       where.exercisePlanId = planId;
     }

@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   try {
     const admin = await requireAdmin(request);
     const body = await request.json();
-    const { patientId, diagnosis, treatment, notes, followUpDate, treatmentPlan } = body;
+    const { patientId, diagnosis, treatment, investigation, impressions, medicalHistory, pshx, notes, followUpDate, treatmentPlan } = body;
 
     if (!patientId || !diagnosis || !treatment) {
       return NextResponse.json(
@@ -89,6 +89,10 @@ export async function POST(request: NextRequest) {
         patientId,
         diagnosis,
         treatment,
+        investigation: investigation || null,
+        impressions: impressions || null,
+        medicalHistory: medicalHistory || null,
+        pshx: pshx || null,
         notes: notes || null,
         followUpDate: followUpDate ? new Date(followUpDate) : null,
         treatmentPlan: treatmentPlan || null,

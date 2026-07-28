@@ -13,6 +13,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "randomuser.me",
       },
+      {
+        protocol: "https",
+        hostname: "media.giphy.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.giphy.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
     ],
   },
   compress: true,
@@ -50,7 +62,7 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://randomuser.me data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://vercel.live; frame-ancestors 'none';",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://randomuser.me https://media.giphy.com https://i.giphy.com https://img.youtube.com data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://vercel.live; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'none';",
           },
         ],
       },

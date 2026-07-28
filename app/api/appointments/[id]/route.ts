@@ -108,6 +108,64 @@ export async function PUT(
   }
 }
 
+// PATCH: Partial update (e.g. cancel by patient)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const auth = await requireAuth(request);
+
+    const existingAppointment = await prisma.appointment.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existingAppointment) {
+      return NextResponse.json(
+        { error: "Appointment not found" },
+        { status: 404 }
+      );
+    }
+
+    // Patients can only update their own appointments
+    if (auth.role !== "admin" && existingAppointment.userId !== auth.userId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { status, notes } = body;
+
+    const appointment = await prisma.appointment.update({
+      where: { id: params.id },
+      data: {
+        ...(status !== undefined && { status }),
+        ...(notes !== undefined && { notes }),
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            phone: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(appointment);
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.error("Patch appointment error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
