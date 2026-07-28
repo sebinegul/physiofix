@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
     }
     console.error("Create appointment error:", error.message, error.stack);
     return NextResponse.json(
-      { error: "Internal server error", detail: error.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -6,6 +6,7 @@ import {
   getWelcomeEmailTemplate,
   getAdminNotificationTemplate,
 } from "@/lib/email-templates";
+import crypto from "crypto";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
 
@@ -74,11 +75,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate auto-password: first name (lowercase) + last 4 digits of phone
-    const firstName = name.trim().split(" ")[0].toLowerCase();
-    const phoneDigits = phone.replace(/\D/g, "");
-    const lastFour = phoneDigits.slice(-4);
-    const generatedPassword = `${firstName}${lastFour}`;
+    // Generate a strong random 10-char password
+    const generatedPassword = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
 
     // Hash the password
     const hashedPassword = await hashPassword(generatedPassword);

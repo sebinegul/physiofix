@@ -24,7 +24,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
 import { useToast } from "@/app/contexts/ToastContext";
-import { getUserFromToken, clearAuth } from "@/lib/auth-client";
+import { getUserFromToken, clearAuth, setAuthCookie } from "@/lib/auth-client";
 
 /* ─── constants ─── */
 
@@ -383,7 +383,7 @@ export default function BookVisitModal() {
       }
 
       localStorage.setItem("token", loginData.token);
-      document.cookie = `auth-token=${encodeURIComponent(loginData.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      setAuthCookie(loginData.token);
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Account created! Check your email for credentials.", "success");
@@ -515,7 +515,7 @@ export default function BookVisitModal() {
         return;
       }
       localStorage.setItem("token", data.token);
-      document.cookie = `auth-token=${encodeURIComponent(data.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      setAuthCookie(data.token);
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back! You are now signed in.", "success");

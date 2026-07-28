@@ -4,6 +4,7 @@ import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { setAuthCookie } from "@/lib/auth-client";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Loader2,
@@ -178,7 +179,7 @@ export default function LoginPage() {
         return;
       }
       localStorage.setItem("token", data.token);
-      document.cookie = `auth-token=${encodeURIComponent(data.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      setAuthCookie(data.token);
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back!", "success");
       if (data.user.role === "admin") router.push("/dashboard");
@@ -247,7 +248,7 @@ export default function LoginPage() {
       const loginData = await loginRes.json();
       if (loginRes.ok) {
         localStorage.setItem("token", loginData.token);
-        document.cookie = `auth-token=${encodeURIComponent(loginData.token)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+        setAuthCookie(loginData.token);
         window.dispatchEvent(new Event("auth-changed"));
       }
 
