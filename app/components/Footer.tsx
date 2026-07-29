@@ -73,15 +73,17 @@ export default function Footer() {
             </div>
             <div className="flex gap-3">
               {[
-                { Icon: Facebook, label: "Facebook" },
-                { Icon: Twitter, label: "Twitter" },
-                { Icon: Instagram, label: "Instagram" },
-                { Icon: Linkedin, label: "LinkedIn" },
-                { Icon: Youtube, label: "YouTube" },
-              ].map(({ Icon, label }) => (
+                { Icon: Facebook, label: "Facebook", href: "https://www.facebook.com/physiofix" },
+                { Icon: Twitter, label: "Twitter", href: "https://x.com/physiofix" },
+                { Icon: Instagram, label: "Instagram", href: "https://www.instagram.com/physiofix" },
+                { Icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/company/physiofix" },
+                { Icon: Youtube, label: "YouTube", href: "https://www.youtube.com/@physiofix" },
+              ].map(({ Icon, label, href }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-400 hover:bg-white/10 transition-colors"
                 >

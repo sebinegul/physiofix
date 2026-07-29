@@ -57,7 +57,6 @@ export default function PopularSearches() {
         <div className="section-shell px-6 py-8 md:px-8 lg:px-10">
           <ScrollReveal className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">Specialization</p>
               <h2 className="text-2xl sm:text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Conditions and treatments we support every day.</h2>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -85,7 +84,7 @@ export default function PopularSearches() {
               </div>
             </div>
 
-            <div className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <StaggerContainer className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
               {filteredItems.map((item, i) => {
                 const Icon = item.icon;
                 return (
@@ -119,7 +118,7 @@ export default function PopularSearches() {
                   </StaggerItem>
                 );
               })}
-            </div>
+            </StaggerContainer>
 
             <div className="mt-8 text-center">
               <Link href="/services" className="btn-primary">

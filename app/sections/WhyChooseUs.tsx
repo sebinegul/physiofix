@@ -75,7 +75,7 @@ export default function WhyChooseUs() {
             </StaggerContainer>
 
             <Link href="/contact" className="btn-primary">
-              Book your first consultation <ArrowRight className="h-4 w-4" />
+              Book now <ArrowRight className="h-4 w-4" />
             </Link>
           </ScrollReveal>
         </div>

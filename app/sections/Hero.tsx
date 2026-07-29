@@ -416,7 +416,7 @@ export default function Hero() {
 
           <ScrollReveal direction="right" className="relative mt-8 lg:mt-0">
             <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
-            <div className="animate-float relative z-10 w-full rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
+            <div className="animate-float relative z-10 w-full rounded-2xl sm:rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
               <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] overflow-hidden rounded-[1.5rem]">
                 <AnimatePresence mode="wait">
                   <motion.div

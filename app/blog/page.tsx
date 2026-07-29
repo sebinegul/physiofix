@@ -1,9 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Calendar, Clock, ArrowUpRight, BookOpen } from "lucide-react";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
-import ScrollProgress from "../components/ui/ScrollProgress";
 import BlogGrid from "./BlogGrid";
 import PageTransition from "../components/PageTransition";
 
@@ -83,18 +81,6 @@ export default async function BlogPage() {
 
   return (
     <>
-      <ScrollProgress />
-
-      {/* ── NOISE OVERLAY ── */}
-      <div
-        className="pointer-events-none fixed inset-0 z-50 opacity-[0.03] mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "256px 256px",
-        }}
-      />
-
       <PageTransition>
       <div className="relative min-h-screen bg-[#0b0d12]">
         {/* ── HERO ── */}
@@ -178,7 +164,7 @@ export default async function BlogPage() {
                 Book a consultation with Dr.Nishmitha.R and get a personalized treatment plan tailored to your needs.
               </p>
               <Link
-                href="/login"
+                href="/contact"
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 px-6 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-blue-500/25 transition-all duration-300 hover:shadow-blue-500/40 hover:scale-[1.03] active:scale-[0.97]"
               >
                 Book a Consultation

@@ -107,7 +107,7 @@ h1, h2, h3, h4 {
   }
 
   .btn-premium:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.97);
   }
 
   .btn-premium:disabled {
@@ -323,7 +323,7 @@ select.premium-select {
   transform: translateY(-1px);
 }
 .btn-primary:active {
-  transform: translateY(0);
+    transform: translateY(0) scale(0.97);
 }
 
 /* Ghost button */
@@ -333,10 +333,13 @@ select.premium-select {
 .btn-ghost:hover {
   @apply border-blue-300 text-blue-600 shadow-md;
 }
+.btn-ghost:active {
+  transform: scale(0.97);
+}
 
 /* Section shell */
 .section-shell {
-  @apply rounded-[2rem] border border-white/60 bg-white/70 shadow-[0_20px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl;
+  @apply rounded-2xl lg:rounded-[2rem] border border-white/60 bg-white/70 shadow-[0_20px_70px_rgba(15,23,42,0.08)] backdrop-blur-xl;
 }
 
 /* Animated gradient background for login */

@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { Star, Quote, MapPin, BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
@@ -189,9 +190,20 @@ export default function Testimonials() {
         >
           {/* Cards grid */}
           <div ref={trackRef} className="grid gap-5" style={{ gridTemplateColumns: `repeat(${itemsPerPage}, 1fr)` }}>
-            {visible.map((t) => (
-              <TestimonialCard key={t.id} t={t} />
-            ))}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={page}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="contents"
+              >
+                {visible.map((t) => (
+                  <TestimonialCard key={t.id} t={t} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Navigation arrows */}
