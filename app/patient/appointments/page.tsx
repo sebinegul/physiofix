@@ -369,7 +369,7 @@ export default function AppointmentsPage() {
               </h2>
               <button
                 onClick={() => setShowForm(false)}
-                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-3 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>

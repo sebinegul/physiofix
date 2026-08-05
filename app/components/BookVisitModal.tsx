@@ -836,7 +836,7 @@ export default function BookVisitModal() {
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-xl text-gray-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-500"
+                className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-xl text-gray-400 transition-all duration-300 hover:bg-blue-50 hover:text-blue-500"
                 aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
@@ -1180,7 +1180,7 @@ export default function BookVisitModal() {
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-primary-500"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-400 transition-colors hover:text-primary-500"
                               aria-label={showPassword ? "Hide password" : "Show password"}
                             >
                               {showPassword ? (

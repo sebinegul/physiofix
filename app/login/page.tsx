@@ -433,7 +433,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-blue-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 transition-colors hover:text-blue-600"
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
@@ -679,7 +679,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={goBack}
-                className="rounded-xl border border-slate-200 p-2 transition-colors hover:bg-slate-50"
+                className="rounded-xl border border-slate-200 p-3 transition-colors hover:bg-slate-50"
                 aria-label="Back to registration"
               >
                 <ChevronLeft className="h-4 w-4 text-slate-600" />

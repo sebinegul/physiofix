@@ -194,7 +194,7 @@ export default function ServicesPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {processSteps.map((step, i) => (
                 <ScrollReveal key={step.step} delay={i * 0.12}>
-                  <div className="group relative h-full overflow-hidden rounded-[1.5rem] border border-slate-100/80 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
+                  <div className="group relative h-full overflow-hidden rounded-2xl border border-slate-100/80 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(15,23,42,0.12)] sm:rounded-[1.5rem]">
                     <div className="mb-4 text-5xl font-black leading-none text-blue-500/15 transition-colors duration-500 group-hover:text-blue-500/30">
                       {step.step}
                     </div>

@@ -8,8 +8,11 @@
 skills/
 .github/
 .cursor/
+.hermes/
 # testing
 /coverage
+/seo-reports
+/drafts
 
 # next.js
 /.next/

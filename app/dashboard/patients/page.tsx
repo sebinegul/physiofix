@@ -183,10 +183,10 @@ export default function PatientsPage() {
                       <td className="px-5 py-3 text-slate-600">{p.dateOfBirth || "—"}</td>
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors">
+                          <button onClick={() => openEdit(p)} className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors">
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
-                          <button onClick={() => handleDelete(p.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors">
+                          <button onClick={() => handleDelete(p.id)} className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors">
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -207,7 +207,7 @@ export default function PatientsPage() {
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h2 className="text-lg font-semibold text-slate-900">{editingPatient ? "Edit Patient" : "Add Patient"}</h2>
-              <button onClick={() => { setShowModal(false); resetForm(); }} className="p-1 rounded-lg hover:bg-slate-100"><X className="w-5 h-5 text-slate-400" /></button>
+              <button onClick={() => { setShowModal(false); resetForm(); }} className="p-3 rounded-lg hover:bg-slate-100"><X className="w-5 h-5 text-slate-400" /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5 text-sm"><AlertCircle className="w-4 h-4" />{error}</div>}

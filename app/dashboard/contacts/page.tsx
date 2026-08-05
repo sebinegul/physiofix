@@ -200,7 +200,7 @@ export default function ContactsDashboardPage() {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleDelete(contact.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                          className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

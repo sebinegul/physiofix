@@ -19,7 +19,7 @@ export default function WhyChooseUs() {
         <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
           <ScrollReveal direction="left" className="hidden lg:block">
             <div className="section-shell p-4">
-              <div className="relative h-[300px] sm:h-[400px] lg:h-[470px] overflow-hidden rounded-[1.5rem]">
+              <div className="relative h-[300px] sm:h-[400px] lg:h-[470px] overflow-hidden rounded-xl sm:rounded-[1.5rem]">
                 <Image
                   src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?w=800&q=80"
                   alt="Physiotherapy session"
@@ -38,7 +38,7 @@ export default function WhyChooseUs() {
                     ))}
                   </div>
                 </div>
-                <div className="absolute bottom-4 left-4 right-4 rounded-[1.25rem] border border-white/15 bg-slate-950/70 p-4 text-white backdrop-blur-xl">
+                <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-white/15 bg-slate-950/70 p-4 text-white backdrop-blur-xl sm:rounded-[1.25rem]">
                   {reasons.slice(0, 3).map((reason) => (
                     <div key={reason.text} className="mb-2 flex items-center gap-2 last:mb-0">
                       <div className={`flex h-7 w-7 items-center justify-center rounded-full ${reason.bg}`}>

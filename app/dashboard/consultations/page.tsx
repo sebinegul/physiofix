@@ -779,21 +779,21 @@ export default function ConsultationsPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => setViewConsultation(c)}
-                            className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                             title="View details"
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => openEdit(c)}
-                            className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                             title="Edit"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(c.id)}
-                            className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -886,21 +886,21 @@ export default function ConsultationsPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => openViewProgress(plan)}
-                            className="p-1.5 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-colors"
                             title="View Progress"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => openEditPlan(plan)}
-                            className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                             title="Edit Plan"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => deleteExercisePlan(plan.id)}
-                            className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -946,7 +946,7 @@ export default function ConsultationsPage() {
               </div>
               <button
                 onClick={() => setViewConsultation(null)}
-                className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="p-3 rounded-xl hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>
@@ -1237,7 +1237,7 @@ export default function ConsultationsPage() {
                   setShowModal(false);
                   resetForm();
                 }}
-                className="p-1 rounded-lg hover:bg-slate-100"
+                className="p-3 rounded-lg hover:bg-slate-100"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>
@@ -1397,7 +1397,7 @@ export default function ConsultationsPage() {
                           <button
                             type="button"
                             onClick={() => removeTreatmentPlanItem(idx)}
-                            className="p-1 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                            className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                             title="Remove item"
                           >
                             <X className="w-3.5 h-3.5" />
@@ -1556,7 +1556,7 @@ export default function ConsultationsPage() {
               </div>
               <button
                 onClick={closePlanner}
-                className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="p-3 rounded-xl hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>
@@ -1979,7 +1979,7 @@ export default function ConsultationsPage() {
                                       itemIdx
                                     )
                                   }
-                                  className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors mt-4"
+                                  className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors mt-4"
                                   title="Remove exercise"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -2053,7 +2053,7 @@ export default function ConsultationsPage() {
               </div>
               <button
                 onClick={() => setViewPlanProgress(null)}
-                className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="p-3 rounded-xl hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>

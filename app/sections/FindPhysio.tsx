@@ -29,14 +29,14 @@ export default function FindPhysio() {
             </p>
 
             <div className="space-y-4">
-              <div className="rounded-[1.25rem] border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md">
+              <div className="rounded-xl border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md sm:rounded-[1.25rem]">
                 <div className="mb-3 flex items-center gap-2 text-slate-900">
                   <Sparkles className="h-5 w-5 text-blue-600" />
                   <h3 className="font-semibold">A clear path from first consultation to recovery</h3>
                 </div>
                 <p className="text-sm leading-7 text-slate-600">The care process is made simple, with thoughtful guidance and practical next steps at every stage.</p>
               </div>
-              <div className="rounded-[1.25rem] border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md">
+              <div className="rounded-xl border border-blue-100/60 bg-white/70 p-4 shadow-sm backdrop-blur transition hover:shadow-md sm:rounded-[1.25rem]">
                 <div className="mb-3 flex items-center gap-2 text-slate-900">
                   <MapPin className="h-5 w-5 text-blue-600" />
                   <h3 className="font-semibold">Convenient care in Bangalore and nearby areas</h3>
@@ -48,7 +48,7 @@ export default function FindPhysio() {
 
           <div className="space-y-4">
             <ScrollReveal direction="right" delay={0.1}>
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 text-white shadow-[0_24px_80px_rgba(2,6,23,0.22)]">
+              <div className="relative overflow-hidden rounded-2xl sm:rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 text-white shadow-[0_24px_80px_rgba(2,6,23,0.22)]">
                 <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/20 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-blue-500/15 blur-3xl" />
 
@@ -79,7 +79,7 @@ export default function FindPhysio() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <div className="rounded-[1.5rem] border border-blue-100/60 bg-white/80 p-5 shadow-sm backdrop-blur">
+              <div className="rounded-2xl border border-blue-100/60 bg-white/80 p-5 shadow-sm backdrop-blur sm:rounded-[1.5rem]">
                 <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">Need guidance on the right next step?</p>

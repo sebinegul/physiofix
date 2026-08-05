@@ -331,14 +331,14 @@ export default function BlogDashboardPage() {
                         <button
                           onClick={() => togglePublish(post)}
                           title={post.published ? "Unpublish" : "Publish"}
-                          className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                          className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                         >
                           {post.published ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
                         <button
                           onClick={() => toggleFeatured(post)}
                           title={post.featured ? "Remove featured" : "Mark featured"}
-                          className={`p-1.5 rounded-lg transition-colors ${
+                          className={`p-3 rounded-lg transition-colors ${
                             post.featured
                               ? "bg-amber-50 text-amber-600 hover:bg-amber-100"
                               : "text-slate-400 hover:bg-amber-50 hover:text-amber-600"
@@ -348,13 +348,13 @@ export default function BlogDashboardPage() {
                         </button>
                         <button
                           onClick={() => openEdit(post)}
-                          className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                          className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(post.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                          className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -388,7 +388,7 @@ export default function BlogDashboardPage() {
                   setShowModal(false);
                   resetForm();
                 }}
-                className="p-1 rounded-lg hover:bg-slate-100"
+                className="p-3 rounded-lg hover:bg-slate-100"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>
@@ -466,7 +466,7 @@ export default function BlogDashboardPage() {
                     {parsedTags.map((tag, i) => (
                       <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100">
                         {tag}
-                        <button type="button" onClick={() => removeTag(tag)} className="ml-0.5 hover:text-blue-900">
+                        <button type="button" onClick={() => removeTag(tag)} className="ml-0.5 -m-1 p-1 hover:text-blue-900">
                           <X className="w-3 h-3" />
                         </button>
                       </span>

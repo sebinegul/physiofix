@@ -209,17 +209,17 @@ export default function Testimonials() {
           {/* Navigation arrows */}
           <button
             onClick={prev}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-left-5 sm:p-3 lg:-left-6"
+            className="absolute -left-4 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-3 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-left-5 sm:p-3 lg:-left-6"
             aria-label="Previous testimonials"
           >
-            <ChevronLeft className="h-4 w-4 text-slate-600 sm:h-5 sm:w-5" />
+            <ChevronLeft className="h-5 w-5 text-slate-600 sm:h-5 sm:w-5" />
           </button>
           <button
             onClick={next}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-right-5 sm:p-3 lg:-right-6"
+            className="absolute -right-4 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-3 shadow-md transition-all hover:border-blue-300 hover:bg-blue-50 hover:shadow-lg sm:-right-5 sm:p-3 lg:-right-6"
             aria-label="Next testimonials"
           >
-            <ChevronRight className="h-4 w-4 text-slate-600 sm:h-5 sm:w-5" />
+            <ChevronRight className="h-5 w-5 text-slate-600 sm:h-5 sm:w-5" />
           </button>
         </div>
 

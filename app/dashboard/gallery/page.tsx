@@ -323,7 +323,7 @@ export default function GalleryDashboardPage() {
                         <button
                           onClick={() => toggleActive(item)}
                           title={item.active ? "Hide from homepage" : "Show on homepage"}
-                          className={`p-1.5 rounded-lg transition-colors ${
+                          className={`p-3 rounded-lg transition-colors ${
                             item.active
                               ? "text-green-600 hover:bg-green-50"
                               : "text-slate-400 hover:bg-slate-100"
@@ -333,13 +333,13 @@ export default function GalleryDashboardPage() {
                         </button>
                         <button
                           onClick={() => openEdit(item)}
-                          className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                          className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDelete(item.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                          className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -373,7 +373,7 @@ export default function GalleryDashboardPage() {
                   setShowModal(false);
                   resetForm();
                 }}
-                className="p-1 rounded-lg hover:bg-slate-100"
+                className="p-3 rounded-lg hover:bg-slate-100"
               >
                 <X className="w-5 h-5 text-slate-400" />
               </button>

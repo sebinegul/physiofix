@@ -136,7 +136,7 @@ export default function ExercisesPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input type="text" placeholder="Search exercises..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400" />
         </div>
-        <div className="relative max-w-[200px]">
+        <div className="relative w-full sm:max-w-[200px]">
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 appearance-none">
             <option value="">All Categories</option>
@@ -160,8 +160,8 @@ export default function ExercisesPage() {
                   <p className="text-xs text-slate-400 capitalize mt-0.5">{ex.category}</p>
                 </div>
                 <div className="flex items-center gap-1 ml-2">
-                  <button onClick={() => openEdit(ex)} className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
-                  <button onClick={() => handleDelete(ex.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => openEdit(ex)} className="p-3 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => handleDelete(ex.id)} className="p-3 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
               <p className="text-sm text-slate-600 line-clamp-2 flex-1">{ex.description}</p>
@@ -196,7 +196,7 @@ export default function ExercisesPage() {
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h2 className="text-lg font-semibold text-slate-900">{editingEx ? "Edit Exercise" : "Add Exercise"}</h2>
-              <button onClick={() => { setShowModal(false); resetForm(); }} className="p-1 rounded-lg hover:bg-slate-100"><X className="w-5 h-5 text-slate-400" /></button>
+              <button onClick={() => { setShowModal(false); resetForm(); }} className="p-3 rounded-lg hover:bg-slate-100"><X className="w-5 h-5 text-slate-400" /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {error && <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5 text-sm"><AlertCircle className="w-4 h-4" />{error}</div>}

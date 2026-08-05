@@ -131,7 +131,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
           />
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-1 rounded-lg hover:bg-gray-100 text-gray-400"
+            className="lg:hidden p-3 rounded-lg hover:bg-gray-100 text-gray-400"
           >
             <X className="w-5 h-5" />
           </button>
@@ -198,7 +198,7 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
         <header className="flex items-center gap-4 px-4 sm:px-6 py-3 bg-white border-b border-gray-200 lg:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600"
+            className="p-3 rounded-lg hover:bg-gray-100 text-gray-600"
           >
             <Menu className="w-5 h-5" />
           </button>

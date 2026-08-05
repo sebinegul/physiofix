@@ -83,8 +83,8 @@ export default async function AboutPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="right" delay={0.1} className="flex h-full">
-              <div className="flex w-full flex-col rounded-[2rem] border border-blue-100/60 bg-white/70 p-4 shadow-[0_24px_90px_rgba(15,23,42,0.1)] backdrop-blur-xl">
-                <div className="flex-1 rounded-[1.5rem] bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8 text-white">
+              <div className="flex w-full flex-col rounded-2xl border border-blue-100/60 bg-white/70 p-4 shadow-[0_24px_90px_rgba(15,23,42,0.1)] backdrop-blur-xl sm:rounded-[2rem]">
+                <div className="flex-1 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 text-white sm:rounded-[1.5rem] sm:p-8">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="rounded-2xl bg-blue-400/15 p-3 text-blue-300">
                       <Stethoscope className="h-6 w-6" />
@@ -113,7 +113,7 @@ export default async function AboutPage() {
         <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-stretch gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <ScrollReveal className="h-full">
-              <div className="section-shell flex h-full flex-col justify-center p-8">
+              <div className="section-shell flex h-full flex-col justify-center p-6 sm:p-8">
                 <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Approach</p>
                 <h2 className="mb-4 text-3xl font-bold leading-[1.2] tracking-tight text-slate-900">Hands-on care, thoughtful rehabilitation, and clear communication.</h2>
                 <p className="text-lg leading-8 text-slate-600">
@@ -123,7 +123,7 @@ export default async function AboutPage() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1} className="h-full">
-              <div className="flex h-full flex-col rounded-[2rem] border border-blue-100/60 bg-gradient-to-br from-blue-500/10 via-white to-blue-500/10 p-8 shadow-[0_20px_80px_rgba(15,23,42,0.06)]">
+              <div className="flex h-full flex-col rounded-2xl border border-blue-100/60 bg-gradient-to-br from-blue-500/10 via-white to-blue-500/10 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.06)] sm:rounded-[2rem] sm:p-8">
                 <div className="mb-5 flex items-center gap-3">
                   <div className="rounded-2xl bg-white p-3 text-blue-600 shadow-sm">
                     <HeartPulse className="h-5 w-5" />

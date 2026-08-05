@@ -101,7 +101,7 @@ export default function ContactPage() {
           <div className="grid gap-6 lg:grid-cols-2 items-stretch">
             {/* Left: Contact Info */}
             <ScrollReveal direction="left">
-              <div className="section-shell p-8 h-full flex flex-col">
+              <div className="section-shell p-6 h-full flex flex-col sm:p-8">
                 <div className="mb-6 flex items-center gap-3">
                   <div className="rounded-2xl bg-blue-500/10 p-3 text-blue-600">
                     <Sparkles className="h-5 w-5" />
@@ -140,7 +140,7 @@ export default function ContactPage() {
 
             {/* Right: Form / Success */}
             <ScrollReveal direction="right" delay={0.1}>
-              <div className="relative overflow-hidden rounded-[2rem] border border-blue-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8 text-white shadow-[0_24px_90px_rgba(2,6,23,0.22)] h-full flex flex-col">
+              <div className="relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-6 text-white shadow-[0_24px_90px_rgba(2,6,23,0.22)] h-full flex flex-col sm:rounded-[2rem] sm:p-8">
                 <div className="pointer-events-none absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-blue-500/15 blur-3xl" />
 
                 {status === "success" ? (

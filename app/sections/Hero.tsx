@@ -268,7 +268,7 @@ export default function Hero() {
                           setShowResults(false);
                         }}
                         aria-label="Clear search"
-                        className="flex-shrink-0 rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition"
+                        className="flex-shrink-0 rounded-full p-3 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -415,9 +415,9 @@ export default function Hero() {
           </div>
 
           <ScrollReveal direction="right" className="relative mt-8 lg:mt-0">
-            <div className="absolute inset-y-6 left-8 right-0 rounded-[2rem] bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50" />
+            <div className="absolute inset-y-6 left-8 right-0 rounded-2xl bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50 sm:rounded-[2rem]" />
             <div className="animate-float relative z-10 w-full rounded-2xl sm:rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
-              <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] overflow-hidden rounded-[1.5rem]">
+              <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] overflow-hidden rounded-xl sm:rounded-[1.5rem]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={heroSlide}

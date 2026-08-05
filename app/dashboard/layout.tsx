@@ -122,7 +122,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             height={54}
             className="h-14 w-auto flex-shrink-0"
           />
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600">
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-3 text-slate-400 hover:text-slate-600">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -183,7 +183,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <header className="h-16 bg-white border-b border-slate-200/80 flex items-center px-4 lg:px-6 gap-4 flex-shrink-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden text-slate-500 hover:text-slate-700 p-1"
+            className="lg:hidden text-slate-500 hover:text-slate-700 p-3"
           >
             <Menu className="w-5 h-5" />
           </button>
