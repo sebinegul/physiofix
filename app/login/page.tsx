@@ -4,7 +4,6 @@ import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { setAuthCookie } from "@/lib/auth-client";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   Loader2,
@@ -16,12 +15,10 @@ import {
   User,
   Phone,
   Mail,
-  FileText,
+  Lock,
   CalendarDays,
   Clock,
   CheckCircle2,
-  Check,
-  Copy,
   ChevronLeft,
   HeartPulse,
   Activity,
@@ -117,7 +114,9 @@ export default function LoginPage() {
   const [regName, setRegName] = useState("");
   const [regPhone, setRegPhone] = useState("");
   const [regEmail, setRegEmail] = useState("");
-  const [regNotes, setRegNotes] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regConfirmPassword, setRegConfirmPassword] = useState("");
+  const [showRegPassword, setShowRegPassword] = useState(false);
 
   // ---- schedule form (Step 2) ----
   const [schedType, setSchedType] = useState("");
@@ -134,12 +133,10 @@ export default function LoginPage() {
   const [successData, setSuccessData] = useState<{
     name: string;
     email: string;
-    generatedPassword: string;
     type: string;
     date: string;
     time: string;
   } | null>(null);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -178,8 +175,7 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
-      localStorage.setItem("token", data.token);
-      setAuthCookie(data.token);
+      // Server sets the HttpOnly session cookie; nothing to store client-side.
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back!", "success");
       if (data.user.role === "admin") router.push("/dashboard");
@@ -191,7 +187,7 @@ export default function LoginPage() {
     }
   };
 
-  /* ─── register submit (Step 1 → book-consultation) ─── */
+  /* ─── register submit (Step 1 → account created with password) ─── */
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
@@ -214,50 +210,42 @@ export default function LoginPage() {
       setError("Please enter a valid email address");
       return;
     }
+    if (regPassword.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+    if (regPassword !== regConfirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
     setLoading(true);
     try {
-      const res = await fetch("/api/book-consultation", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: regName.trim(),
           phone: regPhone.trim(),
           email: regEmail.trim(),
-          notes: regNotes.trim() || undefined,
+          password: regPassword,
         }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Something went wrong. Please try again.");
         showToast("Registration failed. Please try again.", "error");
+        setLoading(false);
         return;
       }
 
-      const generatedPassword: string = data.data.user.generatedPassword;
-
-      // Auto-login
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: regEmail.trim(),
-          password: generatedPassword,
-        }),
-      });
-      const loginData = await loginRes.json();
-      if (loginRes.ok) {
-        localStorage.setItem("token", loginData.token);
-        setAuthCookie(loginData.token);
-        window.dispatchEvent(new Event("auth-changed"));
-      }
-
+      // Account created; the server set the HttpOnly session cookie.
+      window.dispatchEvent(new Event("auth-changed"));
       showToast("Account created! You can now schedule your visit.", "success");
 
       setSuccessData({
         name: regName.trim(),
         email: regEmail.trim(),
-        generatedPassword,
         type: "",
         date: "",
         time: "",
@@ -266,7 +254,6 @@ export default function LoginPage() {
       goTo("schedule");
     } catch {
       setError("Network error. Please check your connection and try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -296,18 +283,10 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to book an appointment.");
-        return;
-      }
-
+      // Session cookie is sent automatically (HttpOnly) — no header needed.
       const res = await fetch("/api/appointments", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           date: schedDate,
           time: schedTime,
@@ -315,6 +294,12 @@ export default function LoginPage() {
           notes: schedNotes.trim() || undefined,
         }),
       });
+      if (res.status === 401) {
+        setLoading(false);
+        setError("Your session expired. Please sign in again.");
+        goTo("login");
+        return;
+      }
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Something went wrong. Please try again.");
@@ -503,7 +488,7 @@ export default function LoginPage() {
                   onClick={() => goTo("register")}
                   className="font-semibold text-blue-600 transition-colors hover:text-blue-700"
                 >
-                  Book a consultation
+                  Create an account
                 </button>
               </p>
             </motion.div>
@@ -523,10 +508,10 @@ export default function LoginPage() {
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <h1 className="text-[28px] font-bold leading-tight tracking-tight text-slate-900" style={{ fontFamily: "var(--font-plus-jakarta), sans-serif" }}>
-              Let&apos;s get you started
+              Create your account
             </h1>
             <p className="mt-2 text-[14px] text-slate-500">
-              Tell us about yourself and your condition
+              Book consultations and track your recovery online
             </p>
 
             {/* Step indicator */}
@@ -602,20 +587,54 @@ export default function LoginPage() {
                   </div>
                 </motion.div>
 
-                {/* Pain description */}
+                {/* Password */}
                 <motion.div variants={staggerItem}>
-                  <label htmlFor="reg-notes" className={labelClass}>
-                    Pain / Injury Description
+                  <label htmlFor="reg-password" className={labelClass}>
+                    Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <FileText className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-400" />
-                    <textarea
-                      id="reg-notes"
-                      rows={3}
-                      value={regNotes}
-                      onChange={(e) => setRegNotes(e.target.value)}
-                      placeholder="Describe your pain or injury..."
-                      className={`${inputClass} resize-none pl-10`}
+                    <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input
+                      id="reg-password"
+                      type={showRegPassword ? "text" : "password"}
+                      required
+                      minLength={8}
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      placeholder="At least 8 characters"
+                      className={`${inputClass} pl-10 pr-12`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowRegPassword((v) => !v)}
+                      aria-label={showRegPassword ? "Hide password" : "Show password"}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
+                    >
+                      {showRegPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Confirm Password */}
+                <motion.div variants={staggerItem}>
+                  <label htmlFor="reg-confirm-password" className={labelClass}>
+                    Confirm Password <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input
+                      id="reg-confirm-password"
+                      type={showRegPassword ? "text" : "password"}
+                      required
+                      minLength={8}
+                      value={regConfirmPassword}
+                      onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      placeholder="Re-enter your password"
+                      className={`${inputClass} pl-10`}
                     />
                   </div>
                 </motion.div>
@@ -634,7 +653,7 @@ export default function LoginPage() {
                           Creating account...
                         </>
                       ) : (
-                        <>Next → Schedule Visit</>
+                        <>Create account & continue</>
                       )}
                     </span>
                   </button>
@@ -856,51 +875,6 @@ export default function LoginPage() {
             <p className="mt-2 text-[14px] text-slate-500">
               Your appointment has been booked successfully
             </p>
-
-            {successData?.generatedPassword && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mt-6 w-full rounded-2xl border border-blue-100 bg-blue-50/50 p-4"
-              >
-                <p className="mb-2 text-sm font-medium text-slate-700">
-                  Your login credentials:
-                </p>
-                <p className="text-sm text-slate-600">
-                  <span className="font-medium">Email:</span>{" "}
-                  {successData?.email}
-                </p>
-                <div className="mt-1 flex items-center gap-2">
-                  <p className="text-sm text-slate-600">
-                    <span className="font-medium">Password:</span>{" "}
-                    {successData?.generatedPassword}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(
-                        successData?.generatedPassword || ""
-                      );
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                    className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-blue-100 hover:text-blue-600"
-                    title="Copy password"
-                  >
-                    {copied ? (
-                      <Check className="h-3.5 w-3.5 text-green-500" />
-                    ) : (
-                      <Copy className="h-3.5 w-3.5" />
-                    )}
-                  </button>
-                </div>
-                <p className="mt-2 text-xs text-slate-500">
-                  You&apos;ve been auto-logged in. A welcome email with your
-                  credentials has also been sent.
-                </p>
-              </motion.div>
-            )}
 
             {successData?.type && (
               <motion.div

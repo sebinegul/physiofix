@@ -1,11 +1,13 @@
+import { safeJsonLd } from "@/lib/json-ld";
+
 export default function JsonLd() {
   const localBusiness = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "PhysioFix",
     description: "Best physiotherapy clinic in JP Nagar, Bangalore",
-    url: "https://physiofix.in",
-    telephone: "+918151912525",
+    url: "https://physiofix.net",
+    telephone: "+91-8151912525",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Bangalore",
@@ -37,7 +39,7 @@ export default function JsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusiness) }}
     />
   );
 }

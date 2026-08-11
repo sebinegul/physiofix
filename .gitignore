@@ -9,6 +9,7 @@ skills/
 .github/
 .cursor/
 .hermes/
+strix_runs/
 # testing
 /coverage
 /seo-reports

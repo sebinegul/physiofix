@@ -662,29 +662,18 @@ export default function ExercisesPage() {
   const [dayFullyComplete, setDayFullyComplete] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [speakEnabled, setSpeakEnabled] = useState(true);
-  const tokenRef = useRef<string | null>(null);
 
   // Fetch exercise plans + progress
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
-    tokenRef.current = token;
-    const headers = { Authorization: `Bearer ${token}` };
-
     Promise.all([
-      fetch('/api/exercise-plans', { headers }).then((r) => {
+      fetch('/api/exercise-plans').then((r) => {
         if (r.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
           window.location.href = '/login';
           return null;
         }
         return r.json();
       }),
-      fetch('/api/exercise-progress', { headers }).then((r) => {
+      fetch('/api/exercise-progress').then((r) => {
         if (r.status === 401) return null;
         return r.json();
       }),
@@ -751,13 +740,12 @@ export default function ExercisesPage() {
         return next;
       });
 
-      // Save to DB
-      if (item && currentPlan && currentDay && tokenRef.current) {
+      // Save to DB (session cookie sent automatically)
+      if (item && currentPlan && currentDay) {
         fetch('/api/exercise-progress', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${tokenRef.current}`,
           },
           body: JSON.stringify({
             exercisePlanId: currentPlan.id,

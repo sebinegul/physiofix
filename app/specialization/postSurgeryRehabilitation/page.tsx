@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title:
-    "Post-Surgery Rehabilitation | Faster Recovery After Surgery in JP Nagar",
+  title: "Post-Surgery Rehabilitation in JP Nagar",
   description:
     "Expert post-surgery rehabilitation for knee replacement, hip replacement & surgical recovery in JP Nagar, Bangalore.",
   alternates: {

@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Manual Therapy | Joint Mobilisation in JP Nagar",
+  title: "Manual Therapy in JP Nagar, Bangalore",
   description: "Hands-on manual therapy for joint mobilisation, soft tissue release & pain relief in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/manualTherapy",

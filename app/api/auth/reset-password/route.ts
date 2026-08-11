@@ -55,16 +55,18 @@ export async function POST(request: NextRequest) {
     // Hash the new password and update
     const hashedPassword = await hashPassword(newPassword.trim());
 
-    // Update password and delete all reset tokens for this user
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: resetRecord.userId },
-        data: { password: hashedPassword },
-      }),
-      prisma.passwordReset.deleteMany({
-        where: { userId: resetRecord.userId },
-      }),
-    ]);
+    // Update password, revoke all existing sessions (tokenVersion bump),
+    // and delete all reset tokens for this user.
+    // NOTE: sequential operations — prisma.$transaction is unsupported by the
+    // Neon HTTP adapter and previously made this endpoint always return 500.
+    await prisma.user.update({
+      where: { id: resetRecord.userId },
+      data: {
+        password: hashedPassword,
+        tokenVersion: { increment: 1 },
+      },
+    });
+    await prisma.$executeRaw`DELETE FROM "PasswordReset" WHERE "userId" = ${resetRecord.userId}`;
 
     return NextResponse.json({
       success: true,

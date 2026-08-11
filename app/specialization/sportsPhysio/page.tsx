@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Sports Injury Physiotherapy | Return to Peak Performance",
+  title: "Sports Physiotherapy in JP Nagar, Bangalore",
   description:
     "Specialised sports injury physiotherapy for athletes — ACL injuries, sprains, strains and overuse conditions in JP Nagar, Bangalore.",
   alternates: {

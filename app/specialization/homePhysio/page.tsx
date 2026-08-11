@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Physiotherapy At Home | Expert Care in Your Comfort Zone",
+  title: "Physiotherapy at Home in JP Nagar, Bangalore",
   description:
     "Professional home-based physiotherapy services for elderly patients, post-surgical recovery and mobility limitations in JP Nagar, Bangalore.",
   alternates: {

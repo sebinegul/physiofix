@@ -6,9 +6,19 @@ import BlogGrid from "./BlogGrid";
 import PageTransition from "../components/PageTransition";
 
 export const metadata: Metadata = {
-  title: "Blog | PhysioFix",
+  title: "Physiotherapy Blog",
   description:
     "Expert articles on physiotherapy, rehabilitation, sports recovery, and wellness from Dr.Nishmitha.R.",
+  alternates: {
+    canonical: "https://physiofix.net/blog",
+  },
+  openGraph: {
+    title: "Physiotherapy & Rehab Blog | PhysioFix",
+    description:
+      "Expert articles on physiotherapy, rehabilitation, sports recovery, and wellness from Dr.Nishmitha.R.",
+    url: "https://physiofix.net/blog",
+    type: "website",
+  },
 };
 
 interface BlogPost {

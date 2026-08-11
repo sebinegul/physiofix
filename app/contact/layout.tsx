@@ -1,9 +1,9 @@
 ﻿import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact & Book Appointment | PhysioFix Physiotherapy JP Nagar Bangalore",
+  title: "Contact & Book Appointment | PhysioFix",
   description:
-    "Book your physiotherapy appointment at PhysioFix, JP Nagar 8th Phase, Bangalore. Call +91-8151912525 or visit 30, Sai Krupa Complex. Sports rehab, orthopaedic & neuro care.",
+    "Book your physiotherapy appointment at PhysioFix, JP Nagar 8th Phase, Bangalore. Call +91-8151912525 or visit 30, Sai Krupa Complex.",
   alternates: {
     canonical: "https://physiofix.net/contact",
   },

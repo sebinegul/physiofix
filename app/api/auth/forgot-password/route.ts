@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 import { sendEmail } from "@/lib/email";
 import { getResetPasswordTemplate } from "@/lib/email-templates";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5167";
 
@@ -17,9 +19,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Rate limit: 3 requests per 15 min per email AND per real IP
+    const ip = getClientIp(request);
+    const cleanEmail = email.trim().toLowerCase();
+    const emailCheck = checkRateLimit(`forgot:email:${cleanEmail}`, 3, 900);
+    const ipCheck = checkRateLimit(`forgot:ip:${ip}`, 3, 900);
+    if (!emailCheck.allowed || !ipCheck.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     // Always return success to avoid email enumeration
     const user = await prisma.user.findUnique({
-      where: { email: email.trim().toLowerCase() },
+      where: { email: cleanEmail },
     });
 
     if (user) {
@@ -27,9 +41,8 @@ export async function POST(request: NextRequest) {
       const token = crypto.randomUUID();
 
       // Delete any existing reset tokens for this user
-      await prisma.passwordReset.deleteMany({
-        where: { userId: user.id },
-      });
+      // (raw SQL: deleteMany needs interactive transactions, unsupported by Neon HTTP)
+      await prisma.$executeRaw`DELETE FROM "PasswordReset" WHERE "userId" = ${user.id}`;
 
       // Save new reset token with 1-hour expiry
       await prisma.passwordReset.create({

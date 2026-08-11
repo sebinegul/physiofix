@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from "next";
+import { safeJsonLd } from "@/lib/json-ld";
 import Script from "next/script";
 import { prisma } from "@/lib/prisma";
 import { Inter, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
@@ -31,11 +32,11 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL("https://physiofix.net"),
   title: {
-    default: "PhysioFix | Best Physiotherapy in JP Nagar, Bangalore | Dr.Nishmitha.R",
-    template: "%s | PhysioFix - Physiotherapy JP Nagar Bangalore",
+    default: "PhysioFix | Best Physiotherapy in JP Nagar, Bangalore",
+    template: "%s | PhysioFix",
   },
   description:
-    "PhysioFix, expert physiotherapy, sports rehab, neuro rehabilitation & post-surgery care in JP Nagar 8th Phase, Bangalore. Dr.Nishmitha.R (MPT Sports Science) with 5+ years experience. Book your appointment today.",
+    "Expert physiotherapy, sports rehab, neuro rehab & post-surgery care in JP Nagar, Bangalore. Dr.Nishmitha.R (MPT) with 5+ years experience. Book today.",
   keywords: [
     "physiotherapy Bangalore",
     "physiotherapist JP Nagar",
@@ -155,7 +156,7 @@ export default async function RootLayout({
           id="physiofix-structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               "@context": "https://schema.org",
               "@type": "MedicalBusiness",
               "@id": "https://physiofix.net/#organization",
@@ -173,8 +174,8 @@ export default async function RootLayout({
                 "Neurology",
                 "Rehabilitation",
               ],
-              image: "https://physiofix.net/logoShort-transparent.png",
-              logo: "https://physiofix.net/logoShort-transparent.png",
+              image: "https://physiofix.net/physiofix.png",
+              logo: "https://physiofix.net/physiofix.png",
               address: {
                 "@type": "PostalAddress",
                 streetAddress: address,
@@ -226,7 +227,7 @@ export default async function RootLayout({
           id="physiofix-website-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "PhysioFix",
@@ -245,7 +246,7 @@ export default async function RootLayout({
           id="physiofix-breadcrumb-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               "@context": "https://schema.org",
               "@type": "BreadcrumbList",
               itemListElement: [
@@ -263,7 +264,7 @@ export default async function RootLayout({
           id="physiofix-faq-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               "@context": "https://schema.org",
               "@type": "FAQPage",
               mainEntity: [

@@ -110,8 +110,6 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-6 sm:flex-row">
           <p className="text-xs text-slate-500">© {new Date().getFullYear()} PhysioFix. All rights reserved.</p>
           <div className="flex gap-6 text-xs text-slate-500">
-            <Link href="/privacy" className="transition hover:text-blue-300">Privacy</Link>
-            <Link href="/terms" className="transition hover:text-blue-300">Terms</Link>
             <Link href="/contact" className="transition hover:text-blue-300">Contact</Link>
           </div>
         </div>

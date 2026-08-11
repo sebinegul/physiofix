@@ -67,6 +67,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Slot-conflict check: prevent double-booking the same date + time.
+    // Cancelled appointments do not block the slot.
+    const bookingDate = new Date(`${date}T00:00:00.000Z`);
+    const dayEnd = new Date(`${date}T23:59:59.999Z`);
+    const conflicting = await prisma.appointment.findFirst({
+      where: {
+        time,
+        date: { gte: bookingDate, lte: dayEnd },
+        status: { not: "cancelled" },
+      },
+      select: { id: true },
+    });
+    if (conflicting) {
+      return NextResponse.json(
+        { error: "That time slot is already booked. Please choose another." },
+        { status: 409 }
+      );
+    }
+
     const appointment = await prisma.appointment.create({
       data: {
         userId: targetUserId,

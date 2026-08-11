@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { MessageSquare, Mail } from "lucide-react";
-import { getUserFromToken } from "@/lib/auth-client";
+import { fetchCurrentUser } from "@/lib/auth-client";
 
 interface Stats {
   patients: number;
@@ -39,17 +39,10 @@ interface RecentConsultation {
   patient?: { user?: { name: string } };
 }
 
-function getToken() {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("token");
-}
 
 async function fetchAPI<T>(url: string): Promise<T | null> {
-  const token = getToken();
-  if (!token) return null;
   try {
     const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
     });
     if (res.status === 401) {
       window.location.href = "/login";
@@ -69,10 +62,13 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState("Admin");
 
   useEffect(() => {
-    const payload = getUserFromToken();
-    if (payload?.name) setUserName(payload.name);
+    let cancelled = false;
+    (async () => {
+      const user = await fetchCurrentUser();
+      if (cancelled) return;
+      if (user?.name) setUserName(user.name);
 
-    async function loadData() {
+      async function loadData() {
       const [statsRes, appointmentsRes, consultationsRes] = await Promise.all([
         fetchAPI<{ patients: number; appointments: number; exercises: number; consultations: number; contacts: number; pendingAppointments: number }>("/api/stats"),
         fetchAPI<RecentAppointment[]>("/api/appointments"),
@@ -105,9 +101,13 @@ export default function DashboardPage() {
       }
 
       setLoading(false);
-    }
+      }
 
-    loadData();
+      loadData();
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {

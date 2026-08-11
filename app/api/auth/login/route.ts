@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyPassword, generateToken } from "@/lib/auth";
+import { generateToken, getClientIp, verifyPasswordForLogin, AUTH_COOKIE_NAME } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -14,30 +14,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Rate limit: 5 attempts per email per 5 minutes
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    const rateKey = `login:${email.toLowerCase().trim()}:${ip}`;
-    const rateCheck = checkRateLimit(rateKey, 5, 300);
+    const cleanEmail = email.toLowerCase().trim();
 
-    if (!rateCheck.allowed) {
+    // Rate limit keyed on the real client IP (never a spoofable header):
+    // - per-email: 5 attempts / 5 min (blocks brute force on one account)
+    // - per-IP: 20 attempts / 5 min (blocks distributed brute force)
+    const ip = getClientIp(request);
+    const emailCheck = checkRateLimit(`login:email:${cleanEmail}`, 5, 300);
+    const ipCheck = checkRateLimit(`login:ip:${ip}`, 20, 300);
+
+    if (!emailCheck.allowed || !ipCheck.allowed) {
+      const resetIn = Math.min(emailCheck.resetIn, ipCheck.resetIn);
       return NextResponse.json(
         {
-          error: `Too many attempts. Try again in ${Math.ceil(rateCheck.resetIn / 60)} minutes.`,
+          error: `Too many attempts. Try again in ${Math.ceil(resetIn / 60)} minutes.`,
         },
         { status: 429 }
       );
     }
 
-    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
-    if (!user) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
+    const user = await prisma.user.findUnique({ where: { email: cleanEmail } });
 
-    const isValid = await verifyPassword(password, user.password);
-    if (!isValid) {
+    // Constant-time-ish compare: unknown emails run a dummy bcrypt compare too
+    const isValid = await verifyPasswordForLogin(password, user?.password ?? null);
+    if (!user || !isValid) {
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
@@ -49,9 +49,13 @@ export async function POST(request: NextRequest) {
       email: user.email,
       role: user.role,
       name: user.name,
+      tv: user.tokenVersion,
     });
 
-    return NextResponse.json({
+    const isProd = process.env.NODE_ENV === "production";
+
+    // Set the session as an HttpOnly cookie so it survives XSS.
+    const response = NextResponse.json({
       token,
       user: {
         id: user.id,
@@ -60,6 +64,14 @@ export async function POST(request: NextRequest) {
         role: user.role,
       },
     });
+    response.cookies.set(AUTH_COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60,
+      path: "/",
+    });
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

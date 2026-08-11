@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { prisma } from "./prisma";
 
 if (!process.env.JWT_SECRET) {
@@ -7,11 +8,16 @@ if (!process.env.JWT_SECRET) {
 }
 const JWT_SECRET = process.env.JWT_SECRET;
 
+import { AUTH_COOKIE_NAME } from "./auth-cookie";
+export { AUTH_COOKIE_NAME };
+
 export interface JWTPayload {
   userId: string;
   email: string;
   role: string;
   name: string;
+  /** Token version — bumped on password change/logout to revoke old JWTs. */
+  tv?: number;
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -37,10 +43,44 @@ export function verifyToken(token: string): JWTPayload | null {
   }
 }
 
+/**
+ * Extract the real client IP without trusting client-supplied headers.
+ * - Vercel sets x-vercel-forwarded-for (not spoofable).
+ * - x-forwarded-for may be spoofed, but the right-most entry is appended by
+ *   the trusted proxy/platform, so we take the LAST value, never the first.
+ */
+export function getClientIp(request: Request): string {
+  const vercel = request.headers.get("x-vercel-forwarded-for");
+  if (vercel) return vercel.trim();
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) {
+    const parts = xff.split(",").map((p) => p.trim()).filter(Boolean);
+    if (parts.length > 0) return parts[parts.length - 1];
+  }
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  return "unknown";
+}
+
 export function getTokenFromRequest(request: Request): string | null {
   const authHeader = request.headers.get("Authorization");
   if (authHeader?.startsWith("Bearer ")) {
     return authHeader.substring(7);
+  }
+  // Fall back to the HttpOnly cookie set at login/register
+  const cookieHeader = request.headers.get("cookie");
+  if (cookieHeader) {
+    for (const part of cookieHeader.split(";")) {
+      const [name, ...rest] = part.trim().split("=");
+      if (name === AUTH_COOKIE_NAME) {
+        const value = rest.join("=");
+        try {
+          return decodeURIComponent(value);
+        } catch {
+          return value;
+        }
+      }
+    }
   }
   return null;
 }
@@ -48,7 +88,43 @@ export function getTokenFromRequest(request: Request): string | null {
 export async function authenticateRequest(request: Request): Promise<JWTPayload | null> {
   const token = getTokenFromRequest(request);
   if (!token) return null;
-  return verifyToken(token);
+  const payload = verifyToken(token);
+  if (!payload) return null;
+  // Revocation check: the JWT's token version must match the user's current one.
+  // Bumped on password change/reset and on server-side logout.
+  if (payload.tv !== undefined) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+        select: { tokenVersion: true },
+      });
+      if (!user || user.tokenVersion !== payload.tv) return null;
+    } catch {
+      return null;
+    }
+  }
+  return payload;
+}
+
+// Dummy bcrypt hash used to equalize login timing for unknown emails.
+let dummyHashPromise: Promise<string> | null = null;
+function getDummyHash(): Promise<string> {
+  if (!dummyHashPromise) {
+    dummyHashPromise = bcrypt.hash(crypto.randomBytes(16).toString("hex"), 12);
+  }
+  return dummyHashPromise;
+}
+
+/** Always resolves to a boolean without leaking whether the user exists. */
+export async function verifyPasswordForLogin(
+  password: string,
+  hashedPassword: string | null
+): Promise<boolean> {
+  if (!hashedPassword) {
+    await getDummyHash().then((h) => bcrypt.compare(password, h));
+    return false;
+  }
+  return bcrypt.compare(password, hashedPassword);
 }
 
 export async function requireAdmin(request: Request): Promise<JWTPayload> {
@@ -71,13 +147,17 @@ export async function requireAuth(request: Request): Promise<JWTPayload> {
 }
 
 export async function seedAdmin() {
-  const adminEmail = "admin@physiofix.com";
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@physiofix.com";
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail },
   });
 
   if (!existingAdmin) {
-    const hashedPassword = await hashPassword("admin123");
+    // Never use a hardcoded default password. Prefer ADMIN_PASSWORD from env;
+    // fall back to a random password printed once to the console.
+    const envPassword = process.env.ADMIN_PASSWORD;
+    const adminPassword = envPassword || crypto.randomBytes(12).toString("base64url");
+    const hashedPassword = await hashPassword(adminPassword);
     await prisma.user.create({
       data: {
         email: adminEmail,
@@ -87,7 +167,12 @@ export async function seedAdmin() {
         phone: "+91-9999999999",
       },
     });
-    console.log("Admin user created: admin@physiofix.com / admin123");
+    if (envPassword) {
+      console.log(`Admin user created: ${adminEmail} (password from ADMIN_PASSWORD env var)`);
+    } else {
+      console.log(`Admin user created: ${adminEmail}`);
+      console.log(`GENERATED ADMIN PASSWORD (set ADMIN_PASSWORD env var to control it): ${adminPassword}`);
+    }
   }
 }
 

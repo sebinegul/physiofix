@@ -24,7 +24,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
 import { useToast } from "@/app/contexts/ToastContext";
-import { getUserFromToken, clearAuth, setAuthCookie } from "@/lib/auth-client";
+import { fetchCurrentUser } from "@/lib/auth-client";
 
 /* ─── constants ─── */
 
@@ -183,8 +183,7 @@ export default function BookVisitModal() {
 
   useEffect(() => {
     if (isOpen) {
-      const token = localStorage.getItem("token");
-      setIsLoggedIn(!!token);
+      fetchCurrentUser().then((user) => setIsLoggedIn(!!user));
     }
   }, [isOpen]);
 
@@ -192,15 +191,16 @@ export default function BookVisitModal() {
 
   useEffect(() => {
     if (!isOpen) return;
-    const token = localStorage.getItem("token");
-    if (token) {
-      setMode("register");
-      setStep(2);
-    } else {
-      setMode("register");
-      setStep(1);
-    }
-    setDirection(1);
+    fetchCurrentUser().then((user) => {
+      if (user) {
+        setMode("register");
+        setStep(2);
+      } else {
+        setMode("register");
+        setStep(1);
+      }
+      setDirection(1);
+    });
   }, [isOpen]);
 
   /* ─── focus management ─── */
@@ -328,7 +328,7 @@ export default function BookVisitModal() {
     return e;
   }, [type, date, time]);
 
-  /* ─── step 1 submit: register ─── */
+  /* ─── step 1 submit: consultation request (no account created) ─── */
 
   const handleStep1Submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -355,50 +355,24 @@ export default function BookVisitModal() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Something went wrong. Please try again.");
-        showToast("Registration failed. Please try again.", "error");
+        showToast("Request failed. Please try again.", "error");
         return;
       }
 
-      const generatedPassword: string = data.data.user.generatedPassword;
-
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password: generatedPassword }),
-      });
-      const loginData = await loginRes.json();
-      if (!loginRes.ok) {
-        setIsLoggedIn(false);
-        setConfirmData({
-          name: name.trim(),
-          email: email.trim(),
-          generatedPassword,
-          type: "",
-          date: "",
-          time: "",
-        });
-        setDirection(1);
-        setStep(3);
-        return;
-      }
-
-      localStorage.setItem("token", loginData.token);
-      setAuthCookie(loginData.token);
-      setIsLoggedIn(true);
-      window.dispatchEvent(new Event("auth-changed"));
-      showToast("Account created! Check your email for credentials.", "success");
-
+      // No account is created by this endpoint anymore. The request is
+      // received and the clinic will contact the visitor directly.
+      setIsLoggedIn(false);
       setConfirmData({
         name: name.trim(),
         email: email.trim(),
-        generatedPassword,
+        generatedPassword: "",
         type: "",
         date: "",
         time: "",
       });
-
       setDirection(1);
-      setStep(2);
+      setStep(3);
+      showToast("Consultation request received!", "success");
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
@@ -420,18 +394,10 @@ export default function BookVisitModal() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to book an appointment.");
-        return;
-      }
-
+      // Session cookie is sent automatically (HttpOnly) — no header needed.
       const res = await fetch("/api/appointments", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           date,
           time,
@@ -439,6 +405,14 @@ export default function BookVisitModal() {
           notes: additionalNotes.trim() || undefined,
         }),
       });
+      if (res.status === 401) {
+        // Session expired/revoked — send the visitor to login
+        setIsLoggedIn(false);
+        setMode("login");
+        setStep(1);
+        setError("Please log in to book an appointment.");
+        return;
+      }
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Something went wrong. Please try again.");
@@ -459,10 +433,10 @@ export default function BookVisitModal() {
               }
         );
       } else {
-        const payload = getUserFromToken();
+        const user = await fetchCurrentUser();
         setConfirmData({
-          name: payload?.name || "Patient",
-          email: payload?.email || loginEmail,
+          name: user?.name || "Patient",
+          email: user?.email || loginEmail,
           generatedPassword: "",
           type,
           date,
@@ -514,8 +488,7 @@ export default function BookVisitModal() {
         showToast("Invalid email or password.", "error");
         return;
       }
-      localStorage.setItem("token", data.token);
-      setAuthCookie(data.token);
+      // Server sets the HttpOnly session cookie; nothing to store client-side.
       setIsLoggedIn(true);
       window.dispatchEvent(new Event("auth-changed"));
       showToast("Welcome back! You are now signed in.", "success");

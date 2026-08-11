@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Cupping Therapy | Pain Relief in JP Nagar",
+  title: "Cupping Therapy in JP Nagar, Bangalore",
   description: "Professional cupping therapy for pain relief, muscle tension & recovery in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/cuppingTherapy",

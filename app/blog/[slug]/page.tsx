@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { safeJsonLd } from "@/lib/json-ld";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Tag } from "lucide-react";
 import type { Metadata } from "next";
@@ -9,12 +10,12 @@ import PageTransition from "../../components/PageTransition";
 
 /* ── SEO ── */
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await prisma.blogPost.findUnique({
-    where: { slug: params.slug },
+    where: { slug: (await params).slug },
   });
 
   if (!post) {
@@ -22,10 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://physiobhavitha.com";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://physiofix.net";
 
   return {
-    title: `${post.title} | PhysioFix Blog`,
+    title: post.title,
     description: post.excerpt || post.title,
     openGraph: {
       title: post.title,
@@ -88,7 +89,7 @@ export const revalidate = 3600;
 
 export default async function BlogPostPage({ params }: Props) {
   const [post, sameCategoryPosts] = await Promise.all([
-    prisma.blogPost.findUnique({ where: { slug: params.slug } }),
+    prisma.blogPost.findUnique({ where: { slug: (await params).slug } }),
     prisma.blogPost.findMany({
       where: { published: true, category: { not: "" } },
       orderBy: { createdAt: "desc" },
@@ -165,7 +166,7 @@ export default async function BlogPostPage({ params }: Props) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               "@context": "https://schema.org",
               "@type": "BlogPosting",
               headline: post.title,
@@ -182,7 +183,7 @@ export default async function BlogPostPage({ params }: Props) {
                   "@type": "ImageObject",
                   url:
                     (process.env.NEXT_PUBLIC_SITE_URL ||
-                      "https://physiobhavitha.com") + "/logo.png",
+                      "https://physiofix.net") + "/physiofix.png",
                 },
               },
               datePublished: post.createdAt.toISOString(),
@@ -191,7 +192,7 @@ export default async function BlogPostPage({ params }: Props) {
                 "@type": "WebPage",
                 "@id":
                   (process.env.NEXT_PUBLIC_SITE_URL ||
-                    "https://physiobhavitha.com") +
+                    "https://physiofix.net") +
                   `/blog/${post.slug}`,
               },
             }),

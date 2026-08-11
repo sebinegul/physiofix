@@ -4,13 +4,13 @@ import { requireAdmin } from "@/lib/auth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingSubscriber = await prisma.newsletterSubscriber.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingSubscriber) {
@@ -20,7 +20,7 @@ export async function DELETE(
       );
     }
 
-    await prisma.newsletterSubscriber.delete({ where: { id: params.id } });
+    await prisma.newsletterSubscriber.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ data: { message: "Deleted" } });
   } catch (error: any) {

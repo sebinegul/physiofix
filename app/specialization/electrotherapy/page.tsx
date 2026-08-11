@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Electrotherapy | Pain Management in JP Nagar",
+  title: "Electrotherapy in JP Nagar, Bangalore",
   description: "Advanced electrotherapy treatment for pain management & rehabilitation in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/electrotherapy",

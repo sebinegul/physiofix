@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Soft Tissue Manipulation | Myofascial Release in JP Nagar",
+  title: "Soft Tissue Manipulation in JP Nagar",
   description: "Professional soft tissue manipulation for muscle tension & myofascial release in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/softTissueManipulation",

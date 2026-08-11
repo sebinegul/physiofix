@@ -4,13 +4,13 @@ import { requireAdmin, requireAuth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth(request);
 
     const exercise = await prisma.exercise.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!exercise) {
@@ -32,13 +32,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingExercise = await prisma.exercise.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingExercise) {
@@ -49,7 +49,7 @@ export async function PUT(
     const { name, description, category, difficulty, duration, instructions, imageUrl, gifUrl, videoUrl } = body;
 
     const exercise = await prisma.exercise.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         ...(name !== undefined && { name }),
         ...(description !== undefined && { description }),
@@ -81,20 +81,20 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingExercise = await prisma.exercise.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingExercise) {
       return NextResponse.json({ error: "Exercise not found" }, { status: 404 });
     }
 
-    await prisma.exercise.delete({ where: { id: params.id } });
+    await prisma.exercise.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ message: "Exercise deleted successfully" });
   } catch (error: any) {

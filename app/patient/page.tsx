@@ -136,17 +136,9 @@ export default function PatientDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
-    const headers = { Authorization: `Bearer ${token}` };
     const authFetch = (url: string) =>
-      fetch(url, { headers }).then((r) => {
+      fetch(url).then((r) => {
         if (r.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
           window.location.href = '/login';
           throw new Error('Unauthorized');
         }

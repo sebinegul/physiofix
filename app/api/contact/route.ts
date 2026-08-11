@@ -1,18 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/auth";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
-const DEFAULT_PASSWORD = "welcome123";
 
-function sanitize(input: string): string {
+/**
+ * Real HTML-entity escaping (the previous implementation used JS escape
+ * sequences like "\u003c" which ARE the characters themselves — a no-op).
+ */
+function escapeHtml(input: string): string {
   return input
-    .replace(/&/g, "\u0026")
-    .replace(/</g, "\u003c")
-    .replace(/>/g, "\u003e")
-    .replace(/"/g, "\u0022")
-    .replace(/'/g, "\u0027");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,6 +24,16 @@ const PHONE_REGEX = /^[\d\s\-+()]{7,15}$/;
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 submissions per 5 minutes per real IP
+    const ip = getClientIp(request);
+    const rateCheck = checkRateLimit(`contact:${ip}`, 5, 300);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { name, phone, email, message } = body;
 
@@ -37,10 +51,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Please describe your concern in at least 10 characters." }, { status: 400 });
     }
 
-    const cleanName = sanitize(name.trim());
-    const cleanPhone = sanitize(phone.trim());
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanMessage = sanitize(message.trim());
+    // Escape every field (including email — it previously went out raw)
+    const cleanName = escapeHtml(name.trim());
+    const cleanPhone = escapeHtml(phone.trim());
+    const cleanEmail = escapeHtml(email.trim().toLowerCase());
+    const cleanMessage = escapeHtml(message.trim());
 
     // Save contact submission
     await prisma.contactSubmission.create({
@@ -52,26 +67,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Create user + patient if email doesn't exist yet
-    const existingUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
-    if (!existingUser) {
-      const hashedPassword = await hashPassword(DEFAULT_PASSWORD);
-      const user = await prisma.user.create({
-        data: {
-          email: cleanEmail,
-          password: hashedPassword,
-          name: cleanName,
-          role: "patient",
-          phone: cleanPhone,
-        },
-      });
-      await prisma.patient.create({
-        data: {
-          userId: user.id,
-          medicalHistory: cleanMessage,
-        },
-      });
-    }
+    // NOTE: No user/patient account is created from this endpoint anymore.
+    // Auto-creating accounts with a default password allowed account
+    // pre-registration/takeover of arbitrary victim emails.
 
     // Send email to admin
     await sendEmail({
@@ -87,7 +85,6 @@ export async function POST(request: NextRequest) {
             <tr><td style="padding: 8px; font-weight: bold; color: #475569;">Email</td><td style="padding: 8px;">${cleanEmail}</td></tr>
             <tr><td style="padding: 8px; font-weight: bold; color: #475569;">Message</td><td style="padding: 8px;">${cleanMessage}</td></tr>
           </table>
-          ${!existingUser ? '<p style="color: #059669;"><strong>A new patient account has been created</strong> with the email above. Default password: welcome123</p>' : '<p style="color: #64748b;">This email is already registered as a patient.</p>'}
         </div>
       `,
       category: "Contact Form",

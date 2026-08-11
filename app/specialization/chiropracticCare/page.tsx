@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Chiropractic Care | Spine & Joint Alignment in JP Nagar",
+  title: "Chiropractic Care in JP Nagar, Bangalore",
   description: "Expert chiropractic care for spinal alignment, back pain relief & posture correction in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/chiropracticCare",

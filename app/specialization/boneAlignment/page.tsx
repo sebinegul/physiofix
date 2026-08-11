@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Bone Alignment Therapy | Joint Correction in JP Nagar",
+  title: "Bone Alignment Therapy in JP Nagar",
   description: "Expert bone alignment therapy for joint correction & posture improvement in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/boneAlignment",

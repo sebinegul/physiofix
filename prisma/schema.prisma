@@ -7,16 +7,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String
-  name          String
-  role          String    @default("patient") // "admin" or "patient"
-  phone         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  patient       Patient?
-  appointments  Appointment[]
+  id             String          @id @default(uuid())
+  email          String          @unique
+  password       String
+  name           String
+  role           String          @default("patient") // "admin" or "patient"
+  phone          String?
+  tokenVersion   Int             @default(0) // bumped on password change/logout to revoke JWTs
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  patient        Patient?
+  appointments   Appointment[]
   passwordResets PasswordReset[]
 }
 
@@ -30,36 +31,36 @@ model PasswordReset {
 }
 
 model Patient {
-  id               String    @id @default(uuid())
-  userId           String    @unique
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dateOfBirth      String?
-  gender           String?
-  address          String?
-  emergencyContact String?
-  medicalHistory   String?
-  allergies        String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  consultations    Consultation[]
+  id                String             @id @default(uuid())
+  userId            String             @unique
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth       String?
+  gender            String?
+  address           String?
+  emergencyContact  String?
+  medicalHistory    String?
+  allergies         String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  consultations     Consultation[]
   assignedExercises AssignedExercise[]
-  exercisePlans    ExercisePlan[]
+  exercisePlans     ExercisePlan[]
   exerciseProgress  ExerciseProgress[]
 }
 
 model Exercise {
-  id            String    @id @default(uuid())
-  name          String
-  description   String
-  category      String    // e.g., "stretching", "strengthening", "balance"
-  difficulty    String    // "easy", "medium", "hard"
-  duration      String    // e.g., "10 minutes"
-  instructions  String
-  imageUrl      String?
-  gifUrl        String?   // GIF URL for exercise reference (patient view)
-  videoUrl      String?   // YouTube embed URL for exercise reference
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String             @id @default(uuid())
+  name              String
+  description       String
+  category          String // e.g., "stretching", "strengthening", "balance"
+  difficulty        String // "easy", "medium", "hard"
+  duration          String // e.g., "10 minutes"
+  instructions      String
+  imageUrl          String?
+  gifUrl            String? // GIF URL for exercise reference (patient view)
+  videoUrl          String? // YouTube embed URL for exercise reference
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   assignedExercises AssignedExercise[]
   exercisePlanItems ExercisePlanItem[]
 }
@@ -70,7 +71,7 @@ model Appointment {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime
   time      String
-  type      String   // e.g., "consultation", "follow-up", "assessment"
+  type      String // e.g., "consultation", "follow-up", "assessment"
   status    String   @default("pending") // "pending", "confirmed", "completed", "cancelled"
   notes     String?
   createdAt DateTime @default(now())
@@ -78,80 +79,84 @@ model Appointment {
 }
 
 model Consultation {
-  id             String    @id @default(uuid())
-  patientId      String
-  patient        Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  date           DateTime  @default(now())
+  id             String         @id @default(uuid())
+  patientId      String?
+  patient        Patient?       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  // Contact info for consultation requests from unregistered visitors
+  patientName    String?
+  patientEmail   String?
+  patientPhone   String?
+  date           DateTime       @default(now())
   diagnosis      String
   treatment      String
-  investigation  String?   // Tests, scans, X-rays ordered
-  impressions    String?   // Clinical impression / assessment
-  medicalHistory String?   // Patient's past medical history (per-visit)
-  pshx           String?   // Past Surgical History
+  investigation  String? // Tests, scans, X-rays ordered
+  impressions    String? // Clinical impression / assessment
+  medicalHistory String? // Patient's past medical history (per-visit)
+  pshx           String? // Past Surgical History
   notes          String?
   followUpDate   DateTime?
-  treatmentPlan  Json?     // Structured plan items: [{title, description, duration, frequency, days}]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  treatmentPlan  Json? // Structured plan items: [{title, description, duration, frequency, days}]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   exercisePlans  ExercisePlan[]
 }
 
 model AssignedExercise {
-  id            String    @id @default(uuid())
-  patientId     String
-  patient       Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  exerciseId    String
-  exercise      Exercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-  sets          Int       @default(3)
-  reps          Int       @default(10)
-  frequency     String    // e.g., "daily", "3x per week"
-  notes         String?
-  assignedDate  DateTime  @default(now())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           String   @id @default(uuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  exerciseId   String
+  exercise     Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets         Int      @default(3)
+  reps         Int      @default(10)
+  frequency    String // e.g., "daily", "3x per week"
+  notes        String?
+  assignedDate DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // NEW: Multi-day exercise plan tied to a consultation
 model ExercisePlan {
-  id              String    @id @default(uuid())
-  consultationId  String
-  consultation    Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
-  patientId       String
-  patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  totalDays       Int       // Number of days in the program
-  title           String?   // e.g., "Knee Rehab Week 1"
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  dailyPlans      DailyPlan[]
+  id               String             @id @default(uuid())
+  consultationId   String
+  consultation     Consultation       @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  patientId        String
+  patient          Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  totalDays        Int // Number of days in the program
+  title            String? // e.g., "Knee Rehab Week 1"
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  dailyPlans       DailyPlan[]
   exerciseProgress ExerciseProgress[]
 }
 
 // NEW: One per day in the plan
 model DailyPlan {
-  id              String    @id @default(uuid())
-  exercisePlanId  String
-  exercisePlan    ExercisePlan @relation(fields: [exercisePlanId], references: [id], onDelete: Cascade)
-  dayNumber       Int       // 1, 2, 3, etc.
-  label           String?   // e.g., "Day 1", "Day 2"
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  items           ExercisePlanItem[]
+  id               String             @id @default(uuid())
+  exercisePlanId   String
+  exercisePlan     ExercisePlan       @relation(fields: [exercisePlanId], references: [id], onDelete: Cascade)
+  dayNumber        Int // 1, 2, 3, etc.
+  label            String? // e.g., "Day 1", "Day 2"
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  items            ExercisePlanItem[]
   exerciseProgress ExerciseProgress[]
 }
 
 // NEW: Individual exercise item for a specific day
 model ExercisePlanItem {
-  id              String    @id @default(uuid())
-  dailyPlanId     String
-  dailyPlan       DailyPlan @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
-  exerciseId      String
-  exercise        Exercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-  sets            Int       // Number of sets
-  durationSeconds Int       // How long each set lasts in seconds
-  sortOrder       Int       @default(0) // Order of exercise within the day
-  notes           String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id               String             @id @default(uuid())
+  dailyPlanId      String
+  dailyPlan        DailyPlan          @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  exerciseId       String
+  exercise         Exercise           @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  sets             Int // Number of sets
+  durationSeconds  Int // How long each set lasts in seconds
+  sortOrder        Int                @default(0) // Order of exercise within the day
+  notes            String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   exerciseProgress ExerciseProgress[]
 }
 
@@ -163,19 +168,19 @@ model SiteContent {
 }
 
 model BlogPost {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  excerpt     String?
-  content     String
-  coverImage  String?
-  author      String   @default("Dr.Nishmitha.R")
-  category    String   @default("general")
-  tags        String?
-  published   Boolean  @default(false)
-  featured    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  title      String
+  slug       String   @unique
+  excerpt    String?
+  content    String
+  coverImage String?
+  author     String   @default("Dr.Nishmitha.R")
+  category   String   @default("general")
+  tags       String?
+  published  Boolean  @default(false)
+  featured   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model ContactSubmission {
@@ -189,19 +194,19 @@ model ContactSubmission {
 
 // Track which exercises a patient has completed per day
 model ExerciseProgress {
-  id                   String   @id @default(uuid())
-  patientId            String
-  patient              Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  exercisePlanId       String
-  exercisePlan         ExercisePlan @relation(fields: [exercisePlanId], references: [id], onDelete: Cascade)
-  dailyPlanId          String
-  dailyPlan            DailyPlan @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
-  exercisePlanItemId   String
-  exercisePlanItem     ExercisePlanItem @relation(fields: [exercisePlanItemId], references: [id], onDelete: Cascade)
-  dayNumber            Int
-  sortOrder            Int
-  completedAt          DateTime @default(now())
-  createdAt            DateTime @default(now())
+  id                 String           @id @default(uuid())
+  patientId          String
+  patient            Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  exercisePlanId     String
+  exercisePlan       ExercisePlan     @relation(fields: [exercisePlanId], references: [id], onDelete: Cascade)
+  dailyPlanId        String
+  dailyPlan          DailyPlan        @relation(fields: [dailyPlanId], references: [id], onDelete: Cascade)
+  exercisePlanItemId String
+  exercisePlanItem   ExercisePlanItem @relation(fields: [exercisePlanItemId], references: [id], onDelete: Cascade)
+  dayNumber          Int
+  sortOrder          Int
+  completedAt        DateTime         @default(now())
+  createdAt          DateTime         @default(now())
 
   @@unique([patientId, exercisePlanItemId])
 }
@@ -214,9 +219,9 @@ model Testimonial {
   text      String
   condition String
   duration  String
-  img       String?  // URL to patient photo
+  img       String? // URL to patient photo
   active    Boolean  @default(true) // toggle visibility on homepage
-  sortOrder Int      @default(0)    // manual ordering
+  sortOrder Int      @default(0) // manual ordering
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -229,14 +234,14 @@ model NewsletterSubscriber {
 }
 
 model GalleryImage {
-  id        String   @id @default(uuid())
-  title     String
+  id          String   @id @default(uuid())
+  title       String
   description String?
-  beforeUrl String   // "before" image URL
-  afterUrl  String   // "after" image URL
-  category  String   @default("general") // e.g. "sports", "ortho", "neuro"
-  sortOrder Int      @default(0)
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  beforeUrl   String // "before" image URL
+  afterUrl    String // "after" image URL
+  category    String   @default("general") // e.g. "sports", "ortho", "neuro"
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

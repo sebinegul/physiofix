@@ -95,45 +95,42 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
-    // Create user and patient in a transaction
-    const result = await prisma.$transaction(async (tx: any) => {
-      const user = await tx.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name,
-          role: "patient",
-          phone: phone || null,
-        },
-      });
-
-      const patient = await tx.patient.create({
-        data: {
-          userId: user.id,
-          dateOfBirth: dateOfBirth || null,
-          gender: gender || null,
-          address: address || null,
-          emergencyContact: emergencyContact || null,
-          medicalHistory: medicalHistory || null,
-          allergies: allergies || null,
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-              name: true,
-              phone: true,
-              createdAt: true,
-            },
-          },
-        },
-      });
-
-      return patient;
+    // Create user and patient (sequential: $transaction is unsupported by the
+    // Neon HTTP adapter, and the user+patient pair is idempotent to create)
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        role: "patient",
+        phone: phone || null,
+      },
     });
 
-    return NextResponse.json(result, { status: 201 });
+    const patient = await prisma.patient.create({
+      data: {
+        userId: user.id,
+        dateOfBirth: dateOfBirth || null,
+        gender: gender || null,
+        address: address || null,
+        emergencyContact: emergencyContact || null,
+        medicalHistory: medicalHistory || null,
+        allergies: allergies || null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            phone: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(patient, { status: 201 });
   } catch (error: any) {
     if (error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

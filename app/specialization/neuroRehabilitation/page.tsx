@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Neuro Rehabilitation | Movement & Independence Recovery in JP Nagar",
+  title: "Neuro Rehabilitation in JP Nagar, Bangalore",
   description:
     "Expert neuro rehabilitation for stroke recovery, spinal cord injury & neurological conditions in JP Nagar, Bangalore.",
   alternates: {

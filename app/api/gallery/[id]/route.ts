@@ -4,11 +4,11 @@ import { requireAdmin } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const galleryItem = await prisma.galleryImage.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!galleryItem) {
@@ -30,13 +30,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existing = await prisma.galleryImage.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existing) {
@@ -50,7 +50,7 @@ export async function PUT(
     const { title, description, beforeUrl, afterUrl, category, active, sortOrder } = body;
 
     const galleryItem = await prisma.galleryImage.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         ...(title !== undefined && { title }),
         ...(description !== undefined && { description }),
@@ -80,13 +80,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existing = await prisma.galleryImage.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existing) {
@@ -96,7 +96,7 @@ export async function DELETE(
       );
     }
 
-    await prisma.galleryImage.delete({ where: { id: params.id } });
+    await prisma.galleryImage.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ data: { message: "Gallery item deleted" } });
   } catch (error: any) {

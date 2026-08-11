@@ -1,12 +1,12 @@
 ﻿"use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { Menu, X, Sparkles, HeartPulse, MoveRight, Phone, User, LogOut, ChevronDown, LayoutDashboard, Calendar, Dumbbell, Stethoscope, CircleUser, Loader2 } from "lucide-react";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
-import { getUserFromToken, clearAuth } from "@/lib/auth-client";
+import { fetchCurrentUser, clearAuth } from "@/lib/auth-client";
 import { useToast } from "@/app/contexts/ToastContext";
 
 const navLinks = [
@@ -36,13 +36,13 @@ export default function Navbar() {
     router.push(href);
   };
 
-  /* ─── read auth state from JWT token ─── */
-  const readAuth = () => {
-    const payload = getUserFromToken();
-    setIsLoggedIn(!!payload);
-    setUserName(payload?.name || "");
-    setUserRole(payload?.role || "");
-  };
+  /* ─── read auth state from the server (HttpOnly session cookie) ─── */
+  const readAuth = useCallback(async () => {
+    const user = await fetchCurrentUser();
+    setIsLoggedIn(!!user);
+    setUserName(user?.name || "");
+    setUserRole(user?.role || "");
+  }, []);
 
   // Read on mount
   useEffect(() => {

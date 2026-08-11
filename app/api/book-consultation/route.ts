@@ -1,132 +1,92 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
-import {
-  getWelcomeEmailTemplate,
-  getAdminNotificationTemplate,
-} from "@/lib/email-templates";
-import crypto from "crypto";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/auth";
+import { getAdminNotificationTemplate } from "@/lib/email-templates";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "sebi94george@gmail.com";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[\d\s\-+()]{7,15}$/;
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 requests per 5 minutes per real IP
+    const ip = getClientIp(request);
+    const rateCheck = checkRateLimit(`book-consultation:${ip}`, 5, 300);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const { name, phone, email, notes } = await request.json();
 
     // Validate required fields
-    if (!name || !name.trim()) {
+    if (!name || typeof name !== "string" || !name.trim()) {
       return NextResponse.json(
         { error: "Full name is required" },
         { status: 400 }
       );
     }
-    if (!phone || !phone.trim()) {
+    if (!phone || typeof phone !== "string" || !PHONE_REGEX.test(phone.trim())) {
       return NextResponse.json(
-        { error: "Phone number is required" },
+        { error: "Please provide a valid phone number" },
         { status: 400 }
       );
     }
-    if (!email || !email.trim()) {
-      return NextResponse.json(
-        { error: "Email address is required" },
-        { status: 400 }
-      );
-    }
-
-    // Basic email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
+    if (!email || typeof email !== "string" || !EMAIL_REGEX.test(email.trim())) {
       return NextResponse.json(
         { error: "Please enter a valid email address" },
         { status: 400 }
       );
     }
 
-    // Check if email already exists
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: email.trim().toLowerCase() },
-          ...(phone.trim()
-            ? [{ phone: phone.trim() }]
-            : []),
-        ],
-      },
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+    const cleanPhone = phone.trim();
+    const cleanNotes = typeof notes === "string" ? notes.trim() : "";
+
+    // Link to an existing patient account if one matches the email,
+    // otherwise store contact info directly on the consultation.
+    // NOTE: No account is ever created here. Previously this endpoint
+    // fabricated accounts with a generated password returned in the HTTP
+    // response (account takeover + user enumeration via 409).
+    const existingUser = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+      select: { id: true },
     });
+
+    let linkedPatientId: string | null = null;
     if (existingUser) {
-      if (existingUser.email === email.trim().toLowerCase()) {
-        return NextResponse.json(
-          {
-            error:
-              "An account with this email already exists. Please log in instead.",
-          },
-          { status: 409 }
-        );
-      }
-      if (existingUser.phone === phone.trim()) {
-        return NextResponse.json(
-          {
-            error:
-              "An account with this phone number already exists. Please log in instead.",
-          },
-          { status: 409 }
-        );
-      }
+      const patient = await prisma.patient.findUnique({
+        where: { userId: existingUser.id },
+        select: { id: true },
+      });
+      linkedPatientId = patient?.id ?? null;
     }
 
-    // Generate a strong random 10-char password
-    const generatedPassword = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
-
-    // Hash the password
-    const hashedPassword = await hashPassword(generatedPassword);
-
-    // Create User record
-    const user = await prisma.user.create({
-      data: {
-        email: email.trim().toLowerCase(),
-        password: hashedPassword,
-        name: name.trim(),
-        role: "patient",
-        phone: phone.trim(),
-      },
-    });
-
-    // Create associated Patient record
-    const patient = await prisma.patient.create({
-      data: {
-        userId: user.id,
-      },
-    });
-
-    // Create Consultation record with notes/pain description
+    // Create Consultation record with the request details
     await prisma.consultation.create({
       data: {
-        patientId: patient.id,
+        patientId: linkedPatientId,
+        patientName: cleanName,
+        patientEmail: cleanEmail,
+        patientPhone: cleanPhone,
         diagnosis: "Initial consultation request",
         treatment: "Pending evaluation",
-        notes: notes?.trim() || null,
+        notes: cleanNotes || undefined,
       },
-    });
-
-    // Send welcome email to patient
-    const welcomeEmail = getWelcomeEmailTemplate({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      password: generatedPassword,
-    });
-    await sendEmail({
-      to: [email.trim().toLowerCase()],
-      subject: welcomeEmail.subject,
-      html: welcomeEmail.html,
     });
 
     // Send admin notification email
     const adminEmail = getAdminNotificationTemplate({
-      patientName: name.trim(),
-      phone: phone.trim(),
-      email: email.trim().toLowerCase(),
-      notes: notes?.trim(),
+      patientName: cleanName,
+      phone: cleanPhone,
+      email: cleanEmail,
+      notes: cleanNotes || undefined,
     });
     await sendEmail({
       to: [ADMIN_EMAIL],
@@ -137,11 +97,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       data: {
         success: true,
-        user: {
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          generatedPassword,
-        },
+        message:
+          "Your consultation request has been received. We will contact you shortly to confirm your appointment.",
       },
     });
   } catch (error) {

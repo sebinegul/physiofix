@@ -2,7 +2,7 @@
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Physiotherapy Assessment | Diagnosis in JP Nagar",
+  title: "Physiotherapy Assessment in JP Nagar",
   description: "Comprehensive physiotherapy assessment & diagnosis in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/specialization/physiotherapyAssessment",

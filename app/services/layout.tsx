@@ -1,9 +1,9 @@
 ﻿import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Our Services | Physiotherapy, Sports Rehab & Recovery in JP Nagar Bangalore",
+  title: "Physiotherapy Services in JP Nagar, Bangalore",
   description:
-    "Comprehensive physiotherapy services in JP Nagar, Bangalore, sports rehabilitation, orthopaedic care, neuro rehab, post-surgery recovery, manual therapy, cupping, chiropractic & home visits.",
+    "Physiotherapy services in JP Nagar: sports rehab, orthopaedic care, neuro rehab, post-surgery recovery, manual therapy, cupping & home visits.",
   alternates: {
     canonical: "https://physiofix.net/services",
   },

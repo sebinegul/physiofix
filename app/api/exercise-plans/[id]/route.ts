@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, requireAuth } from "@/lib/auth";
 
-// GET: Fetch a single exercise plan with full details
+// GET: Fetch a single exercise plan with full details.
+// Auth required: admin sees any plan; patients see only their own plan.
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuth(request);
+
     const plan = await prisma.exercisePlan.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         patient: {
           include: {
@@ -32,8 +35,21 @@ export async function GET(
       return NextResponse.json({ error: "Plan not found" }, { status: 404 });
     }
 
+    // Ownership: admin OR the patient the plan belongs to
+    const isAdmin = auth.role === "admin";
+    const isOwner = plan.patient?.userId === auth.userId;
+    if (!isAdmin && !isOwner) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     return NextResponse.json({ data: plan });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     console.error("Get exercise plan error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -45,7 +61,7 @@ export async function GET(
 // PUT: Edit an exercise plan (replace daily plans and items)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
@@ -61,7 +77,7 @@ export async function PUT(
 
     // Verify plan exists
     const existing = await prisma.exercisePlan.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
     if (!existing) {
       return NextResponse.json({ error: "Plan not found" }, { status: 404 });
@@ -69,19 +85,17 @@ export async function PUT(
 
     // Delete existing daily plans and items (cascade handles items)
     const existingDays = await prisma.dailyPlan.findMany({
-      where: { exercisePlanId: params.id },
+      where: { exercisePlanId: (await params).id },
       select: { id: true },
     });
     for (const day of existingDays) {
-      await prisma.exercisePlanItem.deleteMany({
-        where: { dailyPlanId: day.id },
-      });
+      await prisma.$executeRaw`DELETE FROM "ExercisePlanItem" WHERE "dailyPlanId" = ${day.id}`;
       await prisma.dailyPlan.delete({ where: { id: day.id } });
     }
 
     // Update plan metadata
     await prisma.exercisePlan.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         title: title || existing.title,
         totalDays: parseInt(totalDays),
@@ -92,7 +106,7 @@ export async function PUT(
     for (const day of dailyPlans) {
       const dailyPlan = await prisma.dailyPlan.create({
         data: {
-          exercisePlanId: params.id,
+          exercisePlanId: (await params).id,
           dayNumber: day.dayNumber,
           label: day.label || `Day ${day.dayNumber}`,
         },
@@ -117,7 +131,7 @@ export async function PUT(
 
     // Re-fetch the complete plan
     const updatedPlan = await prisma.exercisePlan.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         dailyPlans: {
           include: {

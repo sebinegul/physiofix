@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
-  title: "Posture Correction | Align Your Body, Ease Your Pain in JP Nagar",
+  title: "Posture Correction in JP Nagar, Bangalore",
   description:
     "Expert posture correction therapy for postural imbalance, back pain & alignment issues in JP Nagar, Bangalore.",
   alternates: {

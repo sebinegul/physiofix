@@ -11,7 +11,7 @@ function generateSlug(title: string): string {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -21,16 +21,16 @@ export async function GET(
     let post;
     if (lookupBySlug) {
       post = await prisma.blogPost.findUnique({
-        where: { slug: params.id },
+        where: { slug: (await params).id },
       });
     } else {
       post = await prisma.blogPost.findUnique({
-        where: { id: params.id },
+        where: { id: (await params).id },
       });
       // Fallback: try by slug if id lookup fails
       if (!post) {
         post = await prisma.blogPost.findUnique({
-          where: { slug: params.id },
+          where: { slug: (await params).id },
         });
       }
     }
@@ -59,13 +59,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingPost = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingPost) {
@@ -80,13 +80,13 @@ export async function PUT(
     if (title && title !== existingPost.title) {
       slug = generateSlug(title);
       const existingSlug = await prisma.blogPost.findUnique({ where: { slug } });
-      if (existingSlug && existingSlug.id !== params.id) {
+      if (existingSlug && existingSlug.id !== (await params).id) {
         slug = `${slug}-${Date.now()}`;
       }
     }
 
     const post = await prisma.blogPost.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         ...(title !== undefined && { title }),
         ...(slug !== existingPost.slug && { slug }),
@@ -119,20 +119,20 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingPost = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingPost) {
       return NextResponse.json({ error: "Blog post not found" }, { status: 404 });
     }
 
-    await prisma.blogPost.delete({ where: { id: params.id } });
+    await prisma.blogPost.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ data: { message: "Blog post deleted successfully" } });
   } catch (error: any) {

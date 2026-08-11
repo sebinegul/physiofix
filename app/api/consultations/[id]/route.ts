@@ -4,13 +4,13 @@ import { requireAdmin, requireAuth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth(request);
 
     const consultation = await prisma.consultation.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         patient: {
           include: {
@@ -59,13 +59,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingConsultation = await prisma.consultation.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingConsultation) {
@@ -79,7 +79,7 @@ export async function PUT(
     const { diagnosis, treatment, investigation, impressions, medicalHistory, pshx, notes, followUpDate, treatmentPlan } = body;
 
     const consultation = await prisma.consultation.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         ...(diagnosis !== undefined && { diagnosis }),
         ...(treatment !== undefined && { treatment }),
@@ -127,13 +127,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existingConsultation = await prisma.consultation.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingConsultation) {
@@ -143,7 +143,7 @@ export async function DELETE(
       );
     }
 
-    await prisma.consultation.delete({ where: { id: params.id } });
+    await prisma.consultation.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ message: "Consultation deleted successfully" });
   } catch (error: any) {

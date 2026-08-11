@@ -22,20 +22,13 @@ interface ContactSubmission {
   createdAt: string;
 }
 
-function getToken() {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("token");
-}
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T | null> {
-  const token = getToken();
-  if (!token) return null;
   try {
     const res = await fetch(url, {
       ...options,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
         ...options?.headers,
       },
     });

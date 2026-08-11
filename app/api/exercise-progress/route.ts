@@ -99,6 +99,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Ownership chain: the plan must belong to this patient (or caller is admin),
+    // the dailyPlan must belong to the plan, and the item to the dailyPlan.
+    // This prevents a patient from writing progress against another
+    // patient's plan or arbitrary foreign references.
+    const plan = await prisma.exercisePlan.findUnique({
+      where: { id: exercisePlanId },
+      select: { patientId: true },
+    });
+    if (!plan) {
+      return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+    }
+    const isAdmin = auth.role === "admin";
+    if (!isAdmin && plan.patientId !== patient.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const dailyPlan = await prisma.dailyPlan.findUnique({
+      where: { id: dailyPlanId },
+      select: { exercisePlanId: true },
+    });
+    if (!dailyPlan || dailyPlan.exercisePlanId !== exercisePlanId) {
+      return NextResponse.json(
+        { error: "Invalid dailyPlanId for this plan" },
+        { status: 400 }
+      );
+    }
+
+    const item = await prisma.exercisePlanItem.findUnique({
+      where: { id: exercisePlanItemId },
+      select: { dailyPlanId: true },
+    });
+    if (!item || item.dailyPlanId !== dailyPlanId) {
+      return NextResponse.json(
+        { error: "Invalid exercisePlanItemId for this day" },
+        { status: 400 }
+      );
+    }
+
     // Upsert: if already completed, just return it; otherwise create
     const progress = await prisma.exerciseProgress.upsert({
       where: {
@@ -158,12 +196,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await prisma.exerciseProgress.deleteMany({
-      where: {
-        patientId: patient.id,
-        exercisePlanItemId,
-      },
-    });
+    await prisma.$executeRaw`DELETE FROM "ExerciseProgress" WHERE "patientId" = ${patient.id} AND "exercisePlanItemId" = ${exercisePlanItemId}`;
 
     return NextResponse.json({ message: "Progress removed" });
   } catch (error: any) {

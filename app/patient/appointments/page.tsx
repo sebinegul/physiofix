@@ -56,18 +56,10 @@ export default function AppointmentsPage() {
   }, []);
 
   const fetchAppointments = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
     fetch('/api/appointments', {
-      headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => {
         if (r.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
           window.location.href = '/login';
           return;
         }
@@ -89,17 +81,11 @@ export default function AppointmentsPage() {
     setError('');
     setSubmitting(true);
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
 
     try {
       const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -111,8 +97,6 @@ export default function AppointmentsPage() {
       });
 
       if (res.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
         window.location.href = '/login';
         return;
       }
@@ -138,24 +122,16 @@ export default function AppointmentsPage() {
   const handleCancel = async (id: string) => {
     if (!confirm('Are you sure you want to cancel this appointment?')) return;
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
 
     try {
       const res = await fetch(`/api/appointments/${id}`, {
         method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ status: 'cancelled' }),
       });
       if (res.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
         window.location.href = '/login';
         return;
       }

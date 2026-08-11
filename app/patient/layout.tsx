@@ -15,7 +15,7 @@ import {
   X,
   ChevronRight,
 } from 'lucide-react';
-import { getUserFromToken, clearAuth } from '@/lib/auth-client';
+import { fetchCurrentUser, clearAuth } from '@/lib/auth-client';
 
 interface UserInfo {
   id: string;
@@ -40,43 +40,25 @@ export default function PatientLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    const payload = getUserFromToken();
-    if (!payload) {
-      clearAuth();
-      router.push('/login');
-      return;
-    }
-
-    if (payload.role === 'admin') {
-      router.push('/dashboard');
-      return;
-    }
-
-    setUser({ id: payload.userId, email: payload.email, name: payload.name, role: payload.role });
-    setLoading(false);
-
-    // Background verification — if /api/auth/me fails, log out
-    fetch('/api/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('Unauthorized');
-        return res.json();
-      })
-      .then((data) => {
-        // Keep localStorage user up-to-date but not required
-        localStorage.removeItem('user'); // clean up any stale entry
-      })
-      .catch(() => {
-        clearAuth();
+    let cancelled = false;
+    (async () => {
+      // Server-verified session via HttpOnly cookie
+      const u = await fetchCurrentUser();
+      if (cancelled) return;
+      if (!u) {
         router.push('/login');
-      });
+        return;
+      }
+      if (u.role === 'admin') {
+        router.push('/dashboard');
+        return;
+      }
+      setUser({ id: u.id, email: u.email, name: u.name, role: u.role });
+      setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   const handleLogout = () => {

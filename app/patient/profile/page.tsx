@@ -62,19 +62,10 @@ export default function ProfilePage() {
   }, []);
 
   const fetchData = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
-
-    const headers = { Authorization: `Bearer ${token}` };
 
     const authFetch = (url: string) =>
-      fetch(url, { headers }).then((r) => {
+      fetch(url).then((r) => {
         if (r.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
           window.location.href = '/login';
           throw new Error('Unauthorized');
         }
@@ -110,9 +101,7 @@ export default function ProfilePage() {
     setSaving(true);
     setSaveSuccess(false);
 
-    const token = localStorage.getItem('token');
-    if (!token || !patient) {
-      if (!token) window.location.href = '/login';
+    if (!patient) {
       return;
     }
 
@@ -121,15 +110,12 @@ export default function ProfilePage() {
       const res = await fetch(`/api/patients/${patient.id}`, {
         method: 'PUT',
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
       if (res.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
         window.location.href = '/login';
         return;
       }

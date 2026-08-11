@@ -20,7 +20,7 @@ import {
   ChevronRight,
   Loader2,
 } from "lucide-react";
-import { getUserFromToken, clearAuth } from "@/lib/auth-client";
+import { fetchCurrentUser, clearAuth } from "@/lib/auth-client";
 
 interface UserInfo {
   id: string;
@@ -52,34 +52,33 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
-    const payload = getUserFromToken();
-    if (!payload) {
-      router.push("/login");
-      return;
-    }
-    if (payload.role !== "admin") {
-      router.push("/patient");
-      return;
-    }
-    setUser({ id: payload.userId, name: payload.name, email: payload.email, role: payload.role });
-    // Fetch notification counts
-    fetch("/api/stats", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (json?.data) {
-          setPendingCount(json.data.pendingAppointments || 0);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    (async () => {
+      const u = await fetchCurrentUser();
+      if (cancelled) return;
+      if (!u) {
+        router.push("/login");
+        return;
+      }
+      if (u.role !== "admin") {
+        router.push("/patient");
+        return;
+      }
+      setUser({ id: u.id, name: u.name, email: u.email, role: u.role });
+      // Fetch notification counts (session cookie sent automatically)
+      fetch("/api/stats")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json?.data) {
+            setPendingCount(json.data.pendingAppointments || 0);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   const handleLogout = () => {

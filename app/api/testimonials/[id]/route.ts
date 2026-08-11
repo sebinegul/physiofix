@@ -4,11 +4,11 @@ import { requireAdmin } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const testimonial = await prisma.testimonial.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!testimonial) {
@@ -30,13 +30,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existing = await prisma.testimonial.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existing) {
@@ -50,7 +50,7 @@ export async function PUT(
     const { name, location, rating, text, condition, duration, img, active, sortOrder } = body;
 
     const testimonial = await prisma.testimonial.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         ...(name !== undefined && { name }),
         ...(location !== undefined && { location }),
@@ -82,13 +82,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin(request);
 
     const existing = await prisma.testimonial.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existing) {
@@ -98,7 +98,7 @@ export async function DELETE(
       );
     }
 
-    await prisma.testimonial.delete({ where: { id: params.id } });
+    await prisma.testimonial.delete({ where: { id: (await params).id } });
 
     return NextResponse.json({ data: { message: "Testimonial deleted" } });
   } catch (error: any) {

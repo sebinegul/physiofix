@@ -8,9 +8,9 @@ import StaggerContainer, { StaggerItem } from "../components/ui/StaggerContainer
 import { ArrowRight, BadgeCheck, HeartPulse, MoveRight, Stethoscope } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Dr.Nishmitha.R | Physiotherapist in JP Nagar, Bangalore",
+  title: "About Dr.Nishmitha.R | Physiotherapist, JP Nagar",
   description:
-    "Dr.Nishmitha.R is a sports science physiotherapist (MPT) with 5+ years experience in orthopaedic, sports & neurological rehabilitation. Trusted physiotherapy care in JP Nagar, Bangalore.",
+    "Dr.Nishmitha.R (MPT Sports Science) with 5+ years experience in orthopaedic, sports & neurological rehab. Trusted physiotherapy care in JP Nagar, Bangalore.",
   alternates: {
     canonical: "https://physiofix.net/about",
   },

@@ -4,13 +4,13 @@ import { requireAdmin, requireAuth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth(request);
 
     const patient = await prisma.patient.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         user: {
           select: {
@@ -52,13 +52,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAdmin(request);
 
     const existingPatient = await prisma.patient.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingPatient) {
@@ -68,31 +68,31 @@ export async function PUT(
     const body = await request.json();
     const { name, phone, dateOfBirth, gender, address, emergencyContact, medicalHistory, allergies } = body;
 
-    const result = await prisma.$transaction(async (tx: any) => {
-      // Update user name/phone if provided
-      if (name !== undefined || phone !== undefined) {
-        await tx.user.update({
-          where: { id: existingPatient.userId },
-          data: {
-            ...(name !== undefined && { name }),
-            ...(phone !== undefined && { phone }),
-          },
-        });
-      }
-
-      // Update patient fields
-      const patient = await tx.patient.update({
-        where: { id: params.id },
+    // Update user name/phone if provided, then patient fields.
+    // (Sequential: $transaction is unsupported by the Neon HTTP adapter.)
+    if (name !== undefined || phone !== undefined) {
+      await prisma.user.update({
+        where: { id: existingPatient.userId },
         data: {
-          ...(dateOfBirth !== undefined && { dateOfBirth }),
-          ...(gender !== undefined && { gender }),
-          ...(address !== undefined && { address }),
-          ...(emergencyContact !== undefined && { emergencyContact }),
-          ...(medicalHistory !== undefined && { medicalHistory }),
-          ...(allergies !== undefined && { allergies }),
+          ...(name !== undefined && { name }),
+          ...(phone !== undefined && { phone }),
         },
-        include: {
-          user: {
+      });
+    }
+
+    // Update patient fields
+    const patient = await prisma.patient.update({
+      where: { id: (await params).id },
+      data: {
+        ...(dateOfBirth !== undefined && { dateOfBirth }),
+        ...(gender !== undefined && { gender }),
+        ...(address !== undefined && { address }),
+        ...(emergencyContact !== undefined && { emergencyContact }),
+        ...(medicalHistory !== undefined && { medicalHistory }),
+        ...(allergies !== undefined && { allergies }),
+      },
+      include: {
+        user: {
             select: {
               id: true,
               email: true,
@@ -104,10 +104,7 @@ export async function PUT(
         },
       });
 
-      return patient;
-    });
-
-    return NextResponse.json(result);
+    return NextResponse.json(patient);
   } catch (error: any) {
     if (error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -125,13 +122,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const admin = await requireAdmin(request);
 
     const existingPatient = await prisma.patient.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     });
 
     if (!existingPatient) {
@@ -139,7 +136,7 @@ export async function DELETE(
     }
 
     // Delete patient (cascades to related records) and the user
-    await prisma.patient.delete({ where: { id: params.id } });
+    await prisma.patient.delete({ where: { id: (await params).id } });
     await prisma.user.delete({ where: { id: existingPatient.userId } });
 
     return NextResponse.json({ message: "Patient deleted successfully" });

@@ -31,18 +31,12 @@ interface Patient {
   user: { id: string; name: string };
 }
 
-function getToken() {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("token");
-}
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T | null> {
-  const token = getToken();
-  if (!token) return null;
   try {
     const res = await fetch(url, {
       ...options,
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...options?.headers },
+      headers: { "Content-Type": "application/json", ...options?.headers },
     });
     if (res.status === 401) { window.location.href = "/login"; return null; }
     if (!res.ok) return null;

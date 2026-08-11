@@ -115,25 +115,16 @@ export default function ConsultationsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
-      return;
-    }
-
-    const headers = { Authorization: `Bearer ${token}` };
 
     Promise.all([
-      fetch('/api/consultations', { headers }).then((r) => {
+      fetch('/api/consultations').then((r) => {
         if (r.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
           window.location.href = '/login';
           return null;
         }
         return r.json();
       }),
-      fetch('/api/exercise-plans', { headers }).then((r) => {
+      fetch('/api/exercise-plans').then((r) => {
         if (r.status === 401) return null;
         return r.json();
       }),
