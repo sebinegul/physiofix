@@ -608,7 +608,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => setShowRegPassword((v) => !v)}
                       aria-label={showRegPassword ? "Hide password" : "Show password"}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 p-2 text-slate-400 transition-colors hover:text-slate-600"
                     >
                       {showRegPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -994,7 +994,7 @@ export default function LoginPage() {
       >
         <Link
           href="/"
-          className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm text-slate-600 backdrop-blur-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:text-blue-700 hover:shadow-sm"
+          className="fixed left-6 top-6 z-20 flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-3 text-sm text-slate-600 backdrop-blur-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:text-blue-700 hover:shadow-sm"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Home
