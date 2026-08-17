@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
 import { useToast } from "@/app/contexts/ToastContext";
 import { fetchCurrentUser } from "@/lib/auth-client";
+import { TIME_SLOTS_MORNING, TIME_SLOTS_AFTERNOON } from "@/lib/slots";
 
 /* ─── constants ─── */
 
@@ -34,24 +35,6 @@ const APPOINTMENT_TYPES = [
   "Sports Rehabilitation",
   "Post-Surgery Recovery",
   "General Consultation",
-];
-
-const TIME_SLOTS_MORNING = [
-  "9:00 AM",
-  "9:30 AM",
-  "10:00 AM",
-  "10:30 AM",
-  "11:00 AM",
-  "11:30 AM",
-];
-
-const TIME_SLOTS_AFTERNOON = [
-  "2:00 PM",
-  "2:30 PM",
-  "3:00 PM",
-  "3:30 PM",
-  "4:00 PM",
-  "4:30 PM",
 ];
 
 /* ─── types ─── */
@@ -145,6 +128,8 @@ export default function BookVisitModal() {
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
   const typeDropdownRef = useRef<HTMLDivElement>(null);
   const timeDropdownRef = useRef<HTMLDivElement>(null);
+  const [availability, setAvailability] = useState<{ available: string[]; booked: string[]; blocked: string[] } | null>(null);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
 
   // login form
   const [loginEmail, setLoginEmail] = useState("");
@@ -174,10 +159,37 @@ export default function BookVisitModal() {
       if (timeDropdownRef.current && !timeDropdownRef.current.contains(e.target as Node)) {
         setTimeDropdownOpen(false);
       }
-    };
+    }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Load slot availability for the selected date — booked + doctor-blocked slots are greyed out
+  useEffect(() => {
+    if (!date) {
+      setAvailability(null);
+      return;
+    }
+    let cancelled = false;
+    setAvailabilityLoading(true);
+    fetch(`/api/slots/available?date=${encodeURIComponent(date)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (cancelled) return;
+        const data = d?.data ?? { available: [], booked: [], blocked: [] };
+        setAvailability(data);
+        setTime((prev) => (prev && !data.available.includes(prev) ? "" : prev));
+      })
+      .catch(() => {
+        if (!cancelled) setAvailability(null);
+      })
+      .finally(() => {
+        if (!cancelled) setAvailabilityLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [date]);
 
   /* ─── detect login state on open ─── */
 
@@ -670,10 +682,26 @@ export default function BookVisitModal() {
                   className={`w-full rounded-xl px-4 py-2 text-left text-[14px] transition-all duration-200 ${
                     time === slot
                       ? "bg-primary-50 font-medium text-primary-600"
-                      : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
+                      : availability !== null && !availability.available.includes(slot)
+                        ? "cursor-not-allowed text-gray-300"
+                        : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
                   }`}
+                  disabled={
+                    (date !== "" && availabilityLoading) ||
+                    (availability !== null && !availability.available.includes(slot))
+                  }
+                  title={
+                    availability !== null && !availability.available.includes(slot)
+                      ? "Unavailable — booked or blocked by the doctor's schedule"
+                      : undefined
+                  }
                 >
                   {slot}
+                  {availability !== null && !availability.available.includes(slot) && (
+                    <span className="float-right text-[10px] font-medium uppercase tracking-wide text-gray-300">
+                      Unavailable
+                    </span>
+                  )}
                 </button>
               ))}
               <p className="mt-1 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-500/70">
@@ -691,12 +719,33 @@ export default function BookVisitModal() {
                   className={`w-full rounded-xl px-4 py-2 text-left text-[14px] transition-all duration-200 ${
                     time === slot
                       ? "bg-primary-50 font-medium text-primary-600"
-                      : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
+                      : availability !== null && !availability.available.includes(slot)
+                        ? "cursor-not-allowed text-gray-300"
+                        : "text-gray-700 hover:bg-primary-50/50 hover:text-primary-600"
                   }`}
+                  disabled={
+                    (date !== "" && availabilityLoading) ||
+                    (availability !== null && !availability.available.includes(slot))
+                  }
+                  title={
+                    availability !== null && !availability.available.includes(slot)
+                      ? "Unavailable — booked or blocked by the doctor's schedule"
+                      : undefined
+                  }
                 >
                   {slot}
+                  {availability !== null && !availability.available.includes(slot) && (
+                    <span className="float-right text-[10px] font-medium uppercase tracking-wide text-gray-300">
+                      Unavailable
+                    </span>
+                  )}
                 </button>
               ))}
+              {availability !== null && availability.available.length === 0 && (
+                <p className="px-3 py-3 text-center text-[12px] font-medium text-gray-400">
+                  No slots available on this date
+                </p>
+              )}
             </div>
           </motion.div>
         )}

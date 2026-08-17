@@ -46,6 +46,7 @@ export default function Hero() {
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [heroSlide, setHeroSlide] = useState(0);
+  const [nextSlot, setNextSlot] = useState<string | null>(null);
 
   // Auto-rotate hero carousel — pauses when tab is hidden and respects reduced motion
   useEffect(() => {
@@ -80,6 +81,28 @@ export default function Hero() {
         if (d?.data) setContent((prev) => ({ ...prev, ...d.data }));
       })
       .catch(() => {});
+  }, []);
+
+  // Live "Next slot" — computed server-side (working hours + bookings + doctor roster),
+  // refreshed every minute so it stays accurate as the day progresses.
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      fetch("/api/slots/next")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (!cancelled) setNextSlot(d?.data?.next?.label ?? null);
+        })
+        .catch(() => {
+          if (!cancelled) setNextSlot(null);
+        });
+    };
+    load();
+    const timer = setInterval(load, 60_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
   }, []);
 
   // Debounced search with abort on stale requests
@@ -243,7 +266,7 @@ export default function Hero() {
               id="find"
               ref={searchRef}
               role="search"
-              className="relative z-10 w-full max-w-full overflow-visible rounded-2xl bg-gradient-to-r from-blue-400/40 via-cyan-300/40 to-blue-400/40 p-[1.5px] shadow-[0_25px_80px_rgba(15,23,42,0.1)] sm:max-w-[560px] sm:rounded-[1.5rem]"
+              className="relative z-30 w-full max-w-full overflow-visible rounded-2xl bg-gradient-to-r from-blue-400/40 via-cyan-300/40 to-blue-400/40 p-[1.5px] shadow-[0_25px_80px_rgba(15,23,42,0.1)] sm:max-w-[560px] sm:rounded-[1.5rem]"
             >
               <div className="w-full rounded-2xl bg-white/80 p-3 backdrop-blur-xl sm:rounded-[1.45rem] sm:p-3.5">
                 <div className="flex flex-col gap-2 sm:flex-row">
@@ -440,14 +463,14 @@ export default function Hero() {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
 
-                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur">
+                <div className="absolute left-4 top-4 hidden items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur sm:flex">
                   <PlayCircle className="h-4 w-4" />
                   Expert physiotherapy care
                 </div>
 
                 <div className="animate-float-delayed absolute right-4 top-4 rounded-2xl border border-white/20 bg-white/90 p-4 shadow-xl">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Next slot</p>
-                  <p className="mt-1 text-xl font-bold text-slate-900">Today · 3:00 PM</p>
+                  <p className="mt-1 text-xl font-bold text-slate-900">{nextSlot ?? "Mon–Sat · 9am–7pm"}</p>
                 </div>
 
                 <div className="absolute bottom-12 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">

@@ -32,7 +32,7 @@ export default function MeetSpecialists() {
               <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-400/20 blur-3xl transition group-hover:bg-blue-400/30" />
               <div className="relative h-[280px] sm:h-[350px] lg:h-[420px] overflow-hidden rounded-xl sm:rounded-[1.5rem]">
                 <Image
-                  src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=640&q=80"
+                  src="/physio-fix-dr-nishmitha.jpeg"
                   alt="Dr.Nishmitha.R"
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

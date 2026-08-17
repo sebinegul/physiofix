@@ -19,6 +19,7 @@ model User {
   patient        Patient?
   appointments   Appointment[]
   passwordResets PasswordReset[]
+  rosterBlocks   RosterBlock[]
 }
 
 model PasswordReset {
@@ -76,6 +77,20 @@ model Appointment {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model RosterBlock {
+  id         String   @id @default(uuid())
+  date       DateTime // the day the block applies to (UTC midnight of the selected date)
+  startTime  String // "HH:MM" 24h, e.g. "15:00"
+  endTime    String // "HH:MM" 24h, exclusive, e.g. "16:00"
+  reason     String? // e.g. "House visit", "Training", "Leave"
+  createdById String
+  createdBy  User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([date])
 }
 
 model Consultation {

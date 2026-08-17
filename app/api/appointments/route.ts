@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isSlotRosterBlocked } from "@/lib/availability";
 import { requireAdmin, requireAuth } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import {
@@ -82,6 +83,14 @@ export async function POST(request: NextRequest) {
     if (conflicting) {
       return NextResponse.json(
         { error: "That time slot is already booked. Please choose another." },
+        { status: 409 }
+      );
+    }
+
+    // Roster guard: the doctor may have blocked this slot (house visit, leave, training...)
+    if (await isSlotRosterBlocked(date, time)) {
+      return NextResponse.json(
+        { error: "This slot is blocked by the doctor's schedule. Please choose another time." },
         { status: 409 }
       );
     }
