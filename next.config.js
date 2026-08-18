@@ -30,6 +30,16 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.physiofix.net" }],
+        destination: "https://physiofix.net/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
