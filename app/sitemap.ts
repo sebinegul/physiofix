@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.physiofix.net';
+ const baseUrl = 'https://physiofix.net';
   // Static pages
   const now = new Date();
   const staticPages: MetadataRoute.Sitemap = [
