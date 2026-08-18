@@ -20,7 +20,7 @@ export default function BoneAlignmentPage() {
       title="Bone Alignment Therapy"
       subtitle="Structural Balance Restoration"
       description="Bone alignment therapy focuses on correcting skeletal misalignments that cause pain, restricted movement, and postural imbalances. Through precise manual techniques and corrective exercises, it restores proper skeletal alignment, improves body mechanics, and helps prevent recurring injuries."
-      heroImage="/backPainTherapy.jpg"
+      heroImage="/boneAlignment.jpg"
       benefits={[
         {
           title: "Corrects Skeletal Misalignment",

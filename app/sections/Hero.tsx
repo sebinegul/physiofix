@@ -187,15 +187,19 @@ export default function Hero() {
                   WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
                 }}
               >
-                <div
-                  className={`flex w-max items-center gap-6 whitespace-nowrap ${
-                    prefersReducedMotion ? "" : "animate-hero-marquee"
-                  }`}
-                >
-                  {[...marqueeTags, ...marqueeTags].map((tag, i) => (
-                    <span key={`${tag}-${i}`} className="text-sm font-medium text-slate-700">
-                      {tag}
-                    </span>
+                <div className="hero-marquee-track">
+                  {[0, 1].map((copy) => (
+                    <div
+                      key={copy}
+                      className="hero-marquee-group"
+                      aria-hidden={copy === 1 ? true : undefined}
+                    >
+                      {marqueeTags.map((tag) => (
+                        <span key={`${copy}-${tag}`} className="whitespace-nowrap text-sm font-medium text-slate-700">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -243,7 +247,7 @@ export default function Hero() {
               id="find"
               ref={searchRef}
               role="search"
-              className="relative z-30 w-full max-w-full overflow-visible rounded-2xl bg-gradient-to-r from-blue-400/40 via-cyan-300/40 to-blue-400/40 p-[1.5px] shadow-[0_25px_80px_rgba(15,23,42,0.1)] sm:max-w-[560px] sm:rounded-[1.5rem]"
+              className="relative z-30 hidden w-full max-w-full overflow-visible rounded-2xl bg-gradient-to-r from-blue-400/40 via-cyan-300/40 to-blue-400/40 p-[1.5px] shadow-[0_25px_80px_rgba(15,23,42,0.1)] md:block sm:max-w-[560px] sm:rounded-[1.5rem]"
             >
               <div className="w-full rounded-2xl bg-white/80 p-3 backdrop-blur-xl sm:rounded-[1.45rem] sm:p-3.5">
                 <div className="flex flex-col gap-2 sm:flex-row">
@@ -445,7 +449,7 @@ export default function Hero() {
                                   Expert physiotherapy care
                                 </div>
 
-                                <div className="absolute bottom-12 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">
+                <div className="absolute bottom-12 left-4 right-4 hidden rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl md:block">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-semibold text-white">Dr.Nishmitha.R</p>

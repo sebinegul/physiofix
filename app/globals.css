@@ -246,6 +246,13 @@ h1, h2, h3, h4 {
     transition-duration: 0.01ms !important;
   }
   html { scroll-behavior: auto; }
+  /* Keep the mobile ticker moving — iOS Low Power Mode / Reduce Motion
+     would otherwise freeze it after a single 0.01ms frame. */
+  .hero-marquee-track,
+  .hero-marquee-track * {
+    animation-duration: 18s !important;
+    animation-iteration-count: infinite !important;
+  }
 }
 
 /* Custom scrollbar for modals */
@@ -280,13 +287,27 @@ h1, h2, h3, h4 {
   animation-play-state: paused;
 }
 
-/* Hero marquee animation (mobile) */
+/* Hero marquee — left to right, two equal groups so -50% loops cleanly.
+   translate3d + shrink-0 avoids iOS Safari failing on % transforms of max-content. */
 @keyframes hero-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
 }
-.animate-hero-marquee {
-  animation: hero-marquee 16s linear infinite;
+.hero-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: hero-marquee 18s linear infinite;
+  -webkit-animation: hero-marquee 18s linear infinite;
+}
+.hero-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 /* Custom select styling */
