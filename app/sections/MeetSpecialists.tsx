@@ -30,14 +30,14 @@ export default function MeetSpecialists() {
           <ScrollReveal direction="left">
             <div className="group relative overflow-hidden rounded-2xl sm:rounded-[2rem] border border-blue-100/60 bg-white/70 p-4 shadow-[0_24px_80px_rgba(15,23,42,0.1)] backdrop-blur-xl">
               <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-blue-400/20 blur-3xl transition group-hover:bg-blue-400/30" />
-              <div className="relative h-[320px] sm:h-[400px] lg:h-[480px] overflow-hidden rounded-xl sm:rounded-[1.5rem]">
-                <Image
-                  src="/physio-fix-dr-nishmitha.jpeg"
-                  alt="Dr.Nishmitha.R"
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-contain object-center bg-slate-50 transition duration-700 group-hover:scale-105"
-                />
+              <div className="relative aspect-[997/1182] w-full max-w-[320px] mx-auto sm:max-w-[400px] lg:max-w-[480px] overflow-hidden rounded-xl sm:rounded-[1.5rem]">
+                              <Image
+                                src="/physio-fix-dr-nishmitha.jpeg"
+                                alt="Dr.Nishmitha.R"
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                className="object-cover object-center transition duration-700 group-hover:scale-105"
+                              />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
                 <span className="absolute left-4 top-4 rounded-full bg-slate-950/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
                   Lead Clinician

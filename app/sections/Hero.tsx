@@ -38,17 +38,16 @@ const DEFAULT_CONTENT = {
 
 export default function Hero() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [showResults, setShowResults] = useState(false);
-  const [searching, setSearching] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
-  const [content, setContent] = useState<ContentMap>(DEFAULT_CONTENT);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [heroSlide, setHeroSlide] = useState(0);
-  const [nextSlot, setNextSlot] = useState<string | null>(null);
+    const [results, setResults] = useState<SearchResult[]>([]);
+    const [showResults, setShowResults] = useState(false);
+    const [searching, setSearching] = useState(false);
+    const prefersReducedMotion = useReducedMotion();
+    const [content, setContent] = useState<ContentMap>(DEFAULT_CONTENT);
+    const searchRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [heroSlide, setHeroSlide] = useState(0);
 
-  // Auto-rotate hero carousel — pauses when tab is hidden and respects reduced motion
+    // Auto-rotate hero carousel — pauses when tab is hidden and respects reduced motion
   useEffect(() => {
     if (prefersReducedMotion) return;
     let timer: ReturnType<typeof setInterval> | null = null;
@@ -81,31 +80,9 @@ export default function Hero() {
         if (d?.data) setContent((prev) => ({ ...prev, ...d.data }));
       })
       .catch(() => {});
-  }, []);
+        }, []);
 
-  // Live "Next slot" — computed server-side (working hours + bookings + doctor roster),
-  // refreshed every minute so it stays accurate as the day progresses.
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => {
-      fetch("/api/slots/next")
-        .then((r) => (r.ok ? r.json() : null))
-        .then((d) => {
-          if (!cancelled) setNextSlot(d?.data?.next?.label ?? null);
-        })
-        .catch(() => {
-          if (!cancelled) setNextSlot(null);
-        });
-    };
-    load();
-    const timer = setInterval(load, 60_000);
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, []);
-
-  // Debounced search with abort on stale requests
+        // Debounced search with abort on stale requests
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
@@ -463,17 +440,12 @@ export default function Hero() {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
 
-                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur">
-                  <PlayCircle className="h-4 w-4" />
-                  Expert physiotherapy care
-                </div>
-
-                <div className="animate-float-delayed absolute right-4 top-2 sm:top-6 rounded-xl border border-white/20 bg-white/90 p-3 shadow-lg z-20">
-                                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400">Next slot</p>
-                                  <p className="mt-0.5 text-base font-bold text-slate-900">{nextSlot ?? "Mon–Sat · 9am–7pm"}</p>
+                                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur">
+                                  <PlayCircle className="h-4 w-4" />
+                                  Expert physiotherapy care
                                 </div>
 
-                <div className="absolute bottom-12 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">
+                                <div className="absolute bottom-12 left-4 right-4 rounded-2xl border border-white/20 bg-slate-950/65 p-4 backdrop-blur-xl">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-semibold text-white">Dr.Nishmitha.R</p>
