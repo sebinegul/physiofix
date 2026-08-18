@@ -168,7 +168,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="relative overflow-x-hidden pt-24 pb-12 sm:pt-28 sm:pb-20 md:pt-36 md:pb-28">
+    <section className="relative overflow-x-clip pt-24 pb-16 sm:pt-28 sm:pb-24 md:pt-36 md:pb-28 lg:pb-32">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(37,99,235,0.16),_transparent_35%)]" />
 
       {!prefersReducedMotion && (
@@ -437,7 +437,7 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          <ScrollReveal direction="right" className="relative mt-8 lg:mt-0">
+          <ScrollReveal direction="right" className="relative z-10 mt-8 lg:mt-0">
             <div className="absolute inset-y-6 left-8 right-0 rounded-2xl bg-gradient-to-br from-blue-100 via-cyan-50 to-blue-50 sm:rounded-[2rem]" />
             <div className="animate-float relative z-10 w-full rounded-2xl sm:rounded-[2rem] border border-white/70 bg-white/70 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.14)] backdrop-blur-xl">
               <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] overflow-hidden rounded-xl sm:rounded-[1.5rem]">
@@ -463,12 +463,12 @@ export default function Hero() {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
 
-                <div className="absolute left-4 top-4 hidden items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur sm:flex">
+                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white backdrop-blur">
                   <PlayCircle className="h-4 w-4" />
                   Expert physiotherapy care
                 </div>
 
-                <div className="animate-float-delayed absolute right-4 top-4 rounded-2xl border border-white/20 bg-white/90 p-4 shadow-xl">
+                <div className="animate-float-delayed absolute right-4 top-4 sm:top-16 rounded-2xl border border-white/20 bg-white/90 p-4 shadow-xl z-20">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Next slot</p>
                   <p className="mt-1 text-xl font-bold text-slate-900">{nextSlot ?? "Mon–Sat · 9am–7pm"}</p>
                 </div>
