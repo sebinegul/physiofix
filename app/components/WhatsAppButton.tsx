@@ -1,9 +1,16 @@
 "use client";
 
 export default function WhatsAppButton() {
+  const message = `*🩺 Appointment Request – PHYSIO FIX*
+
+Hello, I would like to book an appointment.
+Please share the available time slots and location details.
+
+Thank you!`;
+  const encodedMessage = encodeURIComponent(message);
   return (
     <a
-      href="https://wa.me/918151912525?text=Hi%2C%20I%20need%20physiotherapy%20consultation"
+      href={`https://wa.me/918151912525?text=${encodedMessage}`}
       target="_blank"
       rel="noopener noreferrer"
       className="group fixed bottom-6 right-6 z-50 flex items-center"
