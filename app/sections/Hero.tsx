@@ -468,7 +468,7 @@ export default function Hero() {
                   Expert physiotherapy care
                 </div>
 
-                <div className="animate-float-delayed absolute right-4 top-4 sm:top-16 rounded-xl border border-white/20 bg-white/90 p-3 shadow-lg z-20">
+                <div className="animate-float-delayed absolute right-4 top-2 sm:top-6 rounded-xl border border-white/20 bg-white/90 p-3 shadow-lg z-20">
                                   <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400">Next slot</p>
                                   <p className="mt-0.5 text-base font-bold text-slate-900">{nextSlot ?? "Mon–Sat · 9am–7pm"}</p>
                                 </div>
