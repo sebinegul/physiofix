@@ -7,7 +7,7 @@ import "./globals.css";
 import SiteShell from "./components/SiteShell";
 import WhatsAppButton from "./components/WhatsAppButton";
 import ScrollProgress from "./components/ui/ScrollProgress";
-import JsonLd from "./components/JsonLd";
+import { CLINIC_ADDRESS, CLINIC_EMAIL, CLINIC_MAPS_LINK, CLINIC_PHONE } from "@/lib/clinic";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,8 +54,21 @@ export const metadata: Metadata = {
     "best physiotherapist JP Nagar",
     "Dr Nishmitha physiotherapist",
   ],
-  alternates: {
-    canonical: "https://physiofix.net/",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  verification: {
+    google:
+      process.env.GOOGLE_SITE_VERIFICATION ||
+      "y4faTVzIp578_bgNmTiFMLvacqdus5qmOjJ63eLcNdo",
   },
   openGraph: {
     title: "PhysioFix | Best Physiotherapy in JP Nagar, Bangalore",
@@ -97,7 +110,6 @@ export const metadata: Metadata = {
     ],
   },
   other: {
-    "google-site-verification": "",
     "format-detection": "telephone=yes",
   },
 };
@@ -119,20 +131,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const content = await getContactContent();
-  const phone = content.contact_phone || "+91-8151912525";
-  const email = content.contact_email || "physiofix2525@gmail.com";
-  const address = content.contact_address || "30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076";
+  const phone = content.contact_phone || CLINIC_PHONE;
+  const email = content.contact_email || CLINIC_EMAIL;
+  const address = content.contact_address || CLINIC_ADDRESS;
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${dmSans.variable}`}>
+    <html lang="en-IN" className={`${inter.variable} ${plusJakarta.variable} ${dmSans.variable}`}>
       <head>
-              <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
               <link rel="manifest" href="/site.webmanifest" />
               <meta name="theme-color" content="#3b82f6" />
               <meta name="geo.region" content="IN-KA" />
-              <meta name="geo.placename" content="Bangalore" />
+              <meta name="geo.placename" content="Bengaluru" />
               <meta name="geo.position" content="12.8924;77.5928" />
               <meta name="ICBM" content="12.8924, 77.5928" />
-              <JsonLd />
               {/* Google Analytics (GA4) */}
               {process.env.NEXT_PUBLIC_GA_ID && (
                 <>
@@ -218,7 +228,7 @@ export default async function RootLayout({
                 { "@type": "Neighborhood", name: "HSR Layout" },
                 { "@type": "Neighborhood", name: "BTM Layout" },
               ],
-              hasMap: "https://maps.google.com/?q=PhysioFix+JP+Nagar+Bangalore",
+              hasMap: CLINIC_MAPS_LINK,
               priceRange: "$$",
               openingHoursSpecification: [
                 {
@@ -233,6 +243,9 @@ export default async function RootLayout({
                 "https://www.instagram.com/physiofix",
                 "https://www.linkedin.com/company/physiofix",
               ],
+              employee: {
+                "@id": "https://physiofix.net/#physician",
+              },
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: "4.9",
@@ -243,7 +256,6 @@ export default async function RootLayout({
           }}
         />
 
-        {/* Website structured data */}
         <Script
           id="physiofix-website-schema"
           type="application/ld+json"
@@ -253,29 +265,35 @@ export default async function RootLayout({
               "@type": "WebSite",
               name: "PhysioFix",
               url: "https://physiofix.net",
-              potentialAction: {
-                "@type": "SearchAction",
-                target: "https://physiofix.net/?q={search_term_string}",
-                "query-input": "required name=search_term_string",
-              },
+              publisher: { "@id": "https://physiofix.net/#organization" },
             }),
           }}
         />
 
-        {/* BreadcrumbList structured data */}
         <Script
-          id="physiofix-breadcrumb-schema"
+          id="physiofix-physician-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: safeJsonLd({
               "@context": "https://schema.org",
-              "@type": "BreadcrumbList",
-              itemListElement: [
-                { "@type": "ListItem", position: 1, name: "Home", item: "https://physiofix.net/" },
-                { "@type": "ListItem", position: 2, name: "About", item: "https://physiofix.net/about" },
-                { "@type": "ListItem", position: 3, name: "Services", item: "https://physiofix.net/services" },
-                { "@type": "ListItem", position: 4, name: "Contact", item: "https://physiofix.net/contact" },
-              ],
+              "@type": "Physician",
+              "@id": "https://physiofix.net/#physician",
+              name: "Dr. Nishmitha R",
+              honorificPrefix: "Dr.",
+              jobTitle: "Sports Science Physiotherapist",
+              description:
+                "MPT Sports Science physiotherapist with over 5 years of experience in orthopaedic, sports, and neurological rehabilitation in JP Nagar, Bangalore.",
+              image: "https://physiofix.net/physio-fix-dr-nishmitha.jpeg",
+              worksFor: { "@id": "https://physiofix.net/#organization" },
+              medicalSpecialty: ["Physiotherapy", "Sports Medicine", "Rehabilitation"],
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: address,
+                addressLocality: "JP Nagar 8th Phase",
+                addressRegion: "Karnataka",
+                postalCode: "560076",
+                addressCountry: "IN",
+              },
             }),
           }}
         />
@@ -302,7 +320,7 @@ export default async function RootLayout({
                   name: "Where is PhysioFix located in Bangalore?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "PhysioFix is located at 30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bangalore – 560076.",
+                    text: `PhysioFix is located at ${address}.`,
                   },
                 },
                 {
@@ -326,7 +344,7 @@ export default async function RootLayout({
                   name: "What are the clinic hours at PhysioFix?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "PhysioFix is open Monday to Saturday from 9:00 AM to 7:00 PM. Contact +91-8151912525 to book an appointment.",
+                    text: `PhysioFix is open Monday to Saturday from 9:00 AM to 7:00 PM. Contact ${phone} to book an appointment.`,
                   },
                 },
               ],

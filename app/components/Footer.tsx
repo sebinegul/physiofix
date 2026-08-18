@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import Image from "next/image";
 import { Activity, Facebook, Twitter, Instagram, Linkedin, Youtube, MapPin, Phone, Mail } from "lucide-react";
+import { CLINIC_ADDRESS } from "@/lib/clinic";
 import ScrollReveal from "../components/ui/ScrollReveal";
 
 const columns = [
@@ -60,7 +61,7 @@ export default function Footer() {
             <div className="mb-5 space-y-2 text-sm text-slate-400">
               <div className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-400" />
-                <span>30, Sai Krupa Complex, JP Nagar 8th Phase, Bangalore – 560076</span>
+                <span>{CLINIC_ADDRESS}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-blue-400" />

@@ -76,7 +76,7 @@ export function getWelcomeEmailTemplate({
           <tr>
             <td style="padding:24px 32px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;">
-                PhysioFix | JP Nagar 8th Phase, Bangalore
+                PhysioFix | 30, Sai Krupa Complex, JP Nagar 8th Phase, Bengaluru 560076
               </p>
               <p style="margin:0;color:#94a3b8;font-size:12px;">
                 Questions? Reply to this email or call <a href="tel:+918151912525" style="color:#3b82f6;text-decoration:none;">+91-8151912525</a>
@@ -292,7 +292,7 @@ export function getAppointmentConfirmationTemplate({
           <tr>
             <td style="padding:24px 32px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;">
-                PhysioFix | JP Nagar 8th Phase, Bangalore
+                PhysioFix | 30, Sai Krupa Complex, JP Nagar 8th Phase, Bengaluru 560076
               </p>
               <p style="margin:0;color:#94a3b8;font-size:12px;">
                 Questions? Reply to this email or call <a href="tel:+918151912525" style="color:#0284c7;text-decoration:none;">+91-8151912525</a>
@@ -485,7 +485,7 @@ export function getResetPasswordTemplate({
           <tr>
             <td style="padding:24px 32px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;">
-                PhysioFix | JP Nagar 8th Phase, Bangalore
+                PhysioFix | 30, Sai Krupa Complex, JP Nagar 8th Phase, Bengaluru 560076
               </p>
               <p style="margin:0;color:#94a3b8;font-size:12px;">
                 Questions? Reply to this email or call <a href="tel:+918****2525" style="color:#3b82f6;text-decoration:none;">+91-8151912525</a>
@@ -598,7 +598,7 @@ export function getConsultationSummaryTemplate({
           <tr>
             <td style="padding:24px 32px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;">
-                PhysioFix | JP Nagar 8th Phase, Bangalore
+                PhysioFix | 30, Sai Krupa Complex, JP Nagar 8th Phase, Bengaluru 560076
               </p>
               <p style="margin:0;color:#94a3b8;font-size:12px;">
                 Questions? Reply to this email or call <a href="tel:+918151912525" style="color:#0284c7;text-decoration:none;">+91-8151912525</a>

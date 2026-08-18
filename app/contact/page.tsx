@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import PageTransition from '../components/PageTransition';
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
-import { Sparkles, MapPin, Mail, Phone, Send, CheckCircle2, ArrowRight } from "lucide-react";
+import { Sparkles, MapPin, Mail, Phone, Send, CheckCircle2, ArrowRight, ExternalLink } from "lucide-react";
 import { useBookVisit } from "../contexts/BookVisitContext";
+import { CLINIC_ADDRESS, CLINIC_EMAIL, CLINIC_MAPS_EMBED, CLINIC_MAPS_LINK, CLINIC_PHONE } from "@/lib/clinic";
 
 interface ContactContent {
   contact_address?: string;
@@ -13,9 +14,9 @@ interface ContactContent {
 }
 
 const DEFAULT_CONTACT = {
-  contact_address: '30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076',
-  contact_phone: '+91-8151912525',
-  contact_email: 'physiofix2525@gmail.com',
+  contact_address: CLINIC_ADDRESS,
+  contact_phone: CLINIC_PHONE,
+  contact_email: CLINIC_EMAIL,
 } as const;
 
 export default function ContactPage() {
@@ -234,6 +235,36 @@ export default function ContactPage() {
               </div>
             </ScrollReveal>
           </div>
+
+          <ScrollReveal className="mt-6">
+            <div className="section-shell overflow-hidden p-2 sm:p-3">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-3 pt-2 sm:px-4">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Find the clinic</p>
+                  <p className="text-sm text-slate-600">JP Nagar 8th Phase, Bengaluru</p>
+                </div>
+                <a
+                  href={CLINIC_MAPS_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/80 bg-white/80 px-4 py-2 text-xs font-semibold text-blue-700 transition hover:border-blue-400 hover:bg-blue-50"
+                >
+                  Open in Google Maps
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+              <div className="relative min-h-[280px] overflow-hidden rounded-xl sm:min-h-[380px] sm:rounded-2xl">
+                <iframe
+                  title="PhysioFix clinic location on Google Maps"
+                  src={CLINIC_MAPS_EMBED}
+                  className="absolute inset-0 h-full w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </ScrollReveal>
         </section>
       </main>
     </PageTransition>

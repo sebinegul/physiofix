@@ -8,6 +8,7 @@ import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
 import PageTransition from "../components/PageTransition";
 import { useBookVisit } from "@/app/contexts/BookVisitContext";
+import { safeJsonLd } from "@/lib/json-ld";
 
 interface Benefit {
   title: string;
@@ -238,6 +239,26 @@ export default function SpecializationLayout({
               </div>
             </div>
           </section>
+        )}
+
+        {faqs.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: safeJsonLd({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faqs.map((faq) => ({
+                  "@type": "Question",
+                  name: faq.question,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: faq.answer,
+                  },
+                })),
+              }),
+            }}
+          />
         )}
 
         {/* FAQs */}

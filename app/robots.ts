@@ -5,6 +5,14 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: [
+        "/dashboard",
+        "/patient",
+        "/login",
+        "/forgot-password",
+        "/reset-password",
+        "/api/",
+      ],
     },
     sitemap: "https://physiofix.net/sitemap.xml",
     host: "https://physiofix.net",

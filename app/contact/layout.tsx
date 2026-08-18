@@ -3,7 +3,7 @@
 export const metadata: Metadata = {
   title: "Contact & Book Appointment | PhysioFix",
   description:
-    "Book your physiotherapy appointment at PhysioFix, JP Nagar 8th Phase, Bangalore. Call +91-8151912525 or visit 30, Sai Krupa Complex.",
+    "Book your physiotherapy appointment at PhysioFix, 30 Sai Krupa Complex, JP Nagar 8th Phase, Bengaluru. Call +91-8151912525.",
   alternates: {
     canonical: "https://physiofix.net/contact",
   },

@@ -83,7 +83,7 @@ export default function MeetSpecialists() {
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-1 text-slate-500">
                   <MapPin className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm">JP Nagar, Bangalore</span>
+                  <span className="text-sm">JP Nagar 8th Phase, Bengaluru</span>
                 </div>
                 <Link href="/about" className="btn-primary !px-5 !py-2.5 !text-sm">
                   Know More <ArrowRight className="h-4 w-4" />

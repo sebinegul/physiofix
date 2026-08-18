@@ -242,7 +242,7 @@ async function main() {
       { key: "about_text", value: "PhysioFix is a leading home physiotherapy service providing expert care across India. Our certified physiotherapists bring professional treatment directly to your doorstep." },
       { key: "contact_email", value: "info@physiofix.com" },
       { key: "contact_phone", value: "+91-8151912525" },
-      { key: "contact_address", value: "JP Nagar 8th Phase, Bangalore, Karnataka, India" },
+      { key: "contact_address", value: "30, Sai Krupa Complex, Subba Raju Layout, BK Circle, Kothanur Dinne Main Road, JP Nagar 8th Phase, Bengaluru – 560076" },
     ];
 
     for (const item of content) {
