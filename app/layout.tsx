@@ -125,15 +125,36 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable} ${dmSans.variable}`}>
       <head>
-        <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#3b82f6" />
-        <meta name="geo.region" content="IN-KA" />
-        <meta name="geo.placename" content="Bangalore" />
-        <meta name="geo.position" content="12.8924;77.5928" />
-        <meta name="ICBM" content="12.8924, 77.5928" />
-        <JsonLd />
-      </head>
+              <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+              <link rel="manifest" href="/site.webmanifest" />
+              <meta name="theme-color" content="#3b82f6" />
+              <meta name="geo.region" content="IN-KA" />
+              <meta name="geo.placename" content="Bangalore" />
+              <meta name="geo.position" content="12.8924;77.5928" />
+              <meta name="ICBM" content="12.8924, 77.5928" />
+              <JsonLd />
+              {/* Google Analytics (GA4) */}
+              {process.env.NEXT_PUBLIC_GA_ID && (
+                <>
+                  <Script
+                    strategy="afterInteractive"
+                    src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+                  />
+                  <Script
+                    id="google-analytics"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{
+                      __html: `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+                      `,
+                    }}
+                  />
+                </>
+              )}
+            </head>
       <body>
         {/* Film grain noise overlay */}
         <div
