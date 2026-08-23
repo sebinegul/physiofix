@@ -15,6 +15,5 @@ export default function robots(): MetadataRoute.Robots {
       ],
     },
     sitemap: "https://physiofix.net/sitemap.xml",
-    host: "https://physiofix.net",
   };
 }
