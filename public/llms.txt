@@ -1,0 +1,53 @@
+# PhysioFix
+
+> PhysioFix is a physiotherapy clinic in JP Nagar, Bangalore, led by Dr.Nishmitha.R (MPT), offering sports rehab, neuro rehabilitation, post-surgery recovery, chiropractic care, posture correction and home physiotherapy across Bangalore.
+
+PhysioFix helps people recover from pain and injury with evidence-based physiotherapy. The clinic treats back pain, neck pain, knee pain, frozen shoulder, sciatica, plantar fasciitis, sports injuries and post-surgical rehabilitation for patients in JP Nagar and greater Bangalore.
+
+## Site
+
+- [Home](https://physiofix.net/): PhysioFix clinic overview, services and booking
+- [About](https://physiofix.net/about): About Dr.Nishmitha.R and the clinic
+- [Services](https://physiofix.net/services): Full list of treatments offered
+- [Contact](https://physiofix.net/contact): Clinic address, phone and booking form
+- [Blog](https://physiofix.net/blog): Physiotherapy, injury recovery and wellness articles
+
+## Specializations
+
+- [Chiropractic Care](https://physiofix.net/specialization/chiropracticCare): Spinal and joint alignment
+- [Manual Therapy](https://physiofix.net/specialization/manualTherapy): Hands-on joint and soft-tissue treatment
+- [Cupping Therapy](https://physiofix.net/specialization/cuppingTherapy): Myofascial decompression therapy
+- [Electrotherapy](https://physiofix.net/specialization/electrotherapy): TENS, IFT and ultrasound therapy
+- [Physiotherapy Assessment](https://physiofix.net/specialization/physiotherapyAssessment): Comprehensive movement evaluation
+- [Bone Alignment](https://physiofix.net/specialization/boneAlignment): Structural alignment therapy
+- [Soft Tissue Manipulation](https://physiofix.net/specialization/softTissueManipulation): Muscle and fascia release
+- [Neuro Rehabilitation](https://physiofix.net/specialization/neuroRehabilitation): Stroke and neurological recovery
+- [Posture Correction](https://physiofix.net/specialization/postureCorrection): Ergonomic and postural retraining
+- [Post-Surgery Rehabilitation](https://physiofix.net/specialization/postSurgeryRehabilitation): Structured surgical recovery programs
+- [Home Physiotherapy](https://physiofix.net/specialization/homePhysio): At-home treatment visits in Bangalore
+- [Geriatric Physiotherapy](https://physiofix.net/specialization/geriatricPhysio): Care for older adults
+- [Sports Physiotherapy](https://physiofix.net/specialization/sportsPhysio): Injury prevention and return-to-sport
+
+## Blog Posts
+
+- [Understanding Back Pain: Causes and Prevention](https://physiofix.net/blog/understanding-back-pain-causes-and-prevention)
+- [5 Stretches to Relieve Neck Pain from Desk Work](https://physiofix.net/blog/5-stretches-to-relieve-neck-pain-from-desk-work)
+- [Understanding Frozen Shoulder: Symptoms, Stages, and Treatment](https://physiofix.net/blog/understanding-frozen-shoulder-symptoms-stages-and-treatment)
+- [The Runner's Knee Guide: Prevention, Recovery, and When to Worry](https://physiofix.net/blog/the-runner-s-knee-guide-prevention-recovery-and-when-to-worry)
+- [Physiotherapy After Knee Replacement: What Your Recovery Looks Like](https://physiofix.net/blog/physiotherapy-after-knee-replacement-what-your-recovery-looks-like)
+- [The Hidden Link Between Stress and Chronic Pain](https://physiofix.net/blog/the-hidden-link-between-stress-and-chronic-pain)
+- [Sciatica Pain Relief: Stretches, Exercises, and When to See a Physiotherapist](https://physiofix.net/blog/sciatica-pain-relief-stretches-exercises-and-when-to-see-a-physiotherapist)
+- [Plantar Fasciitis: Why Your Heel Hurts Every Morning and What to Do About It](https://physiofix.net/blog/plantar-fasciitis-why-your-heel-hurts-every-morning-and-what-to-do-about-it)
+- [5 Signs You Need Physiotherapy After a Sports Injury](https://physiofix.net/blog/5-signs-you-need-physiotherapy-after-sports-injury)
+- [Post-Surgery Rehabilitation: What to Expect at Each Phase](https://physiofix.net/blog/post-surgery-rehabilitation-phases)
+- [Desk Job Neck Pain: 5 Exercises You Can Do at Your Workstation](https://physiofix.net/blog/desk-job-neck-pain-exercises-workstation)
+- [Knee Osteoarthritis: Exercises, Pain Relief, and When to See a Physiotherapist](https://physiofix.net/blog/knee-osteoarthritis-exercises-pain-relief-and-when-to-see-a-physiotherapist)
+- [Ankle Sprain Recovery: Exercises, Timeline, and When to See a Physiotherapist](https://physiofix.net/blog/ankle-sprain-recovery-exercises-timeline-and-when-to-see-a-physiotherapist)
+- [Carpal Tunnel Syndrome: Symptoms, Exercises, and Wrist Pain Relief](https://physiofix.net/blog/carpal-tunnel-syndrome-symptoms-exercises-and-wrist-pain-relief)
+- [Back Pain During Pregnancy: Safe Exercises and Relief Tips](https://physiofix.net/blog/back-pain-during-pregnancy-safe-exercises-and-relief-tips)
+
+## Contact
+
+- Phone: +91-8151912525
+- Email: physiofix2525@gmail.com
+- Location: JP Nagar, Bangalore, India
