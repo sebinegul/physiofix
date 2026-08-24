@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact & Book Appointment | PhysioFix",
+  title: "Contact & Book Appointment",
   description:
     "Book your physiotherapy appointment at PhysioFix, 30 Sai Krupa Complex, JP Nagar 8th Phase, Bengaluru. Call +91-8151912525.",
   alternates: {

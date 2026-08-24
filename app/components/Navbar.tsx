@@ -142,7 +142,7 @@ export default function Navbar() {
 
         <div className="relative z-10 hidden items-center gap-3 md:flex">
           <a
-            href="tel:+918****2525"
+            href="tel:+918151912525"
             className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
           >
             <Phone className="h-3.5 w-3.5" />
@@ -297,7 +297,7 @@ export default function Navbar() {
               </motion.div>
             ))}
             <div className="mt-3 flex gap-3 p-1">
-              <a href="tel:+918****2525" className="flex-1 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200">
+              <a href="tel:+918151912525" className="flex-1 rounded-xl border border-white/15 px-3 py-3 text-center text-sm font-semibold text-slate-200">
                 Call now
               </a>
               {isLoggedIn ? (

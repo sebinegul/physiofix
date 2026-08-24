@@ -261,6 +261,30 @@ export default function SpecializationLayout({
           />
         )}
 
+        {/* Service structured data — server-rendered so crawlers see it in raw HTML */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: safeJsonLd({
+              "@context": "https://schema.org",
+              "@type": "Service",
+              name: title,
+              description,
+              serviceType: title,
+              provider: { "@id": "https://physiofix.net/#organization" },
+              areaServed: [
+                { "@type": "City", name: "Bangalore" },
+                { "@type": "Neighborhood", name: "JP Nagar" },
+                { "@type": "Neighborhood", name: "Kothanur" },
+              ],
+              availableChannel: {
+                "@type": "ServiceChannel",
+                serviceUrl: "https://physiofix.net/contact",
+              },
+            }),
+          }}
+        />
+
         {/* FAQs */}
         {faqs.length > 0 && (
           <section className="py-16 md:py-24">

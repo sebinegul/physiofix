@@ -53,6 +53,13 @@ export const metadata: Metadata = {
     "physiotherapist near me Bangalore",
     "best physiotherapist JP Nagar",
     "Dr Nishmitha physiotherapist",
+    "physiotherapy Kothanur",
+    "physiotherapist Kothanur Bangalore",
+    "sports injury treatment Bangalore",
+    "cupping therapy JP Nagar",
+    "cupping therapy Bangalore",
+    "rehabilitation center JP Nagar",
+    "physiotherapy clinic near me",
   ],
   robots: {
     index: true,
@@ -182,8 +189,10 @@ export default async function RootLayout({
 
         <WhatsAppButton />
 
-        {/* LocalBusiness + MedicalBusiness structured data */}
-        <Script
+        {/* LocalBusiness + MedicalBusiness structured data.
+            NOTE: plain <script>, NOT next/script <Script> — next/script injects
+            after hydration, so crawlers fetching raw HTML see NO structured data. */}
+        <script
           id="physiofix-structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -246,17 +255,11 @@ export default async function RootLayout({
               employee: {
                 "@id": "https://physiofix.net/#physician",
               },
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: "4.9",
-                reviewCount: "250",
-                bestRating: "5",
-              },
             }),
           }}
         />
 
-        <Script
+        <script
           id="physiofix-website-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -270,7 +273,7 @@ export default async function RootLayout({
           }}
         />
 
-        <Script
+        <script
           id="physiofix-physician-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -299,7 +302,7 @@ export default async function RootLayout({
         />
 
         {/* FAQ structured data */}
-        <Script
+        <script
           id="physiofix-faq-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
