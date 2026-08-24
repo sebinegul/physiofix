@@ -241,7 +241,23 @@ export default function SpecializationLayout({
           </section>
         )}
 
-        {faqs.length > 0 && (
+        {/* BreadcrumbList schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: safeJsonLd({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://physiofix.net" },
+                { "@type": "ListItem", position: 2, name: "Services", item: "https://physiofix.net/services" },
+                { "@type": "ListItem", position: 3, name: title, item: `https://physiofix.net/services` },
+              ],
+            }),
+          }}
+        />
+
+{faqs.length > 0 && (
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{

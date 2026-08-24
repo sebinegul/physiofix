@@ -38,15 +38,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       publishedTime: post.createdAt.toISOString(),
       authors: [post.author],
-      images: post.coverImage
-        ? [{ url: post.coverImage, alt: post.title }]
-        : undefined,
+      // posts without a coverImage fall back to the dynamic
+      // opengraph-image.tsx route rendered by Next.js
+      images: [{ url: post.coverImage || `${siteUrl}/blog/${post.slug}/opengraph-image`, alt: post.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt || undefined,
-      images: post.coverImage ? [post.coverImage] : undefined,
+      images: [post.coverImage || `${siteUrl}/blog/${post.slug}/opengraph-image`],
     },
   };
 }
@@ -166,6 +166,20 @@ export default async function BlogPostPage({ params }: Props) {
       <PageTransition>
       <div className="relative min-h-screen bg-[#0b0d12]">
         {/* JSON-LD */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: safeJsonLd({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://physiofix.net" },
+                { "@type": "ListItem", position: 2, name: "Blog", item: "https://physiofix.net/blog" },
+                { "@type": "ListItem", position: 3, name: post.title, item: `https://physiofix.net/blog/${post.slug}` },
+              ],
+            }),
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
