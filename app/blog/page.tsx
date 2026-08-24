@@ -65,15 +65,14 @@ async function getPublishedPosts(): Promise<BlogPost[]> {
 export const revalidate = 3600;
 
 // Distinct categories for filter
+// Category tabs mirror the actual `category` values stored in the BlogPost
+// table so filtering matches. Keep in sync when new categories are introduced.
 const ALL_CATEGORIES = [
   { slug: "all", label: "All" },
-  { slug: "sports-injury", label: "Sports" },
-  { slug: "rehabilitation", label: "Rehab" },
-  { slug: "joint-pain", label: "Joint Pain" },
-  { slug: "neck-back-pain", label: "Neck & Back" },
+  { slug: "conditions", label: "Conditions" },
   { slug: "wellness", label: "Wellness" },
-  { slug: "fitness", label: "Fitness" },
-  { slug: "posture-ergonomics", label: "Posture" },
+  { slug: "sports", label: "Sports" },
+  { slug: "post-surgery", label: "Post-Surgery" },
 ];
 
 export default async function BlogPage() {
