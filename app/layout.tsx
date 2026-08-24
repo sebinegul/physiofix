@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Inter, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "./globals.css";
 import SiteShell from "./components/SiteShell";
+import LazyGA from "./components/LazyGA";
 import WhatsAppButton from "./components/WhatsAppButton";
 import ScrollProgress from "./components/ui/ScrollProgress";
 import { CLINIC_ADDRESS, CLINIC_EMAIL, CLINIC_MAPS_LINK, CLINIC_PHONE } from "@/lib/clinic";
@@ -150,27 +151,7 @@ export default async function RootLayout({
               <meta name="geo.placename" content="Bengaluru" />
               <meta name="geo.position" content="12.8924;77.5928" />
               <meta name="ICBM" content="12.8924, 77.5928" />
-              {/* Google Analytics (GA4) */}
-              {process.env.NEXT_PUBLIC_GA_ID && (
-                <>
-                  <Script
-                    strategy="afterInteractive"
-                    src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-                  />
-                  <Script
-                    id="google-analytics"
-                    strategy="afterInteractive"
-                    dangerouslySetInnerHTML={{
-                      __html: `
-                        window.dataLayer = window.dataLayer || [];
-                        function gtag(){dataLayer.push(arguments);}
-                        gtag('js', new Date());
-                        gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
-                      `,
-                    }}
-                  />
-                </>
-              )}
+              {/* GA4 moved to <LazyGA /> client component (lazyOnload) */}
             </head>
       <body>
         {/* Film grain noise overlay */}
@@ -184,6 +165,7 @@ export default async function RootLayout({
         />
 
         <ScrollProgress />
+        <LazyGA />
 
         <SiteShell>{children}</SiteShell>
 
