@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, MapPin, Phone, Clock, CheckCircle2, Home as HomeIcon, Stethoscope, Accessibility } from "lucide-react";
+import { ArrowRight, MapPin, Phone, Clock, CheckCircle2, Home as HomeIcon, Accessibility } from "lucide-react";
 import PageTransition from "../components/PageTransition";
 import ScrollReveal from "../components/ui/ScrollReveal";
 import GradientText from "../components/ui/GradientText";
@@ -178,30 +178,45 @@ export default function PhysiotherapyKothanurPage() {
         {/* Conditions + location info */}
         <section className="bg-white/70 py-16 backdrop-blur md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-12 lg:grid-cols-2">
+            <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
               <ScrollReveal>
-                <h2 className="text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl">
-                  Conditions we treat every day
+                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
+                  What We Treat
+                </p>
+                <h2 className="text-2xl font-black leading-[1.15] tracking-tight text-slate-950 sm:text-3xl md:text-4xl">
+                  Conditions we treat <GradientText>every day</GradientText>
                 </h2>
-                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                <ul className="mt-8 grid gap-x-6 gap-y-3 sm:grid-cols-2">
                   {conditions.map((c) => (
-                    <li key={c} className="flex items-center gap-2 text-sm text-slate-700">
-                      <Stethoscope className="h-4 w-4 shrink-0 text-blue-500" />
+                    <li
+                      key={c}
+                      className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 text-sm font-medium text-slate-800 shadow-[0_1px_4px_rgba(15,23,42,0.03)]"
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </span>
                       {c}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-8 space-y-4 text-sm leading-7 text-slate-600">
-                  <p>
-                    Our clinic sits on Kothanur Dinne Main Road at BK Circle, so patients
-                    from Kothanur, Subba Raju Layout and JP Nagar 8th Phase reach us within
-                    minutes. For those who prefer treatment at home, our therapists travel
-                    across these neighbourhoods.
+
+                <div className="mt-10 overflow-hidden rounded-2xl border border-blue-100/80 bg-gradient-to-br from-blue-50/80 to-indigo-50/50 p-6 sm:p-7">
+                  <h3 className="flex items-center gap-2.5 text-base font-bold text-slate-900">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
+                      <HomeIcon className="h-4.5 w-4.5" />
+                    </span>
+                    Coming from Kothanur? We&apos;re just around the corner.
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    Our clinic sits on Kothanur Dinne Main Road at BK Circle — patients from
+                    Kothanur, Subba Raju Layout and JP Nagar 8th Phase reach us within minutes.
                   </p>
-                  <p className="flex items-start gap-2">
-                    <Accessibility className="mt-1 h-4 w-4 shrink-0 text-blue-500" />
-                    Elderly or post-surgery? Ask about home physiotherapy visits — same
-                    hands-on care, zero travel.
+                  <p className="mt-4 flex items-start gap-2.5 rounded-xl bg-white/70 px-4 py-3 text-sm leading-6 text-slate-700">
+                    <Accessibility className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+                    <span>
+                      <strong className="font-semibold text-slate-900">Elderly or post-surgery?</strong>{" "}
+                      Ask about home physiotherapy visits — same hands-on care, zero travel.
+                    </span>
                   </p>
                 </div>
               </ScrollReveal>
