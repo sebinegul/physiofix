@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { MetadataRoute } from "next";
 
+// Revalidate hourly so newly published blog posts appear without a redeploy.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
  const baseUrl = 'https://physiofix.net';
   // Static pages

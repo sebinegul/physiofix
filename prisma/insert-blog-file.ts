@@ -1,24 +1,36 @@
 import "dotenv/config";
+import { readFileSync } from "fs";
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeonHttp } from "@prisma/adapter-neon";
-import { readFileSync } from "fs";
+
+// Usage: npx tsx prisma/insert-blog-file.ts drafts/YYYY-MM-DD.json
 
 const adapter = new PrismaNeonHttp(process.env.DATABASE_URL || "", {});
 const prisma = new PrismaClient({ adapter });
 
 function generateSlug(title: string): string {
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
-async function insertOne(data: any) {
+async function main() {
+  const file = process.argv[2];
+  if (!file) {
+    console.error("Pass draft JSON path as first argument");
+    process.exit(1);
+  }
+  const data = JSON.parse(readFileSync(file, "utf-8"));
   if (!data.title || !data.content) {
-    console.log(`SKIP invalid draft (missing title/content)`);
-    return;
+    console.error("title and content are required");
+    process.exit(1);
   }
   const slug = generateSlug(data.title);
   const existing = await prisma.blogPost.findUnique({ where: { slug } });
   if (existing) {
-    console.log(`SKIP: "${data.title}" already exists (slug: ${slug})`);
+    console.log(`SKIP (exists): ${slug}`);
+    await prisma.$disconnect();
     return;
   }
   const post = await prisma.blogPost.create({
@@ -36,18 +48,11 @@ async function insertOne(data: any) {
     },
   });
   console.log(`CREATED: ${post.title} -> /blog/${post.slug}`);
-}
-
-async function main() {
-  const file = process.argv[2];
-  if (!file) { console.error("Pass draft JSON path"); process.exit(1); }
-  const raw = JSON.parse(readFileSync(file, "utf-8"));
-  if (Array.isArray(raw)) {
-    for (const d of raw) await insertOne(d);
-  } else {
-    await insertOne(raw);
-  }
   await prisma.$disconnect();
 }
 
-main().catch((e) => { console.error(e); prisma.$disconnect(); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  prisma.$disconnect();
+  process.exit(1);
+});
