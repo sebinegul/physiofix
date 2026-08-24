@@ -62,14 +62,14 @@ export default function PopularSearches() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-bold text-slate-900 transition-colors duration-300 group-hover:text-blue-700">{item.title}</p>
-                          <p className="mt-1.5 text-sm leading-6 text-slate-500">{item.description}</p>
+                          <p className="mt-1.5 text-sm leading-6 text-slate-600">{item.description}</p>
                         </div>
                       </div>
 
                       {/* Bottom bar that slides in on hover */}
                       <div className="relative mt-auto pt-4 flex items-center gap-2 overflow-hidden">
                         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent transition-all duration-500 group-hover:via-blue-200" />
-                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 transition-all duration-500 group-hover:translate-x-0 group-hover:text-blue-600">
+                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition-all duration-500 group-hover:translate-x-0 group-hover:text-blue-600">
                           Learn more
                           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                         </span>

@@ -411,6 +411,7 @@ export default function Hero() {
               <a
                 href={`tel:${(content.contact_phone ?? DEFAULT_CONTENT.contact_phone).replace(/\s/g, "")}`}
                 className="btn-ghost !px-4 !py-2.5 !text-xs sm:!px-5 sm:!py-3 sm:!text-sm"
+                aria-label="Call PhysioFix now"
               >
                 <Phone className="h-4 w-4" />
                 <span className="hidden sm:inline">{content.contact_phone ?? DEFAULT_CONTENT.contact_phone}</span>
@@ -466,11 +467,17 @@ export default function Hero() {
                     <button
                       key={i}
                       onClick={() => setHeroSlide(i)}
-                      className={`rounded-full transition-all duration-300 ${
-                        i === heroSlide ? "h-2 w-6 bg-white" : "h-2 w-2 bg-white/40 hover:bg-white/60"
+                      className={`flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 ${
+                        i === heroSlide ? "" : "hover:bg-white/10"
                       }`}
                       aria-label={`Go to slide ${i + 1}`}
-                    />
+                    >
+                      <span
+                        className={`rounded-full transition-all duration-300 ${
+                          i === heroSlide ? "h-2 w-6 bg-white" : "h-2 w-2 bg-white/40 hover:bg-white/60"
+                        }`}
+                      />
+                    </button>
                   ))}
                 </div>
               </div>

@@ -1,12 +1,6 @@
 ﻿import type { Metadata } from "next";
 import PageTransition from "./components/PageTransition";
-import Hero from "./sections/Hero";
-import MeetSpecialists from "./sections/MeetSpecialists";
-import PopularSearches from "./sections/PopularSearches";
-import FindPhysio from "./sections/FindPhysio";
-import WhyChooseUs from "./sections/WhyChooseUs";
-import Testimonials from "./sections/Testimonials";
-import Newsletter from "./sections/Newsletter";
+import HomeSections from "./sections/HomeSections";
 
 export const metadata: Metadata = {
   alternates: {
@@ -18,13 +12,7 @@ export default function Home() {
   return (
     <PageTransition>
       <main className="overflow-x-hidden bg-transparent">
-        <Hero />
-        <MeetSpecialists />
-        <PopularSearches />
-        <FindPhysio />
-        <WhyChooseUs />
-        <Testimonials />
-        <Newsletter />
+        <HomeSections />
       </main>
     </PageTransition>
   );

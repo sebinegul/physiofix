@@ -72,7 +72,7 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://randomuser.me https://media.giphy.com https://i.giphy.com https://img.youtube.com https://maps.gstatic.com https://maps.googleapis.com data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://vercel.live; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com; frame-ancestors 'none';",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://randomuser.me https://media.giphy.com https://i.giphy.com https://img.youtube.com https://maps.gstatic.com https://maps.googleapis.com data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://vercel.live https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com; frame-ancestors 'none';",
           },
         ],
       },

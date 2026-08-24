@@ -96,7 +96,7 @@ export default function Footer() {
 
           {columns.map((col, i) => (
             <ScrollReveal key={col.title} delay={i * 0.08}>
-              <h4 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-white">{col.title}</h4>
+              <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-white">{col.title}</h2>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.label}>
