@@ -172,6 +172,16 @@ export default function BlogGrid({ featured, regular }: BlogGridProps) {
     (p) => activeFilter === "all" || p.category === activeFilter
   );
 
+  // Pagination: show first batch, expand on demand. Resets when the
+  // category filter changes so every filter starts from page one.
+  const PAGE_SIZE = 12;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeFilter]);
+  const visibleRegular = filteredRegular.slice(0, visibleCount);
+  const hasMore = filteredRegular.length > visibleCount;
+
   const hasContent =
     filteredFeatured.length > 0 || filteredRegular.length > 0;
 
@@ -313,7 +323,7 @@ export default function BlogGrid({ featured, regular }: BlogGridProps) {
             />
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredRegular.map((post, i) => (
+              {visibleRegular.map((post, i) => (
                 <motion.div
                   key={post.id}
                   variants={cardVariants}
@@ -396,6 +406,24 @@ export default function BlogGrid({ featured, regular }: BlogGridProps) {
                 </motion.div>
               ))}
             </div>
+
+            {/* Load more */}
+            {hasMore && (
+              <div className="mt-10 flex flex-col items-center gap-2">
+                <button
+                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                  className="rounded-full border border-white/[0.12] bg-white/[0.04] px-8 py-3 text-sm font-semibold text-white/80 backdrop-blur-sm transition-all hover:border-blue-400/40 hover:bg-blue-500/10 hover:text-white active:scale-[0.97]"
+                >
+                  Load More Articles
+                  <span className="ml-2 text-xs font-normal text-white/40">
+                    ({filteredRegular.length - visibleCount} more)
+                  </span>
+                </button>
+                <p className="text-xs text-white/30">
+                  Showing {visibleRegular.length} of {filteredRegular.length} articles
+                </p>
+              </div>
+            )}
           </div>
         </motion.div>
       )}
