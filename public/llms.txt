@@ -28,6 +28,10 @@ PhysioFix helps people recover from pain and injury with evidence-based physioth
 - [Geriatric Physiotherapy](https://physiofix.net/specialization/geriatricPhysio): Care for older adults
 - [Sports Physiotherapy](https://physiofix.net/specialization/sportsPhysio): Injury prevention and return-to-sport
 
+## Location Pages
+
+- [Physiotherapy in Kothanur](https://physiofix.net/physiotherapy-kothanur): Clinic and home-visit physiotherapy for Kothanur residents
+
 ## Blog Posts
 
 - [Understanding Back Pain: Causes and Prevention](https://physiofix.net/blog/understanding-back-pain-causes-and-prevention)

@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/services`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
     { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/physiotherapy-kothanur`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
   ];
 
   // Specialization pages — slugs must match app/specialization/*/page.tsx

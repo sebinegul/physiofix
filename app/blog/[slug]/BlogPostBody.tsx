@@ -335,6 +335,59 @@ const categoryColors: Record<string, string> = {
   geriatric: "border-teal-500/30 text-teal-300 bg-teal-500/10",
 };
 
+/* ── Category → specialization internal links (SEO) ──────────────────── */
+const categoryServiceLinks: Record<string, { name: string; href: string }[]> = {
+  "sports-injury": [
+    { name: "Sports Physiotherapy", href: "/specialization/sportsPhysio" },
+    { name: "Post-Surgery Rehabilitation", href: "/specialization/postSurgeryRehabilitation" },
+    { name: "Manual Therapy", href: "/specialization/manualTherapy" },
+  ],
+  rehabilitation: [
+    { name: "Neuro Rehabilitation", href: "/specialization/neuroRehabilitation" },
+    { name: "Post-Surgery Rehabilitation", href: "/specialization/postSurgeryRehabilitation" },
+    { name: "Physiotherapy Assessment", href: "/specialization/physiotherapyAssessment" },
+  ],
+  "neck-back-pain": [
+    { name: "Chiropractic Care", href: "/specialization/chiropracticCare" },
+    { name: "Bone Alignment", href: "/specialization/boneAlignment" },
+    { name: "Posture Correction", href: "/specialization/postureCorrection" },
+  ],
+  "joint-pain": [
+    { name: "Manual Therapy", href: "/specialization/manualTherapy" },
+    { name: "Electrotherapy", href: "/specialization/electrotherapy" },
+    { name: "Cupping Therapy", href: "/specialization/cuppingTherapy" },
+  ],
+  fitness: [
+    { name: "Sports Physiotherapy", href: "/specialization/sportsPhysio" },
+    { name: "Physiotherapy Assessment", href: "/specialization/physiotherapyAssessment" },
+  ],
+  "posture-ergonomics": [
+    { name: "Posture Correction", href: "/specialization/postureCorrection" },
+    { name: "Physiotherapy Assessment", href: "/specialization/physiotherapyAssessment" },
+  ],
+  wellness: [
+    { name: "Cupping Therapy", href: "/specialization/cuppingTherapy" },
+    { name: "Soft Tissue Manipulation", href: "/specialization/softTissueManipulation" },
+  ],
+  "women-health": [
+    { name: "Home Physiotherapy", href: "/specialization/homePhysio" },
+    { name: "Physiotherapy Assessment", href: "/specialization/physiotherapyAssessment" },
+  ],
+  "pediatric-physio": [
+    { name: "Physiotherapy Assessment", href: "/specialization/physiotherapyAssessment" },
+    { name: "Home Physiotherapy", href: "/specialization/homePhysio" },
+  ],
+  geriatric: [
+    { name: "Geriatric Physiotherapy", href: "/specialization/geriatricPhysio" },
+    { name: "Home Physiotherapy", href: "/specialization/homePhysio" },
+  ],
+  general: [
+    { name: "Physiotherapy Assessment", href: "/specialization/physiotherapyAssessment" },
+    { name: "Sports Physiotherapy", href: "/specialization/sportsPhysio" },
+    { name: "Cupping Therapy", href: "/specialization/cuppingTherapy" },
+  ],
+};
+
 /* ── Main Component ───────────────────────────────────────────────────── */
 interface BlogPostBodyProps {
   content: string;
@@ -452,6 +505,37 @@ export default function BlogPostBody({
       >
         <ShareButton title={title} />
       </motion.div>
+
+      {/* ── Related Treatments (internal links) ── */}
+      {(() => {
+        const serviceLinks = categoryServiceLinks[category] || categoryServiceLinks.general;
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="mt-12 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 sm:p-8"
+          >
+            <h2 className="text-lg font-bold text-white mb-1">Related treatments at PhysioFix</h2>
+            <p className="text-sm text-white/50 mb-4">
+              Offered in-clinic in JP Nagar and through home visits across Bangalore.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {serviceLinks.map((s) => (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-xs font-semibold text-blue-200 backdrop-blur-sm transition hover:border-blue-400/60 hover:bg-blue-500/20 hover:text-blue-100"
+                >
+                  {s.name}
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        );
+      })()}
 
       {/* ── CTA ── */}
       <motion.div
