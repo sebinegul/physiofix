@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     description:
       "Specialised sports injury physiotherapy for athletes — ACL injuries, sprains, strains and overuse conditions in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/sportsPhysio",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

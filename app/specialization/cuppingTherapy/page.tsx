@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     title: "Cupping Therapy | Pain Relief in JP Nagar",
     description: "Professional cupping therapy for pain relief, muscle tension & recovery in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/cuppingTherapy",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

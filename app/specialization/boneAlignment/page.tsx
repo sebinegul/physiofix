@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     title: "Bone Alignment Therapy | Joint Correction in JP Nagar",
     description: "Expert bone alignment therapy for joint correction & posture improvement in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/boneAlignment",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

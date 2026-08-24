@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     title: "Electrotherapy | Pain Management in JP Nagar",
     description: "Advanced electrotherapy treatment for pain management & rehabilitation in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/electrotherapy",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

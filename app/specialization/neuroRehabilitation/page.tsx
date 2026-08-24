@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     description:
       "Expert neuro rehabilitation for stroke recovery, spinal cord injury & neurological conditions in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/neuroRehabilitation",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

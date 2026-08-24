@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "https://physiofix.net/og-image.svg",
+        url: "https://physiofix.net/og-image.png",
         width: 1200,
         height: 630,
         alt: "PhysioFix, Physiotherapy, Sports Rehab & Recovery Care in JP Nagar, Bangalore",
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     title: "PhysioFix | Best Physiotherapy in JP Nagar, Bangalore",
     description:
       "Expert physiotherapy care for pain relief, sports recovery, post-surgery rehab & neurological rehabilitation in JP Nagar, Bangalore.",
-    images: ["https://physiofix.net/og-image.svg"],
+    images: ["https://physiofix.net/og-image.png"],
   },
   icons: {
     icon: [

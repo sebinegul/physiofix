@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     title: "Manual Therapy | Joint Mobilisation in JP Nagar",
     description: "Hands-on manual therapy for joint mobilisation, soft tissue release & pain relief in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/manualTherapy",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     description:
       "Meet Dr.Nishmitha.R, experienced physiotherapist specialising in sports rehab, orthopaedic care & neurological rehabilitation in JP Nagar, Bangalore.",
     url: "https://physiofix.net/about",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import SpecializationLayout from "../SpecializationLayout";
 
 export const metadata: Metadata = {
@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     title: "Chiropractic Care | Spine & Joint Alignment in JP Nagar",
     description: "Expert chiropractic care for spinal alignment, back pain relief & posture correction in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/chiropracticCare",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

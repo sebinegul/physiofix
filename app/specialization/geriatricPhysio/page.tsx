@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     description:
       "Specialised geriatric physiotherapy for elderly patients focusing on mobility, balance, fall prevention and independence in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/geriatricPhysio",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     description:
       "Professional home-based physiotherapy services for elderly patients, post-surgical recovery and mobility limitations in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/homePhysio",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

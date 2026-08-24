@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     description:
       "Expert post-surgery rehabilitation for knee replacement, hip replacement & surgical recovery in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/postSurgeryRehabilitation",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 

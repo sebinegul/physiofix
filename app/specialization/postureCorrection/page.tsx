@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     description:
       "Expert posture correction therapy for postural imbalance, back pain & alignment issues in JP Nagar, Bangalore.",
     url: "https://physiofix.net/specialization/postureCorrection",
+    images: ["https://physiofix.net/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["https://physiofix.net/og-image.png"],
   },
 };
 
